@@ -164,6 +164,39 @@ export default function TenantDashboardPage() {
               </button>
             </Link>
           </div>
+
+          {/* Integrations */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Integrations</h3>
+            </div>
+            <p className="text-gray-600 text-sm mb-4">
+              Connect Axcelerate, Canvas, Xero, MYOB
+            </p>
+            <Link href={`/dashboard/${tenantSlug}/integrations`}>
+              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                Manage Integrations
+              </button>
+            </Link>
+          </div>
+
+          {/* TAS Generator */}
+          <div className="bg-white rounded-lg shadow-md p-6 border-2 border-purple-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">TAS Generator</h3>
+              <span className="px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-800 text-xs font-medium rounded-full">
+                ⚡ AI Powered
+              </span>
+            </div>
+            <p className="text-gray-600 text-sm mb-4">
+              Auto TAS builder • GPT-4 synthesis • 90% time reduction
+            </p>
+            <Link href={`/dashboard/${tenantSlug}/tas`}>
+              <button className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-md font-semibold">
+                ✨ Generate TAS
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* Coming Soon Notice */}
