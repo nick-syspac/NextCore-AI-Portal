@@ -9,7 +9,7 @@ interface APIKey {
   id: string;
   tenant: string;
   name: string;
-  description: string;
+  description?: string;
   key_prefix: string;
   is_active: boolean;
   created_at: string;

@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { UsageOverview } from '@/components/usage/UsageOverview';
+import { QuotaWidget } from '@/components/usage/QuotaWidget';
 
 export default function TenantDashboardPage() {
   const params = useParams();
@@ -65,6 +67,16 @@ export default function TenantDashboardPage() {
           </p>
         </div>
 
+        {/* Usage Overview Widget */}
+        <div className="mb-8 grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <UsageOverview tenantSlug={tenantSlug} />
+          </div>
+          <div>
+            <QuotaWidget tenantSlug={tenantSlug} />
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* AI Gateway */}
           <div className="bg-white rounded-lg shadow-md p-6">
@@ -120,22 +132,6 @@ export default function TenantDashboardPage() {
             </Link>
           </div>
 
-          {/* Usage Stats */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Usage Stats</h3>
-              <span className="px-3 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full">
-                This Month
-              </span>
-            </div>
-            <p className="text-gray-600 text-sm mb-4">
-              API calls, tokens, and costs
-            </p>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              View Analytics
-            </button>
-          </div>
-
           {/* Settings */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between mb-4">
@@ -144,9 +140,11 @@ export default function TenantDashboardPage() {
             <p className="text-gray-600 text-sm mb-4">
               Configure tenant preferences
             </p>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              Manage Settings
-            </button>
+            <Link href={`/dashboard/${tenantSlug}/settings`}>
+              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                Manage Settings
+              </button>
+            </Link>
           </div>
 
           {/* Billing */}
@@ -160,9 +158,11 @@ export default function TenantDashboardPage() {
             <p className="text-gray-600 text-sm mb-4">
               Subscription and payment info
             </p>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              View Billing
-            </button>
+            <Link href={`/dashboard/${tenantSlug}/billing`}>
+              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                View Billing
+              </button>
+            </Link>
           </div>
         </div>
 
