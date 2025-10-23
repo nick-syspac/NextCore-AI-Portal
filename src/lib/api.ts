@@ -143,4 +143,86 @@ export const api = {
     }
     return response.json();
   },
+
+  async getAPIKeys(tenantSlug: string, authToken: string) {
+    const response = await fetch(`${API_URL}/api/api-keys/?tenant__slug=${tenantSlug}`, {
+      headers: {
+        'Authorization': `Token ${authToken}`,
+      },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(JSON.stringify(error));
+    }
+    return response.json();
+  },
+
+  async createAPIKey(data: { tenant: string; name: string; description?: string }, authToken: string) {
+    const response = await fetch(`${API_URL}/api/api-keys/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${authToken}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(JSON.stringify(error));
+    }
+    return response.json();
+  },
+
+  async revokeAPIKey(keyId: string, authToken: string) {
+    const response = await fetch(`${API_URL}/api/api-keys/${keyId}/revoke/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${authToken}`,
+      },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(JSON.stringify(error));
+    }
+    return response.json();
+  },
+
+  async getAuditLogs(tenantSlug: string, authToken: string, filters?: {
+    event_type?: string;
+    severity?: string;
+    search?: string;
+    page?: number;
+  }) {
+    const params = new URLSearchParams();
+    params.append('tenant__slug', tenantSlug);
+    if (filters?.event_type) params.append('event_type', filters.event_type);
+    if (filters?.severity) params.append('severity', filters.severity);
+    if (filters?.search) params.append('search', filters.search);
+    if (filters?.page) params.append('page', filters.page.toString());
+
+    const response = await fetch(`${API_URL}/api/audit/events/?${params.toString()}`, {
+      headers: {
+        'Authorization': `Token ${authToken}`,
+      },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(JSON.stringify(error));
+    }
+    return response.json();
+  },
+
+  async verifyAuditLog(tenantId: string, authToken: string) {
+    const response = await fetch(`${API_URL}/api/audit/verify/?tenant_id=${tenantId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${authToken}`,
+      },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(JSON.stringify(error));
+    }
+    return response.json();
+  },
 };

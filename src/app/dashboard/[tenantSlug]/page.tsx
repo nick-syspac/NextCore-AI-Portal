@@ -77,9 +77,11 @@ export default function TenantDashboardPage() {
             <p className="text-gray-600 text-sm mb-4">
               Access AI models and manage API keys
             </p>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              Manage API Keys
-            </button>
+            <Link href={`/dashboard/${tenantSlug}/api-keys`}>
+              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                Manage API Keys
+              </button>
+            </Link>
           </div>
 
           {/* Users */}
@@ -111,9 +113,11 @@ export default function TenantDashboardPage() {
             <p className="text-gray-600 text-sm mb-4">
               View activity and security events
             </p>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              View Logs
-            </button>
+            <Link href={`/dashboard/${tenantSlug}/logs`}>
+              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                View Logs
+              </button>
+            </Link>
           </div>
 
           {/* Usage Stats */}
