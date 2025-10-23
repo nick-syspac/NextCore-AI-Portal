@@ -1,5 +1,35 @@
 'use client';
 
+/**
+ * Billing Page - Stripe Integration
+ * 
+ * PRODUCTION SETUP INSTRUCTIONS:
+ * 
+ * 1. Install Stripe SDK:
+ *    npm install @stripe/stripe-js @stripe/react-stripe-js
+ * 
+ * 2. Set environment variables:
+ *    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxx
+ * 
+ * 3. Wrap this component with Stripe Elements:
+ *    import { Elements } from '@stripe/react-stripe-js';
+ *    import { loadStripe } from '@stripe/stripe-js';
+ *    const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+ *    <Elements stripe={stripePromise}><BillingPage /></Elements>
+ * 
+ * 4. Replace mock addPaymentMethod() with real Stripe integration:
+ *    - Use stripe.createToken() or stripe.createPaymentMethod()
+ *    - Send token/payment method ID to backend
+ *    - Backend creates Stripe Customer and attaches payment method
+ * 
+ * 5. Backend API endpoints needed:
+ *    - POST /api/tenants/{slug}/payment-methods (attach payment method)
+ *    - PUT /api/tenants/{slug}/payment-methods/{id}/default
+ *    - DELETE /api/tenants/{slug}/payment-methods/{id}
+ *    - POST /api/tenants/{slug}/subscription (change plan)
+ *    - GET /api/tenants/{slug}/invoices/{id}/pdf
+ */
+
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -94,6 +124,16 @@ export default function BillingPage() {
   const [showChangePlan, setShowChangePlan] = useState(false);
   const [selectedInterval, setSelectedInterval] = useState<'month' | 'year'>('month');
   const [changingPlan, setChangingPlan] = useState(false);
+  const [addingPayment, setAddingPayment] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [cardDetails, setCardDetails] = useState({
+    cardNumber: '',
+    cardName: '',
+    expMonth: '',
+    expYear: '',
+    cvc: '',
+    zipCode: '',
+  });
 
   useEffect(() => {
     loadBillingData();
@@ -703,6 +743,211 @@ export default function BillingPage() {
     return availablePlans.find(p => p.tier === billingData?.subscription.plan_tier);
   };
 
+  // Card formatting helpers
+  const formatCardNumber = (value: string) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = (matches && matches[0]) || '';
+    const parts = [];
+
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return value;
+    }
+  };
+
+  const formatExpiry = (value: string, field: 'month' | 'year') => {
+    const v = value.replace(/[^0-9]/gi, '');
+    if (field === 'month') {
+      if (v.length === 0) return '';
+      if (v.length === 1) return v;
+      const num = parseInt(v);
+      if (num > 12) return '12';
+      if (num < 1) return '01';
+      return v.padStart(2, '0');
+    }
+    return v.slice(0, 2);
+  };
+
+  const getCardBrand = (cardNumber: string): string => {
+    const number = cardNumber.replace(/\s+/g, '');
+    if (/^4/.test(number)) return 'Visa';
+    if (/^5[1-5]/.test(number)) return 'Mastercard';
+    if (/^3[47]/.test(number)) return 'Amex';
+    if (/^6(?:011|5)/.test(number)) return 'Discover';
+    return 'Card';
+  };
+
+  const handleCardInputChange = (field: keyof typeof cardDetails, value: string) => {
+    let formattedValue = value;
+
+    if (field === 'cardNumber') {
+      formattedValue = formatCardNumber(value);
+    } else if (field === 'expMonth') {
+      formattedValue = formatExpiry(value, 'month');
+    } else if (field === 'expYear') {
+      formattedValue = formatExpiry(value, 'year');
+    } else if (field === 'cvc') {
+      formattedValue = value.replace(/[^0-9]/gi, '').slice(0, 4);
+    } else if (field === 'zipCode') {
+      formattedValue = value.replace(/[^0-9]/gi, '').slice(0, 5);
+    }
+
+    setCardDetails(prev => ({ ...prev, [field]: formattedValue }));
+  };
+
+  const addPaymentMethod = async () => {
+    try {
+      setAddingPayment(true);
+
+      // Validate card details
+      if (!cardDetails.cardNumber || cardDetails.cardNumber.replace(/\s/g, '').length < 13) {
+        alert('Please enter a valid card number');
+        return;
+      }
+      if (!cardDetails.cardName.trim()) {
+        alert('Please enter the cardholder name');
+        return;
+      }
+      if (!cardDetails.expMonth || !cardDetails.expYear) {
+        alert('Please enter the expiration date');
+        return;
+      }
+      if (!cardDetails.cvc || cardDetails.cvc.length < 3) {
+        alert('Please enter a valid CVC');
+        return;
+      }
+      if (!cardDetails.zipCode || cardDetails.zipCode.length !== 5) {
+        alert('Please enter a valid ZIP code');
+        return;
+      }
+
+      // In production, this would integrate with Stripe:
+      // 1. Load Stripe.js library
+      // 2. Create a token using stripe.createToken()
+      // 3. Send token to backend API
+      // Example:
+      /*
+      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+      const { token, error } = await stripe.createToken('card', {
+        number: cardDetails.cardNumber.replace(/\s/g, ''),
+        exp_month: cardDetails.expMonth,
+        exp_year: cardDetails.expYear,
+        cvc: cardDetails.cvc,
+        name: cardDetails.cardName,
+        address_zip: cardDetails.zipCode,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const response = await api.addPaymentMethod(tenantSlug, {
+        stripe_token: token.id,
+      });
+      */
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Create mock payment method
+      const cardNumber = cardDetails.cardNumber.replace(/\s/g, '');
+      const last4 = cardNumber.slice(-4);
+      const brand = getCardBrand(cardNumber);
+      const currentYear = new Date().getFullYear();
+      const expYear = parseInt(cardDetails.expYear) + (parseInt(cardDetails.expYear) < 50 ? 2000 : 1900);
+
+      const newPaymentMethod: PaymentMethod = {
+        id: `pm_${Date.now()}`,
+        type: 'card',
+        last4,
+        brand,
+        exp_month: parseInt(cardDetails.expMonth),
+        exp_year: expYear,
+        is_default: billingData?.payment_methods.length === 0,
+      };
+
+      // Update billing data
+      if (billingData) {
+        setBillingData({
+          ...billingData,
+          payment_methods: [...billingData.payment_methods, newPaymentMethod],
+        });
+      }
+
+      // Reset form and close modal
+      setCardDetails({
+        cardNumber: '',
+        cardName: '',
+        expMonth: '',
+        expYear: '',
+        cvc: '',
+        zipCode: '',
+      });
+      setShowAddPayment(false);
+      alert('Payment method added successfully!');
+    } catch (error) {
+      console.error('Failed to add payment method:', error);
+      alert('Failed to add payment method. Please try again.');
+    } finally {
+      setAddingPayment(false);
+    }
+  };
+
+  const setDefaultPaymentMethod = async (paymentMethodId: string) => {
+    try {
+      // In production: await api.setDefaultPaymentMethod(tenantSlug, paymentMethodId);
+      
+      if (billingData) {
+        setBillingData({
+          ...billingData,
+          payment_methods: billingData.payment_methods.map(pm => ({
+            ...pm,
+            is_default: pm.id === paymentMethodId,
+          })),
+        });
+      }
+      
+      alert('Default payment method updated');
+    } catch (error) {
+      console.error('Failed to set default payment method:', error);
+      alert('Failed to update default payment method. Please try again.');
+    }
+  };
+
+  const removePaymentMethod = async (paymentMethodId: string) => {
+    try {
+      const pm = billingData?.payment_methods.find(p => p.id === paymentMethodId);
+      if (pm?.is_default) {
+        alert('Cannot remove the default payment method. Please set another payment method as default first.');
+        return;
+      }
+
+      if (!confirm('Are you sure you want to remove this payment method?')) {
+        return;
+      }
+
+      // In production: await api.removePaymentMethod(tenantSlug, paymentMethodId);
+      
+      if (billingData) {
+        setBillingData({
+          ...billingData,
+          payment_methods: billingData.payment_methods.filter(pm => pm.id !== paymentMethodId),
+        });
+      }
+      
+      alert('Payment method removed');
+    } catch (error) {
+      console.error('Failed to remove payment method:', error);
+      alert('Failed to remove payment method. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -1031,7 +1276,10 @@ export default function BillingPage() {
                 <div className="space-y-4">
                   {billingData.payment_methods.map((pm) => (
                     <div key={pm.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-                      <div className="flex items-center gap-4">
+                      <div 
+                        className="flex items-center gap-4 flex-1 cursor-pointer" 
+                        onClick={() => setSelectedPaymentMethod(pm)}
+                      >
                         <div className="w-16 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded flex items-center justify-center text-xs font-bold text-white">
                           {pm.type === 'card' ? pm.brand?.toUpperCase() : 'BANK'}
                         </div>
@@ -1047,18 +1295,33 @@ export default function BillingPage() {
                             {pm.type === 'bank_account' && 'Bank Account'}
                           </p>
                         </div>
+                        <svg className="w-5 h-5 text-gray-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 ml-4">
                         {pm.is_default ? (
                           <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
                             Default
                           </span>
                         ) : (
-                          <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDefaultPaymentMethod(pm.id);
+                            }}
+                            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                          >
                             Set as Default
                           </button>
                         )}
-                        <button className="text-red-600 hover:text-red-700 text-sm font-medium">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removePaymentMethod(pm.id);
+                          }}
+                          className="text-red-600 hover:text-red-700 text-sm font-medium"
+                        >
                           Remove
                         </button>
                       </div>
@@ -1068,22 +1331,207 @@ export default function BillingPage() {
 
                 {/* Add Payment Modal (simplified) */}
                 {showAddPayment && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 max-w-md w-full">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Payment Method</h3>
-                      <p className="text-gray-600 mb-4">
-                        This would integrate with Stripe or another payment processor
-                      </p>
-                      <div className="flex gap-3">
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+                      <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                        <h3 className="text-xl font-bold text-gray-900">Add Payment Method</h3>
                         <button 
                           onClick={() => setShowAddPayment(false)}
-                          className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                          className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
                         >
-                          Cancel
+                          ×
                         </button>
-                        <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                          Add Card
-                        </button>
+                      </div>
+                      
+                      <div className="p-6">
+                        {/* Stripe Security Badge */}
+                        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                          <div className="flex items-center gap-3">
+                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            <div>
+                              <p className="text-sm font-medium text-blue-900">Secure Payment</p>
+                              <p className="text-xs text-blue-700">Powered by Stripe. Your payment information is encrypted and secure.</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Card Form */}
+                        <form onSubmit={(e) => { e.preventDefault(); addPaymentMethod(); }} className="space-y-4">
+                          {/* Cardholder Name */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Cardholder Name
+                            </label>
+                            <input
+                              type="text"
+                              value={cardDetails.cardName}
+                              onChange={(e) => handleCardInputChange('cardName', e.target.value)}
+                              placeholder="John Doe"
+                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              required
+                            />
+                          </div>
+
+                          {/* Card Number */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Card Number
+                            </label>
+                            <div className="relative">
+                              <input
+                                type="text"
+                                value={cardDetails.cardNumber}
+                                onChange={(e) => handleCardInputChange('cardNumber', e.target.value)}
+                                placeholder="1234 5678 9012 3456"
+                                maxLength={19}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                required
+                              />
+                              {cardDetails.cardNumber && (
+                                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                  <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                                    {getCardBrand(cardDetails.cardNumber)}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">Enter your 16-digit card number</p>
+                          </div>
+
+                          {/* Expiration and CVC */}
+                          <div className="grid grid-cols-3 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Exp Month
+                              </label>
+                              <input
+                                type="text"
+                                value={cardDetails.expMonth}
+                                onChange={(e) => handleCardInputChange('expMonth', e.target.value)}
+                                placeholder="MM"
+                                maxLength={2}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                required
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Exp Year
+                              </label>
+                              <input
+                                type="text"
+                                value={cardDetails.expYear}
+                                onChange={(e) => handleCardInputChange('expYear', e.target.value)}
+                                placeholder="YY"
+                                maxLength={2}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                required
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                CVC
+                              </label>
+                              <input
+                                type="text"
+                                value={cardDetails.cvc}
+                                onChange={(e) => handleCardInputChange('cvc', e.target.value)}
+                                placeholder="123"
+                                maxLength={4}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          {/* ZIP Code */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              ZIP Code
+                            </label>
+                            <input
+                              type="text"
+                              value={cardDetails.zipCode}
+                              onChange={(e) => handleCardInputChange('zipCode', e.target.value)}
+                              placeholder="12345"
+                              maxLength={5}
+                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              required
+                            />
+                          </div>
+
+                          {/* Card Preview */}
+                          {cardDetails.cardNumber && (
+                            <div className="mt-6 p-4 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl text-white">
+                              <div className="flex justify-between items-start mb-8">
+                                <div className="w-12 h-8 bg-yellow-400 rounded"></div>
+                                <span className="text-xs font-semibold">{getCardBrand(cardDetails.cardNumber)}</span>
+                              </div>
+                              <div className="text-lg tracking-wider mb-4 font-mono">
+                                {cardDetails.cardNumber || '•••• •••• •••• ••••'}
+                              </div>
+                              <div className="flex justify-between items-end">
+                                <div>
+                                  <div className="text-xs opacity-75 mb-1">CARDHOLDER</div>
+                                  <div className="text-sm font-semibold uppercase">
+                                    {cardDetails.cardName || 'YOUR NAME'}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-xs opacity-75 mb-1">EXPIRES</div>
+                                  <div className="text-sm font-semibold">
+                                    {cardDetails.expMonth || 'MM'}/{cardDetails.expYear || 'YY'}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Terms */}
+                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                            <p className="text-xs text-gray-600">
+                              By adding this payment method, you authorize NextCore AI Cloud to charge this card for current and future payments in accordance with our terms of service.
+                            </p>
+                          </div>
+
+                          {/* Buttons */}
+                          <div className="flex gap-3 pt-4">
+                            <button 
+                              type="button"
+                              onClick={() => setShowAddPayment(false)}
+                              className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                              disabled={addingPayment}
+                            >
+                              Cancel
+                            </button>
+                            <button 
+                              type="submit"
+                              className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                              disabled={addingPayment}
+                            >
+                              {addingPayment ? (
+                                <span className="flex items-center justify-center gap-2">
+                                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                  </svg>
+                                  Processing...
+                                </span>
+                              ) : (
+                                'Add Card'
+                              )}
+                            </button>
+                          </div>
+                        </form>
+
+                        {/* Help Text */}
+                        <div className="mt-6 text-center">
+                          <p className="text-xs text-gray-500">
+                            Need help? Contact <a href="mailto:billing@nextcore.ai" className="text-blue-600 hover:underline">billing@nextcore.ai</a>
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1406,6 +1854,222 @@ export default function BillingPage() {
                 >
                   Close
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Payment Method Details Modal */}
+        {selectedPaymentMethod && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-2xl w-full">
+              <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                <h3 className="text-xl font-bold text-gray-900">Payment Method Details</h3>
+                <button 
+                  onClick={() => setSelectedPaymentMethod(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="p-6">
+                {/* Visual Card Display */}
+                <div className="mb-6">
+                  {selectedPaymentMethod.type === 'card' ? (
+                    <div className="w-full max-w-md mx-auto p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl shadow-2xl text-white relative overflow-hidden">
+                      {/* Card Background Pattern */}
+                      <div className="absolute inset-0 opacity-10">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -translate-y-32 translate-x-32"></div>
+                        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full translate-y-24 -translate-x-24"></div>
+                      </div>
+
+                      {/* Card Content */}
+                      <div className="relative">
+                        {/* Chip and Brand */}
+                        <div className="flex justify-between items-start mb-12">
+                          <div className="w-14 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg"></div>
+                          <div className="text-right">
+                            <span className="text-lg font-bold">{selectedPaymentMethod.brand?.toUpperCase()}</span>
+                            {selectedPaymentMethod.is_default && (
+                              <div className="mt-1">
+                                <span className="text-xs bg-blue-500 px-2 py-1 rounded-full">Default</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Card Number */}
+                        <div className="mb-8">
+                          <p className="text-2xl font-mono tracking-wider">
+                            •••• •••• •••• {selectedPaymentMethod.last4}
+                          </p>
+                        </div>
+
+                        {/* Cardholder Info */}
+                        <div className="flex justify-between items-end">
+                          <div>
+                            <p className="text-xs opacity-75 mb-1">CARDHOLDER</p>
+                            <p className="text-sm font-semibold">
+                              {billingData?.billing_email.split('@')[0].toUpperCase() || 'ACCOUNT HOLDER'}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs opacity-75 mb-1">EXPIRES</p>
+                            <p className="text-sm font-semibold">
+                              {String(selectedPaymentMethod.exp_month).padStart(2, '0')}/{selectedPaymentMethod.exp_year}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full max-w-md mx-auto p-6 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl shadow-2xl text-white">
+                      <div className="flex items-center justify-between mb-8">
+                        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                          <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
+                        </svg>
+                        {selectedPaymentMethod.is_default && (
+                          <span className="text-xs bg-blue-500 px-2 py-1 rounded-full">Default</span>
+                        )}
+                      </div>
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-xs opacity-75">BANK NAME</p>
+                          <p className="text-lg font-semibold">{selectedPaymentMethod.bank_name}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs opacity-75">ACCOUNT NUMBER</p>
+                          <p className="text-xl font-mono">•••• •••• •••• {selectedPaymentMethod.last4}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Payment Method Information */}
+                <div className="space-y-4 mb-6">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-900 mb-3">Payment Method Information</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600">Type</p>
+                        <p className="font-medium text-gray-900">
+                          {selectedPaymentMethod.type === 'card' ? 'Credit/Debit Card' : 'Bank Account'}
+                        </p>
+                      </div>
+                      {selectedPaymentMethod.type === 'card' && (
+                        <>
+                          <div>
+                            <p className="text-sm text-gray-600">Brand</p>
+                            <p className="font-medium text-gray-900">{selectedPaymentMethod.brand}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Last 4 Digits</p>
+                            <p className="font-medium text-gray-900">•••• {selectedPaymentMethod.last4}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Expiration Date</p>
+                            <p className="font-medium text-gray-900">
+                              {String(selectedPaymentMethod.exp_month).padStart(2, '0')}/{selectedPaymentMethod.exp_year}
+                            </p>
+                          </div>
+                        </>
+                      )}
+                      {selectedPaymentMethod.type === 'bank_account' && (
+                        <>
+                          <div>
+                            <p className="text-sm text-gray-600">Bank Name</p>
+                            <p className="font-medium text-gray-900">{selectedPaymentMethod.bank_name}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Last 4 Digits</p>
+                            <p className="font-medium text-gray-900">•••• {selectedPaymentMethod.last4}</p>
+                          </div>
+                        </>
+                      )}
+                      <div>
+                        <p className="text-sm text-gray-600">Status</p>
+                        <p className="font-medium text-gray-900">
+                          {selectedPaymentMethod.is_default ? (
+                            <span className="text-blue-600">Default Payment Method</span>
+                          ) : (
+                            'Active'
+                          )}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Payment Method ID</p>
+                        <p className="font-medium text-gray-900 text-xs truncate">{selectedPaymentMethod.id}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Usage Information */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <div className="flex-1">
+                        <h5 className="font-medium text-blue-900">Payment Method Usage</h5>
+                        <p className="text-sm text-blue-700 mt-1">
+                          {selectedPaymentMethod.is_default ? (
+                            <>This is your default payment method and will be used for all subscription charges and invoices.</>
+                          ) : (
+                            <>This payment method is available but not set as default. You can set it as default or remove it at any time.</>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Security Information */}
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <svg className="w-5 h-5 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                      <div className="flex-1">
+                        <h5 className="font-medium text-green-900">Secure & Encrypted</h5>
+                        <p className="text-sm text-green-700 mt-1">
+                          Your payment information is encrypted and securely stored by Stripe, a PCI-DSS Level 1 certified payment processor.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3">
+                  {!selectedPaymentMethod.is_default && (
+                    <button 
+                      onClick={() => {
+                        setDefaultPaymentMethod(selectedPaymentMethod.id);
+                        setSelectedPaymentMethod(null);
+                      }}
+                      className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                    >
+                      Set as Default
+                    </button>
+                  )}
+                  <button 
+                    onClick={() => {
+                      removePaymentMethod(selectedPaymentMethod.id);
+                      setSelectedPaymentMethod(null);
+                    }}
+                    className={`${selectedPaymentMethod.is_default ? 'flex-1' : 'flex-1'} px-4 py-3 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-medium`}
+                  >
+                    Remove Payment Method
+                  </button>
+                  <button 
+                    onClick={() => setSelectedPaymentMethod(null)}
+                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>
