@@ -89,7 +89,7 @@ export default function TenantDashboardPage() {
                 </p>
               </div>
               <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <div className="text-white text-sm font-medium">5 AI Tools</div>
+                <div className="text-white text-sm font-medium">6 AI Tools</div>
               </div>
             </div>
           </div>
@@ -199,7 +199,7 @@ export default function TenantDashboardPage() {
                 </p>
               </div>
               <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <div className="text-white text-sm font-medium">5 AI Tools</div>
+                <div className="text-white text-sm font-medium">6 AI Tools</div>
               </div>
             </div>
           </div>
@@ -291,6 +291,24 @@ export default function TenantDashboardPage() {
               <Link href={`/dashboard/${tenantSlug}/moderation-tool`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-lg hover:from-emerald-700 hover:to-green-700 transition-all shadow-md font-semibold">
                   ⚖️ Moderate Now
+                </button>
+              </Link>
+            </div>
+
+            {/* Evidence Mapper */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-indigo-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Evidence Mapper</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-indigo-100 to-violet-100 text-indigo-800 text-xs font-medium rounded-full">
+                  🔍 Search AI
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Tag submissions to criteria • Text extraction + embedding search • Stronger audit trail
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/evidence-mapper`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-lg hover:from-indigo-700 hover:to-violet-700 transition-all shadow-md font-semibold">
+                  🗂️ Map Evidence
                 </button>
               </Link>
             </div>
