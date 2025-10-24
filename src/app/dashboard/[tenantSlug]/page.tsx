@@ -368,6 +368,24 @@ export default function TenantDashboardPage() {
                 </button>
               </Link>
             </div>
+
+            {/* Risk Engine */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-red-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Risk Engine</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-red-100 to-orange-100 text-red-800 text-xs font-medium rounded-full">
+                  ⚠️ ML + Sentiment
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Predict dropout risk • Logistic regression + sentiment fusion • Early warning alerts
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/risk-engine`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-lg hover:from-red-700 hover:to-orange-700 transition-all shadow-md font-semibold">
+                  🚨 Assess Risk
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
