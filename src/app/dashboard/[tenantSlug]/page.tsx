@@ -473,7 +473,7 @@ export default function TenantDashboardPage() {
                 </p>
               </div>
               <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <div className="text-white text-sm font-medium">Trainer AI</div>
+                <div className="text-white text-sm font-medium">3 AI Tools</div>
               </div>
             </div>
           </div>
@@ -511,6 +511,24 @@ export default function TenantDashboardPage() {
               <Link href={`/dashboard/${tenantSlug}/trainer-diary`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
                   📝 Write Diary
+                </button>
+              </Link>
+            </div>
+
+            {/* Industry Currency Verifier */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-teal-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Industry Currency Verifier</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-800 text-xs font-medium rounded-full">
+                  🔍 LinkedIn + GitHub + NLP
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Scan LinkedIn/GitHub for relevance • NLP entity extraction + web scraping • Automated currency evidence
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/industry-currency`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
+                  🔍 Verify Currency
                 </button>
               </Link>
             </div>
