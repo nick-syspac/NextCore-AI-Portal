@@ -77,197 +77,221 @@ export default function TenantDashboardPage() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* AI Gateway */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">AI Gateway</h3>
-              <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                Active
-              </span>
+        {/* EduAI Compliance Suite */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 rounded-lg shadow-xl p-8 mb-6">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="text-5xl">🎓</div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-white mb-2">EduAI Compliance Suite</h2>
+                <p className="text-blue-100 text-lg">
+                  AI-powered tools for RTO compliance, audit readiness, and quality assurance
+                </p>
+              </div>
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2">
+                <div className="text-white text-sm font-medium">5 AI Tools</div>
+              </div>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
-              Access AI models and manage API keys
-            </p>
-            <Link href={`/dashboard/${tenantSlug}/api-keys`}>
-              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                Manage API Keys
-              </button>
-            </Link>
           </div>
 
-          {/* Users */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Team Members</h3>
-              <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                5 Users
-              </span>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {/* TAS Generator */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-purple-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">TAS Generator</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-800 text-xs font-medium rounded-full">
+                  ⚡ AI Powered
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Auto TAS builder • GPT-4 synthesis • 90% time reduction
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/tas`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-md font-semibold">
+                  ✨ Generate TAS
+                </button>
+              </Link>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
-              Invite and manage team members
-            </p>
-            <Link href={`/dashboard/${tenantSlug}/members`}>
-              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                View Team Members
-              </button>
-            </Link>
-          </div>
 
-          {/* Audit Logs */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Audit Logs</h3>
-              <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
-                24h
-              </span>
+            {/* Policy Comparator */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-blue-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Policy Comparator</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 text-xs font-medium rounded-full">
+                  🤖 NLP Powered
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Compare policies to ASQA • Text similarity • Instant gap detection
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/policy-comparator`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
+                  🔍 Compare Policies
+                </button>
+              </Link>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
-              View activity and security events
-            </p>
-            <Link href={`/dashboard/${tenantSlug}/logs`}>
-              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                View Logs
-              </button>
-            </Link>
-          </div>
 
-          {/* Settings */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Settings</h3>
+            {/* Audit Assistant */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-purple-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Audit Assistant</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 text-xs font-medium rounded-full">
+                  🤖 NER Powered
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Upload evidence • Auto-tag clauses • Clause-by-clause reports
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/audit-assistant`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-md font-semibold">
+                  📋 Start Audit
+                </button>
+              </Link>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
-              Configure tenant preferences
-            </p>
-            <Link href={`/dashboard/${tenantSlug}/settings`}>
-              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                Manage Settings
-              </button>
-            </Link>
-          </div>
 
-          {/* Billing */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Billing</h3>
-              <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                Paid
-              </span>
+            {/* Continuous Improvement Register */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-green-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">CI Register</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-green-100 to-teal-100 text-green-800 text-xs font-medium rounded-full">
+                  🤖 AI Classified
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Track improvements • AI classification • Real-time compliance
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/continuous-improvement`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg hover:from-green-700 hover:to-teal-700 transition-all shadow-md font-semibold">
+                  📊 Manage Actions
+                </button>
+              </Link>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
-              Subscription and payment info
-            </p>
-            <Link href={`/dashboard/${tenantSlug}/billing`}>
-              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                View Billing
-              </button>
-            </Link>
-          </div>
 
-          {/* Integrations */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Integrations</h3>
+            {/* Funding Eligibility Checker */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-indigo-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Funding Eligibility</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 text-xs font-medium rounded-full">
+                  ⚖️ Rules Engine
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Validate eligibility • Rules engine • Prevent non-compliant enrolments
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/funding-eligibility`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md font-semibold">
+                  ✓ Check Eligibility
+                </button>
+              </Link>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
-              Connect Axcelerate, Canvas, Xero, MYOB
-            </p>
-            <Link href={`/dashboard/${tenantSlug}/integrations`}>
-              <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                Manage Integrations
-              </button>
-            </Link>
           </div>
+        </div>
 
-          {/* TAS Generator */}
-          <div className="bg-white rounded-lg shadow-md p-6 border-2 border-purple-200">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">TAS Generator</h3>
-              <span className="px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-800 text-xs font-medium rounded-full">
-                ⚡ AI Powered
-              </span>
+        {/* Other Features */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Platform Management</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* AI Gateway */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">AI Gateway</h3>
+                <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                  Active
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Access AI models and manage API keys
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/api-keys`}>
+                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  Manage API Keys
+                </button>
+              </Link>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
-              Auto TAS builder • GPT-4 synthesis • 90% time reduction
-            </p>
-            <Link href={`/dashboard/${tenantSlug}/tas`}>
-              <button className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-md font-semibold">
-                ✨ Generate TAS
-              </button>
-            </Link>
-          </div>
 
-          {/* Policy Comparator */}
-          <div className="bg-white rounded-lg shadow-md p-6 border-2 border-blue-200">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Policy Comparator</h3>
-              <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 text-xs font-medium rounded-full">
-                🤖 NLP Powered
-              </span>
+            {/* Users */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Team Members</h3>
+                <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                  5 Users
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Invite and manage team members
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/members`}>
+                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  View Team Members
+                </button>
+              </Link>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
-              Compare policies to ASQA • Text similarity • Instant gap detection
-            </p>
-            <Link href={`/dashboard/${tenantSlug}/policy-comparator`}>
-              <button className="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
-                🔍 Compare Policies
-              </button>
-            </Link>
-          </div>
 
-          {/* Audit Assistant */}
-          <div className="bg-white rounded-lg shadow-md p-6 border-2 border-purple-200">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Audit Assistant</h3>
-              <span className="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 text-xs font-medium rounded-full">
-                🤖 NER Powered
-              </span>
+            {/* Audit Logs */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Audit Logs</h3>
+                <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
+                  24h
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                View activity and security events
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/logs`}>
+                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  View Logs
+                </button>
+              </Link>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
-              Upload evidence • Auto-tag clauses • Clause-by-clause reports
-            </p>
-            <Link href={`/dashboard/${tenantSlug}/audit-assistant`}>
-              <button className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-md font-semibold">
-                📋 Start Audit
-              </button>
-            </Link>
-          </div>
 
-          {/* Continuous Improvement Register */}
-          <div className="bg-white rounded-lg shadow-md p-6 border-2 border-green-200">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">CI Register</h3>
-              <span className="px-3 py-1 bg-gradient-to-r from-green-100 to-teal-100 text-green-800 text-xs font-medium rounded-full">
-                🤖 AI Classified
-              </span>
+            {/* Settings */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Settings</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Configure tenant preferences
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/settings`}>
+                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  Manage Settings
+                </button>
+              </Link>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
-              Track improvements • AI classification • Real-time compliance
-            </p>
-            <Link href={`/dashboard/${tenantSlug}/continuous-improvement`}>
-              <button className="w-full px-4 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg hover:from-green-700 hover:to-teal-700 transition-all shadow-md font-semibold">
-                📊 Manage Actions
-              </button>
-            </Link>
-          </div>
 
-          {/* Funding Eligibility Checker */}
-          <div className="bg-white rounded-lg shadow-md p-6 border-2 border-indigo-200">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Funding Eligibility</h3>
-              <span className="px-3 py-1 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 text-xs font-medium rounded-full">
-                ⚖️ Rules Engine
-              </span>
+            {/* Billing */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Billing</h3>
+                <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                  Paid
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Subscription and payment info
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/billing`}>
+                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  View Billing
+                </button>
+              </Link>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
-              Validate eligibility • Rules engine • Prevent non-compliant enrolments
-            </p>
-            <Link href={`/dashboard/${tenantSlug}/funding-eligibility`}>
-              <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md font-semibold">
-                ✓ Check Eligibility
-              </button>
-            </Link>
+
+            {/* Integrations */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Integrations</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Connect Axcelerate, Canvas, Xero, MYOB
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/integrations`}>
+                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  Manage Integrations
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
