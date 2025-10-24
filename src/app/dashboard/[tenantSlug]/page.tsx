@@ -333,6 +333,44 @@ export default function TenantDashboardPage() {
           </div>
         </div>
 
+        {/* LearnAI Suite */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-lg shadow-xl p-8 mb-6">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="text-5xl">🎯</div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-white mb-2">LearnAI Suite</h2>
+                <p className="text-emerald-100 text-lg">
+                  Predict learner performance, personalise delivery, and enhance engagement
+                </p>
+              </div>
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2">
+                <div className="text-white text-sm font-medium">Learning AI</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {/* LLN Predictor */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-emerald-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">LLN Predictor</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800 text-xs font-medium rounded-full">
+                  📚 NLP + ACSF
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Assess student foundation skills • NLP + ACSF model • Auto ACSF level predictions
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/lln-predictor`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all shadow-md font-semibold">
+                  📊 Predict LLN
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* Other Features */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Platform Management</h2>
