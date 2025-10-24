@@ -199,7 +199,7 @@ export default function TenantDashboardPage() {
                 </p>
               </div>
               <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <div className="text-white text-sm font-medium">3 AI Tools</div>
+                <div className="text-white text-sm font-medium">4 AI Tools</div>
               </div>
             </div>
           </div>
@@ -255,6 +255,24 @@ export default function TenantDashboardPage() {
               <Link href={`/dashboard/${tenantSlug}/auto-marker`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-md font-semibold">
                   ⚡ Auto-Mark
+                </button>
+              </Link>
+            </div>
+
+            {/* Feedback Assistant */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-teal-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Feedback Assistant</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-800 text-xs font-medium rounded-full">
+                  💬 AI Powered
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Generate personalised feedback • Sentiment control + rubric mapping • Professional feedback at scale
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/feedback-assistant`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
+                  ✨ Generate Feedback
                 </button>
               </Link>
             </div>
