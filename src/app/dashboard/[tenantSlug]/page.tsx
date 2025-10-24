@@ -187,6 +187,44 @@ export default function TenantDashboardPage() {
           </div>
         </div>
 
+        {/* AssessAI Suite */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 rounded-lg shadow-xl p-8 mb-6">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="text-5xl">📝</div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-white mb-2">AssessAI Suite</h2>
+                <p className="text-orange-100 text-lg">
+                  Automate assessment writing, marking, moderation, and feedback
+                </p>
+              </div>
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2">
+                <div className="text-white text-sm font-medium">1 AI Tool</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {/* Assessment Builder */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-orange-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Assessment Builder</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-orange-100 to-red-100 text-orange-800 text-xs font-medium rounded-full">
+                  🎓 GPT-4
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Generate assessments from unit codes • Bloom's taxonomy detection • Compliant design
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/assessment-builder`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:from-orange-700 hover:to-red-700 transition-all shadow-md font-semibold">
+                  ✨ Build Assessment
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* Other Features */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Platform Management</h2>
