@@ -440,6 +440,24 @@ export default function TenantDashboardPage() {
                 </button>
               </Link>
             </div>
+
+            {/* Intervention Tracker */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-blue-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Intervention Tracker</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-xs font-medium rounded-full">
+                  📋 Workflow + Rules
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Record trainer actions & outcomes • Workflow + rule engine • Documented learner support for audit
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/intervention-tracker`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md font-semibold">
+                  📋 Track Interventions
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
