@@ -251,6 +251,24 @@ export default function TenantDashboardPage() {
               </button>
             </Link>
           </div>
+
+          {/* Funding Eligibility Checker */}
+          <div className="bg-white rounded-lg shadow-md p-6 border-2 border-indigo-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Funding Eligibility</h3>
+              <span className="px-3 py-1 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 text-xs font-medium rounded-full">
+                ⚖️ Rules Engine
+              </span>
+            </div>
+            <p className="text-gray-600 text-sm mb-4">
+              Validate eligibility • Rules engine • Prevent non-compliant enrolments
+            </p>
+            <Link href={`/dashboard/${tenantSlug}/funding-eligibility`}>
+              <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md font-semibold">
+                ✓ Check Eligibility
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* Coming Soon Notice */}
