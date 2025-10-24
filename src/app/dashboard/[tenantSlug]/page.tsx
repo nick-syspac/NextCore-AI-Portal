@@ -422,6 +422,24 @@ export default function TenantDashboardPage() {
                 </button>
               </Link>
             </div>
+
+            {/* Study Coach Chatbot */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-green-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Study Coach Chatbot</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 text-xs font-medium rounded-full">
+                  🤖 LLM + Vector DB
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                24/7 AI tutor • Contextual LLM chat with vector DB • Scalable student support
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/study-coach`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-md font-semibold">
+                  💬 Start Chat
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
