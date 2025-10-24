@@ -571,9 +571,23 @@ export default function TenantDashboardPage() {
           </div>
         </div>
 
-        {/* Other Features */}
+        {/* Platform Management */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Platform Management</h2>
+          <div className="bg-gradient-to-r from-slate-600 via-gray-600 to-zinc-600 rounded-lg shadow-xl p-8 mb-6">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="text-5xl">⚙️</div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold text-white mb-2">Platform Management</h2>
+                <p className="text-slate-100 text-lg">
+                  Manage your workspace, team, integrations, and system configuration
+                </p>
+              </div>
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2">
+                <div className="text-white text-sm font-medium">6 Tools</div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* AI Gateway */}
             <div className="bg-white rounded-lg shadow-md p-6">
