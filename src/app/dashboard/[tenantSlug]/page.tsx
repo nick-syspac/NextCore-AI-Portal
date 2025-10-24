@@ -199,7 +199,7 @@ export default function TenantDashboardPage() {
                 </p>
               </div>
               <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <div className="text-white text-sm font-medium">4 AI Tools</div>
+                <div className="text-white text-sm font-medium">5 AI Tools</div>
               </div>
             </div>
           </div>
@@ -273,6 +273,24 @@ export default function TenantDashboardPage() {
               <Link href={`/dashboard/${tenantSlug}/feedback-assistant`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
                   ✨ Generate Feedback
+                </button>
+              </Link>
+            </div>
+
+            {/* Moderation Tool */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-emerald-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Moderation Tool</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 text-xs font-medium rounded-full">
+                  ⚖️ Fairness AI
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Compare assessor decisions • Outlier detection + bias scoring • Validation & fairness evidence
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/moderation-tool`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-lg hover:from-emerald-700 hover:to-green-700 transition-all shadow-md font-semibold">
+                  ⚖️ Moderate Now
                 </button>
               </Link>
             </div>
