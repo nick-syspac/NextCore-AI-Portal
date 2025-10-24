@@ -496,6 +496,24 @@ export default function TenantDashboardPage() {
                 </button>
               </Link>
             </div>
+
+            {/* Trainer Diary Writer */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-teal-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Trainer Diary Writer</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-800 text-xs font-medium rounded-full">
+                  🎤 Speech-to-Text + AI
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Auto-summarise teaching sessions • Speech-to-text + AI summarisation • Daily evidence creation
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/trainer-diary`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
+                  📝 Write Diary
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
