@@ -215,6 +215,24 @@ export default function TenantDashboardPage() {
               </button>
             </Link>
           </div>
+
+          {/* Audit Assistant */}
+          <div className="bg-white rounded-lg shadow-md p-6 border-2 border-purple-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Audit Assistant</h3>
+              <span className="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 text-xs font-medium rounded-full">
+                🤖 NER Powered
+              </span>
+            </div>
+            <p className="text-gray-600 text-sm mb-4">
+              Upload evidence • Auto-tag clauses • Clause-by-clause reports
+            </p>
+            <Link href={`/dashboard/${tenantSlug}/audit-assistant`}>
+              <button className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-md font-semibold">
+                📋 Start Audit
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* Coming Soon Notice */}
