@@ -35,36 +35,172 @@ interface IntegrationLog {
 }
 
 const INTEGRATION_CONFIGS = {
+  // SMS/RTO Systems
+  readytech_jr: {
+    name: 'ReadyTech JR Plus',
+    description: 'Major AU VET footprint - TAFEs & enterprise RTOs',
+    icon: '🎓',
+    color: 'from-indigo-600 to-indigo-700',
+    category: 'SMS/RTO',
+    priority: 'HIGH',
+    features: ['Student Sync', 'Unit of Competency', 'Enrolments', 'Assessment Outcomes'],
+    fields: [
+      { key: 'api_base_url', label: 'API Base URL', type: 'text', placeholder: 'https://api.readytech.io' },
+      { key: 'access_token', label: 'Access Token', type: 'password', placeholder: 'Bearer Token' },
+      { key: 'refresh_token', label: 'Refresh Token', type: 'password', placeholder: 'OAuth Refresh Token' },
+      { key: 'organization_id', label: 'Organization ID', type: 'text', placeholder: '12345' },
+    ],
+  },
+  vettrak: {
+    name: 'VETtrak',
+    description: 'Longstanding AU RTO SMS - many private RTOs',
+    icon: '📚',
+    color: 'from-teal-600 to-teal-700',
+    category: 'SMS/RTO',
+    priority: 'HIGH',
+    features: ['Client Data', 'Programs', 'Enrolments', 'Unit Completions'],
+    fields: [
+      { key: 'api_base_url', label: 'API Base URL', type: 'text', placeholder: 'https://your-instance.vettrak.com.au/api' },
+      { key: 'api_key', label: 'API Key', type: 'password', placeholder: 'Enter VETtrak API Key' },
+    ],
+  },
   axcelerate: {
     name: 'Axcelerate',
-    description: 'Training management and RTO compliance platform',
-    icon: '📚',
+    description: 'Cloud-based RTO student management',
+    icon: '�',
     color: 'from-purple-600 to-purple-700',
+    category: 'SMS/RTO',
+    priority: 'MEDIUM',
     features: ['Student Management', 'Course Sync', 'Compliance Reporting', 'USI Validation'],
     fields: [
       { key: 'axcelerate_subdomain', label: 'Subdomain', type: 'text', placeholder: 'yourschool' },
-      { key: 'axcelerate_wstoken', label: 'WS Token', type: 'password', placeholder: 'Enter WS Token' },
+      { key: 'api_key', label: 'WS Token', type: 'password', placeholder: 'Enter WS Token' },
+    ],
+  },
+  eskilled: {
+    name: 'eSkilled',
+    description: 'AU-focused SMS+LMS targeting 2025 Standards',
+    icon: '💼',
+    color: 'from-cyan-600 to-cyan-700',
+    category: 'SMS/RTO',
+    priority: 'MEDIUM',
+    features: ['Student Records', 'Course Data', 'LMS Activity', 'Compliance Reports'],
+    fields: [
+      { key: 'api_base_url', label: 'API Base URL', type: 'text', placeholder: 'https://api.eskilled.edu.au' },
+      { key: 'access_token', label: 'Access Token', type: 'password', placeholder: 'Bearer Token' },
+    ],
+  },
+  // LMS/Assessment Systems
+  cloudassess: {
+    name: 'CloudAssess',
+    description: 'Compliance-first assessment platform',
+    icon: '✅',
+    color: 'from-emerald-600 to-emerald-700',
+    category: 'LMS/Assessment',
+    priority: 'MEDIUM',
+    features: ['Assessment Templates', 'Student Submissions', 'Marking/Results', 'Competency Outcomes'],
+    fields: [
+      { key: 'api_base_url', label: 'API Base URL', type: 'text', placeholder: 'https://api.cloudassess.com' },
+      { key: 'api_key', label: 'API Key', type: 'password', placeholder: 'X-API-Key' },
+    ],
+  },
+  coursebox: {
+    name: 'Coursebox AI-LMS',
+    description: 'AU AI-LMS popular with new RTOs',
+    icon: '🤖',
+    color: 'from-violet-600 to-violet-700',
+    category: 'LMS/Assessment',
+    priority: 'EMERGING',
+    features: ['AI-Generated Content', 'Courses', 'Student Progress', 'Analytics'],
+    fields: [
+      { key: 'api_base_url', label: 'API Base URL', type: 'text', placeholder: 'https://api.coursebox.ai' },
+      { key: 'access_token', label: 'Access Token', type: 'password', placeholder: 'Bearer Token' },
+    ],
+  },
+  moodle: {
+    name: 'Moodle',
+    description: 'Huge AU adoption across VET/HE',
+    icon: '🎯',
+    color: 'from-orange-600 to-orange-700',
+    category: 'LMS/Assessment',
+    priority: 'HIGH',
+    features: ['Courses', 'Users', 'Enrolments', 'Grades', 'Activities'],
+    fields: [
+      { key: 'api_base_url', label: 'Moodle URL', type: 'text', placeholder: 'https://moodle.yourschool.edu.au' },
+      { key: 'api_key', label: 'WS Token', type: 'password', placeholder: 'Web Services Token' },
+    ],
+  },
+  d2l_brightspace: {
+    name: 'D2L Brightspace',
+    description: 'APAC professional education platform',
+    icon: '🌟',
+    color: 'from-amber-600 to-amber-700',
+    category: 'LMS/Assessment',
+    priority: 'HIGH',
+    features: ['Org Units', 'Course Content', 'Grades', 'User Enrollments'],
+    fields: [
+      { key: 'api_base_url', label: 'Brightspace URL', type: 'text', placeholder: 'https://yourschool.brightspace.com' },
+      { key: 'access_token', label: 'Access Token', type: 'password', placeholder: 'OAuth Token' },
+      { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'OAuth Client ID' },
+      { key: 'client_secret', label: 'Client Secret', type: 'password', placeholder: 'OAuth Client Secret' },
     ],
   },
   canvas: {
     name: 'Canvas LMS',
-    description: 'Learning management system for education',
+    description: 'Enterprise learning management',
     icon: '🎨',
     color: 'from-red-600 to-red-700',
+    category: 'LMS/Assessment',
+    priority: 'MEDIUM',
     features: ['Course Management', 'Gradebook Sync', 'Assignment Integration', 'Student Analytics'],
     fields: [
-      { key: 'canvas_domain', label: 'Canvas Domain', type: 'text', placeholder: 'yourschool.instructure.com' },
+      { key: 'api_base_url', label: 'Canvas Domain', type: 'text', placeholder: 'yourschool.instructure.com' },
       { key: 'canvas_account_id', label: 'Account ID', type: 'text', placeholder: '12345' },
       { key: 'api_key', label: 'API Key', type: 'password', placeholder: 'Enter Canvas API Key' },
     ],
   },
-  xero: {
-    name: 'Xero',
-    description: 'Cloud accounting and financial management',
+  // Accounting Systems
+  quickbooks: {
+    name: 'QuickBooks Online',
+    description: 'Common alternative to Xero/MYOB',
     icon: '💰',
     color: 'from-blue-600 to-blue-700',
+    category: 'Accounting',
+    priority: 'HIGH',
+    features: ['Customers', 'Invoices', 'Payments', 'Chart of Accounts'],
+    fields: [
+      { key: 'api_base_url', label: 'API Base URL', type: 'text', placeholder: 'https://quickbooks.api.intuit.com' },
+      { key: 'realm_id', label: 'Realm ID (Company ID)', type: 'text', placeholder: 'Company ID' },
+      { key: 'access_token', label: 'Access Token', type: 'password', placeholder: 'OAuth Token' },
+      { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'OAuth Client ID' },
+      { key: 'client_secret', label: 'Client Secret', type: 'password', placeholder: 'OAuth Client Secret' },
+    ],
+  },
+  sage_intacct: {
+    name: 'Sage Intacct',
+    description: 'Larger education/training organizations',
+    icon: '📊',
+    color: 'from-lime-600 to-lime-700',
+    category: 'Accounting',
+    priority: 'HIGH',
+    features: ['Customers', 'Invoices', 'Journal Entries', 'Financial Reporting'],
+    fields: [
+      { key: 'api_base_url', label: 'API Base URL', type: 'text', placeholder: 'https://api.intacct.com' },
+      { key: 'client_id', label: 'Sender ID', type: 'text', placeholder: 'Company Sender ID' },
+      { key: 'client_secret', label: 'Sender Password', type: 'password', placeholder: 'Sender Password' },
+      { key: 'access_token', label: 'Session Token', type: 'password', placeholder: 'Session Token' },
+    ],
+  },
+  xero: {
+    name: 'Xero',
+    description: 'Popular AU cloud accounting',
+    icon: '�',
+    color: 'from-sky-600 to-sky-700',
+    category: 'Accounting',
+    priority: 'HIGH',
     features: ['Invoice Sync', 'Payment Tracking', 'Financial Reporting', 'Bank Reconciliation'],
     fields: [
+      { key: 'api_base_url', label: 'API Base URL', type: 'text', placeholder: 'https://api.xero.com' },
       { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'OAuth Client ID' },
       { key: 'client_secret', label: 'Client Secret', type: 'password', placeholder: 'OAuth Client Secret' },
       { key: 'xero_tenant_id', label: 'Tenant ID', type: 'text', placeholder: 'Xero Tenant ID' },
@@ -72,14 +208,32 @@ const INTEGRATION_CONFIGS = {
   },
   myob: {
     name: 'MYOB',
-    description: 'Business and accounting software',
-    icon: '📊',
+    description: 'Established AU accounting software',
+    icon: '🧮',
     color: 'from-green-600 to-green-700',
+    category: 'Accounting',
+    priority: 'HIGH',
     features: ['Accounting Integration', 'Invoicing', 'Payroll Sync', 'GST Reporting'],
     fields: [
+      { key: 'api_base_url', label: 'API Base URL', type: 'text', placeholder: 'https://api.myob.com' },
       { key: 'client_id', label: 'Client ID', type: 'text', placeholder: 'OAuth Client ID' },
       { key: 'client_secret', label: 'Client Secret', type: 'password', placeholder: 'OAuth Client Secret' },
       { key: 'myob_company_file_id', label: 'Company File ID', type: 'text', placeholder: 'Company File ID' },
+    ],
+  },
+  // Payment Gateways
+  stripe: {
+    name: 'Stripe',
+    description: 'Dominant AU gateway - PayTo/eftpos support',
+    icon: '💳',
+    color: 'from-pink-600 to-pink-700',
+    category: 'Payment',
+    priority: 'HIGH',
+    features: ['Customers', 'Payments', 'Subscriptions', 'Webhooks'],
+    fields: [
+      { key: 'api_base_url', label: 'API Base URL', type: 'text', placeholder: 'https://api.stripe.com' },
+      { key: 'access_token', label: 'Secret Key', type: 'password', placeholder: 'sk_live_... or sk_test_...' },
+      { key: 'webhook_secret', label: 'Webhook Secret', type: 'password', placeholder: 'whsec_...' },
     ],
   },
 };
@@ -98,6 +252,7 @@ export default function IntegrationsPage() {
   const [saving, setSaving] = useState(false);
   const [logs, setLogs] = useState<IntegrationLog[]>([]);
   const [showLogsModal, setShowLogsModal] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
   useEffect(() => {
     loadIntegrations();
@@ -288,6 +443,37 @@ export default function IntegrationsPage() {
               </p>
             </div>
           </div>
+          
+          {/* Stats */}
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="bg-white rounded-lg px-4 py-3 shadow-sm border border-gray-200">
+              <div className="text-2xl font-bold text-gray-900">{integrations.length}</div>
+              <div className="text-sm text-gray-600">Connected</div>
+            </div>
+            <div className="bg-white rounded-lg px-4 py-3 shadow-sm border border-gray-200">
+              <div className="text-2xl font-bold text-gray-900">{Object.keys(INTEGRATION_CONFIGS).length}</div>
+              <div className="text-sm text-gray-600">Available</div>
+            </div>
+            <div className="bg-white rounded-lg px-4 py-3 shadow-sm border border-gray-200">
+              <div className="text-2xl font-bold text-indigo-600">
+                {Object.values(INTEGRATION_CONFIGS).filter((c: any) => c.category === 'SMS/RTO').length}
+              </div>
+              <div className="text-sm text-gray-600">SMS/RTO</div>
+            </div>
+            <div className="bg-white rounded-lg px-4 py-3 shadow-sm border border-gray-200">
+              <div className="text-2xl font-bold text-orange-600">
+                {Object.values(INTEGRATION_CONFIGS).filter((c: any) => c.category === 'LMS/Assessment').length}
+              </div>
+              <div className="text-sm text-gray-600">LMS</div>
+            </div>
+            <div className="bg-white rounded-lg px-4 py-3 shadow-sm border border-gray-200">
+              <div className="text-2xl font-bold text-blue-600">
+                {Object.values(INTEGRATION_CONFIGS).filter((c: any) => c.category === 'Accounting').length + 
+                 Object.values(INTEGRATION_CONFIGS).filter((c: any) => c.category === 'Payment').length}
+              </div>
+              <div className="text-sm text-gray-600">Finance</div>
+            </div>
+          </div>
         </div>
 
         {/* Active Integrations */}
@@ -376,25 +562,68 @@ export default function IntegrationsPage() {
         {/* Available Integrations */}
         <div>
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Available Integrations</h2>
+          
+          {/* Category Filter */}
+          <div className="mb-6 flex gap-2 flex-wrap">
+            {['all', 'SMS/RTO', 'LMS/Assessment', 'Accounting', 'Payment'].map((category) => (
+              <button
+                key={category}
+                onClick={() => setCategoryFilter(category)}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  categoryFilter === category
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                }`}
+              >
+                {category === 'all' ? 'All Systems' : category}
+              </button>
+            ))}
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Object.entries(INTEGRATION_CONFIGS).map(([type, config]) => {
+            {Object.entries(INTEGRATION_CONFIGS)
+              .filter(([type, config]: [string, any]) => {
+                if (categoryFilter === 'all') return true;
+                return config.category === categoryFilter;
+              })
+              .map(([type, config]: [string, any]) => {
               const existingIntegration = integrations.find(i => i.integration_type === type);
               if (existingIntegration) return null;
 
+              const priorityColors = {
+                HIGH: 'bg-green-100 text-green-800 border-green-300',
+                MEDIUM: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+                EMERGING: 'bg-blue-100 text-blue-800 border-blue-300',
+              };
+
               return (
-                <div key={type} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                <div key={type} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow relative">
+                  {/* Priority Badge */}
+                  <div className="absolute top-4 right-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${priorityColors[config.priority as keyof typeof priorityColors]}`}>
+                      {config.priority}
+                    </span>
+                  </div>
+
                   <div className={`w-16 h-16 bg-gradient-to-br ${config.color} rounded-lg flex items-center justify-center text-3xl mb-4`}>
                     {config.icon}
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{config.name}</h3>
-                  <p className="text-sm text-gray-600 mb-4">{config.description}</p>
+                  <p className="text-sm text-gray-600 mb-3">{config.description}</p>
                   
+                  {/* Category Badge */}
+                  <div className="mb-3">
+                    <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">
+                      {config.category}
+                    </span>
+                  </div>
+
                   <div className="mb-4">
                     <p className="text-xs text-gray-500 font-medium mb-2">Features:</p>
                     <ul className="space-y-1">
-                      {config.features.slice(0, 3).map((feature, idx) => (
+                      {config.features.slice(0, 3).map((feature: string, idx: number) => (
                         <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
-                          <svg className="w-3 h-3 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-3 h-3 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                           </svg>
                           {feature}
@@ -476,16 +705,22 @@ export default function IntegrationsPage() {
                         placeholder={field.placeholder}
                         value={formData[field.key] || formData.config?.[field.key] || ''}
                         onChange={(e) => {
-                          if (field.key.startsWith('axcelerate_') || field.key.startsWith('canvas_') || field.key.startsWith('xero_') || field.key.startsWith('myob_')) {
+                          // Special handling for specific field types
+                          if (field.key === 'api_base_url' || field.key === 'api_key' || 
+                              field.key === 'access_token' || field.key === 'refresh_token' ||
+                              field.key === 'client_id' || field.key === 'client_secret' ||
+                              field.key === 'webhook_secret') {
+                            // Store at top level
+                            setFormData({ ...formData, [field.key]: e.target.value });
+                          } else {
+                            // Store in config
                             setFormData({
                               ...formData,
                               config: { ...formData.config, [field.key]: e.target.value }
                             });
-                          } else {
-                            setFormData({ ...formData, [field.key]: e.target.value });
                           }
                         }}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
                       />
                     </div>
                   ))}
