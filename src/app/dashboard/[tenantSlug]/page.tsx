@@ -197,6 +197,24 @@ export default function TenantDashboardPage() {
               </button>
             </Link>
           </div>
+
+          {/* Policy Comparator */}
+          <div className="bg-white rounded-lg shadow-md p-6 border-2 border-blue-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Policy Comparator</h3>
+              <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 text-xs font-medium rounded-full">
+                🤖 NLP Powered
+              </span>
+            </div>
+            <p className="text-gray-600 text-sm mb-4">
+              Compare policies to ASQA • Text similarity • Instant gap detection
+            </p>
+            <Link href={`/dashboard/${tenantSlug}/policy-comparator`}>
+              <button className="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
+                🔍 Compare Policies
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* Coming Soon Notice */}
