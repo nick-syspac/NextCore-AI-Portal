@@ -386,6 +386,24 @@ export default function TenantDashboardPage() {
                 </button>
               </Link>
             </div>
+
+            {/* Adaptive Learning Pathway */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-purple-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Adaptive Learning Pathway</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 text-xs font-medium rounded-full">
+                  🎓 CF + Embeddings
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Recommend next learning step • Collaborative filtering + embeddings • Higher course completion rates
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/adaptive-pathway`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-md font-semibold">
+                  🚀 Get Pathway
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
