@@ -404,6 +404,24 @@ export default function TenantDashboardPage() {
                 </button>
               </Link>
             </div>
+
+            {/* Engagement Heatmap */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-orange-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Engagement Heatmap</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-orange-100 to-amber-100 text-orange-800 text-xs font-medium rounded-full">
+                  📊 Sentiment + Activity
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Track attendance, LMS use, discussion tone • Sentiment & activity analysis • Visual risk dashboard
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/engagement-heatmap`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-lg hover:from-orange-700 hover:to-amber-700 transition-all shadow-md font-semibold">
+                  🔥 View Heatmap
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
