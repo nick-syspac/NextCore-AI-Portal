@@ -199,7 +199,7 @@ export default function TenantDashboardPage() {
                 </p>
               </div>
               <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <div className="text-white text-sm font-medium">6 AI Tools</div>
+                <div className="text-white text-sm font-medium">7 AI Tools</div>
               </div>
             </div>
           </div>
@@ -309,6 +309,24 @@ export default function TenantDashboardPage() {
               <Link href={`/dashboard/${tenantSlug}/evidence-mapper`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-lg hover:from-indigo-700 hover:to-violet-700 transition-all shadow-md font-semibold">
                   🗂️ Map Evidence
+                </button>
+              </Link>
+            </div>
+
+            {/* Authenticity Check */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-red-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Authenticity Check</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-red-100 to-orange-100 text-red-800 text-xs font-medium rounded-full">
+                  🔍 Integrity AI
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Plagiarism + metadata verification • Embedding + anomaly detection • Academic integrity compliance
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/authenticity-check`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-lg hover:from-red-700 hover:to-orange-700 transition-all shadow-md font-semibold">
+                  🛡️ Check Authenticity
                 </button>
               </Link>
             </div>
