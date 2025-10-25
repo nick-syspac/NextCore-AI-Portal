@@ -101,10 +101,16 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showVersionModal, setShowVersionModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showTemplatesListModal, setShowTemplatesListModal] = useState(false);
+  const [showTemplateFormModal, setShowTemplateFormModal] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<TASTemplate | null>(null);
   const [versions, setVersions] = useState<TASVersion[]>([]);
   const [logs, setLogs] = useState<GenerationLog[]>([]);
   const [activeTab, setActiveTab] = useState<'all' | 'draft' | 'approved' | 'published'>('all');
   const [generating, setGenerating] = useState(false);
+  const [templateFormMode, setTemplateFormMode] = useState<'create' | 'edit'>('create');
+  const [savingTemplate, setSavingTemplate] = useState(false);
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
 
   // Generate form state
   const [generateForm, setGenerateForm] = useState({
@@ -121,55 +127,65 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
     use_gpt4: true,
   });
 
-  // Mock data for demonstration
-  useEffect(() => {
-    // Mock TAS documents
-    setDocuments([
-      {
-        id: 1,
-        tenant: 1,
-        title: 'BSB50120 - Diploma of Business',
-        code: 'BSB50120',
-        description: 'Diploma of Business qualification',
-        qualification_name: 'Diploma of Business',
-        aqf_level: 'diploma',
-        aqf_level_display: 'Diploma',
-        training_package: 'BSB',
-        template: 1,
-        template_details: null,
-        sections: [],
-        status: 'approved',
-        status_display: 'Approved',
-        version: 2,
-        is_current_version: true,
-        gpt_generated: true,
-        gpt_generation_date: '2025-10-15T10:30:00Z',
-        gpt_model_used: 'gpt-4',
-        gpt_tokens_used: 8500,
-        generation_time_seconds: 45.5,
-        content: {},
-        metadata: {},
-        time_saved: {
-          traditional_hours: 7.6,
-          gpt_hours: 0.01,
-          saved_hours: 6.8,
-          percentage_saved: 90,
-        },
-        version_count: 2,
-        created_by: 1,
-        created_by_details: {
-          id: 1,
-          username: 'admin',
-          email: 'admin@example.com',
-          first_name: 'Admin',
-          last_name: 'User',
-        },
-        created_at: '2025-10-15T10:30:00Z',
-        updated_at: '2025-10-20T14:20:00Z',
-      },
-    ]);
+  // Template form state
+  const [templateForm, setTemplateForm] = useState({
+    name: '',
+    description: '',
+    template_type: 'general',
+    aqf_level: 'certificate_iii',
+    structure: {},
+    default_sections: [] as string[],
+    gpt_prompts: {} as Record<string, string>,
+    is_active: true,
+  });
 
-    // Mock templates
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+  // Load templates from API
+  const loadTemplates = async () => {
+    setLoadingTemplates(true);
+    try {
+      const response = await fetch(`${API_URL}/api/tenants/${params.tenantSlug}/tas/templates/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Add authentication headers if needed
+          // 'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Templates API response:', data);
+        
+        // Handle both array and paginated response formats
+        if (Array.isArray(data)) {
+          setTemplates(data);
+        } else if (data.results && Array.isArray(data.results)) {
+          // DRF paginated response
+          setTemplates(data.results);
+        } else if (data.data && Array.isArray(data.data)) {
+          // Custom paginated response
+          setTemplates(data.data);
+        } else {
+          console.error('Unexpected API response format:', data);
+          loadMockTemplates();
+        }
+      } else {
+        console.error('Failed to load templates. Status:', response.status);
+        // Fallback to mock data
+        loadMockTemplates();
+      }
+    } catch (error) {
+      console.error('Error loading templates:', error);
+      // Fallback to mock data
+      loadMockTemplates();
+    } finally {
+      setLoadingTemplates(false);
+    }
+  };
+
+  // Load mock templates as fallback
+  const loadMockTemplates = () => {
     setTemplates([
       {
         id: 1,
@@ -231,6 +247,56 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
         updated_at: '2025-01-01T00:00:00Z',
       },
     ]);
+  };
+
+  // Mock data for demonstration
+  useEffect(() => {
+    loadTemplates();
+    // Mock TAS documents
+    setDocuments([
+      {
+        id: 1,
+        tenant: 1,
+        title: 'BSB50120 - Diploma of Business',
+        code: 'BSB50120',
+        description: 'Diploma of Business qualification',
+        qualification_name: 'Diploma of Business',
+        aqf_level: 'diploma',
+        aqf_level_display: 'Diploma',
+        training_package: 'BSB',
+        template: 1,
+        template_details: null,
+        sections: [],
+        status: 'approved',
+        status_display: 'Approved',
+        version: 2,
+        is_current_version: true,
+        gpt_generated: true,
+        gpt_generation_date: '2025-10-15T10:30:00Z',
+        gpt_model_used: 'gpt-4',
+        gpt_tokens_used: 8500,
+        generation_time_seconds: 45.5,
+        content: {},
+        metadata: {},
+        time_saved: {
+          traditional_hours: 7.6,
+          gpt_hours: 0.01,
+          saved_hours: 6.8,
+          percentage_saved: 90,
+        },
+        version_count: 2,
+        created_by: 1,
+        created_by_details: {
+          id: 1,
+          username: 'admin',
+          email: 'admin@example.com',
+          first_name: 'Admin',
+          last_name: 'User',
+        },
+        created_at: '2025-10-15T10:30:00Z',
+        updated_at: '2025-10-20T14:20:00Z',
+      },
+    ]);
   }, []);
 
   const handleGenerate = async () => {
@@ -278,6 +344,217 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
   const removeUnit = (index: number) => {
     const units = generateForm.units_of_competency.filter((_, i) => i !== index);
     setGenerateForm({ ...generateForm, units_of_competency: units });
+  };
+
+  const handleCreateTemplate = () => {
+    setTemplateFormMode('create');
+    setSelectedTemplate(null); // Clear any selected template
+    setTemplateForm({
+      name: '',
+      description: '',
+      template_type: 'general',
+      aqf_level: 'certificate_iii',
+      structure: {},
+      default_sections: [],
+      gpt_prompts: {},
+      is_active: true,
+    });
+    setShowTemplatesListModal(false); // Close templates list modal
+    setShowTemplateFormModal(true); // Open template form modal
+  };
+
+  const handleEditTemplate = (template: TASTemplate) => {
+    setTemplateFormMode('edit');
+    setSelectedTemplate(template);
+    setTemplateForm({
+      name: template.name,
+      description: template.description,
+      template_type: template.template_type,
+      aqf_level: template.aqf_level,
+      structure: template.structure,
+      default_sections: template.default_sections,
+      gpt_prompts: template.gpt_prompts,
+      is_active: template.is_active,
+    });
+    setShowTemplatesListModal(false); // Close templates list modal
+    setShowTemplateFormModal(true); // Open template form modal
+  };
+
+  const handleDeleteTemplate = async (template: TASTemplate) => {
+    if (template.is_system_template) {
+      alert('❌ System templates cannot be deleted');
+      return;
+    }
+    
+    if (!confirm(`Are you sure you want to delete "${template.name}"?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/tenants/${params.tenantSlug}/tas/templates/${template.id}/`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            // Add authentication headers if needed
+            // 'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok || response.status === 204) {
+        setTemplates(templates.filter(t => t.id !== template.id));
+        alert('✅ Template deleted successfully');
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Failed to delete template:', errorData);
+        alert(`❌ Failed to delete template: ${errorData.detail || response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error deleting template:', error);
+      alert('❌ Error deleting template. Please try again.');
+    }
+  };
+
+  const handleSaveTemplate = async () => {
+    setSavingTemplate(true);
+    
+    try {
+      const url = templateFormMode === 'create'
+        ? `${API_URL}/api/tenants/${params.tenantSlug}/tas/templates/`
+        : `${API_URL}/api/tenants/${params.tenantSlug}/tas/templates/${selectedTemplate?.id}/`;
+      
+      const method = templateFormMode === 'create' ? 'POST' : 'PUT';
+      
+      console.log(`Saving template to: ${url}`, {
+        method,
+        templateForm,
+      });
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          // Add authentication headers if needed
+          // 'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(templateForm),
+      });
+
+      console.log('Response status:', response.status);
+
+      if (response.ok) {
+        const savedTemplate = await response.json();
+        console.log('Template saved successfully:', savedTemplate);
+        
+        if (templateFormMode === 'create') {
+          setTemplates([...templates, savedTemplate]);
+          alert('✅ Template created successfully!');
+        } else {
+          setTemplates(templates.map(t => 
+            t.id === selectedTemplate?.id ? savedTemplate : t
+          ));
+          alert('✅ Template updated successfully!');
+        }
+        
+        setShowTemplateFormModal(false);
+        setShowTemplatesListModal(true); // Return to templates list
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Failed to save template. Status:', response.status, 'Error:', errorData);
+        
+        // Show more detailed error message
+        let errorMessage = 'Failed to save template';
+        
+        // Try to extract meaningful error information
+        if (typeof errorData === 'object' && errorData !== null) {
+          if (errorData.detail) {
+            errorMessage += `: ${errorData.detail}`;
+          } else if (errorData.error) {
+            errorMessage += `: ${errorData.error}`;
+          } else if (errorData.message) {
+            errorMessage += `: ${errorData.message}`;
+          } else if (Object.keys(errorData).length > 0) {
+            // Try to show field-specific errors
+            const errors = Object.entries(errorData)
+              .map(([key, value]) => {
+                if (Array.isArray(value)) {
+                  return `${key}: ${value.join(', ')}`;
+                }
+                return `${key}: ${String(value)}`;
+              })
+              .join('; ');
+            errorMessage += `: ${errors}`;
+          } else {
+            errorMessage += `: ${response.statusText}`;
+          }
+        } else if (response.status === 404) {
+          errorMessage += ': API endpoint not found. Make sure the backend server is running.';
+        } else if (response.status === 500) {
+          errorMessage += ': Server error. Check the backend logs.';
+        } else {
+          errorMessage += `: ${response.statusText}`;
+        }
+        
+        alert(`❌ ${errorMessage}`);
+      }
+    } catch (error: any) {
+      console.error('Error saving template:', error);
+      
+      // More specific error messages
+      let errorMessage = 'Error saving template';
+      if (error.message) {
+        if (error.message.includes('fetch')) {
+          errorMessage += ': Cannot connect to the backend server. Make sure it is running on ' + API_URL;
+        } else {
+          errorMessage += `: ${error.message}`;
+        }
+      }
+      
+      alert(`❌ ${errorMessage}`);
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
+
+  const TEMPLATE_TYPES = [
+    { value: 'general', label: 'General Template' },
+    { value: 'trade', label: 'Trade/Technical' },
+    { value: 'business', label: 'Business/Commerce' },
+    { value: 'health', label: 'Health/Community Services' },
+    { value: 'creative', label: 'Creative Industries' },
+    { value: 'hospitality', label: 'Hospitality/Tourism' },
+    { value: 'technology', label: 'Information Technology' },
+    { value: 'education', label: 'Education/Training' },
+  ];
+
+  const DEFAULT_SECTIONS = [
+    'qualification_overview',
+    'target_group',
+    'entry_requirements',
+    'learning_outcomes',
+    'units_of_competency',
+    'delivery_strategy',
+    'assessment_strategy',
+    'resources',
+    'trainer_requirements',
+    'aqf_alignment',
+  ];
+
+  const toggleSection = (section: string) => {
+    const sections = templateForm.default_sections;
+    if (sections.includes(section)) {
+      setTemplateForm({
+        ...templateForm,
+        default_sections: sections.filter(s => s !== section),
+      });
+    } else {
+      setTemplateForm({
+        ...templateForm,
+        default_sections: [...sections, section],
+      });
+    }
   };
 
   const loadVersions = (doc: TAS) => {
@@ -408,6 +685,12 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
             <div className="text-3xl mb-2">📋</div>
             <div className="text-2xl font-bold text-gray-900">{templates.length}</div>
             <div className="text-sm text-gray-600">Templates</div>
+            <button
+              onClick={() => setShowTemplatesListModal(true)}
+              className="mt-2 text-sm text-purple-600 hover:text-purple-700 font-medium"
+            >
+              View All →
+            </button>
           </div>
         </div>
       </div>
@@ -870,6 +1153,317 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
               </button>
               <button className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold">
                 🔄 Regenerate Section
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Templates List Modal */}
+      {showTemplatesListModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">📋 TAS Templates</h2>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleCreateTemplate}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                >
+                  ➕ Create Template
+                </button>
+                <button onClick={() => setShowTemplatesListModal(false)} className="text-gray-500 hover:text-gray-700">
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              {loadingTemplates ? (
+                <div className="text-center py-12">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
+                  <p className="text-gray-600">Loading templates...</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {templates.map((template) => (
+                  <div key={template.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-gray-900 mb-1">{template.name}</h3>
+                        <p className="text-sm text-gray-600 mb-2">{template.description}</p>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                            {template.template_type_display}
+                          </span>
+                          <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
+                            {template.aqf_level_display}
+                          </span>
+                          {template.is_system_template && (
+                            <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-medium">
+                              🔒 System
+                            </span>
+                          )}
+                          {!template.is_active && (
+                            <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-medium">
+                              Inactive
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mb-3">
+                      <div className="text-xs font-semibold text-gray-700 mb-1">Default Sections ({template.default_sections.length}):</div>
+                      <div className="flex flex-wrap gap-1">
+                        {template.default_sections.slice(0, 5).map((section, idx) => (
+                          <span key={idx} className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
+                            {section.replace('_', ' ')}
+                          </span>
+                        ))}
+                        {template.default_sections.length > 5 && (
+                          <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
+                            +{template.default_sections.length - 5} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-gray-500 mb-3">
+                      Created by {template.created_by_details 
+                        ? `${template.created_by_details.first_name} ${template.created_by_details.last_name}`
+                        : 'System'} • 
+                      Updated {new Date(template.updated_at).toLocaleDateString()}
+                    </div>
+
+                    <div className="flex gap-2 pt-3 border-t border-gray-200">
+                      <button
+                        onClick={() => {
+                          setGenerateForm({ ...generateForm, template_id: template.id });
+                          setShowTemplatesListModal(false);
+                          setShowGenerateModal(true);
+                        }}
+                        className="flex-1 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+                      >
+                        ✨ Use Template
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleEditTemplate(template);
+                          setShowTemplatesListModal(false);
+                        }}
+                        className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+                      >
+                        ✏️ Edit
+                      </button>
+                      {!template.is_system_template && (
+                        <button
+                          onClick={() => handleDeleteTemplate(template)}
+                          className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium"
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {templates.length === 0 && !loadingTemplates && (
+                  <div className="col-span-2 text-center py-12">
+                    <div className="text-6xl mb-4">📋</div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">No templates found</h3>
+                    <p className="text-gray-600 mb-4">Create your first template to streamline TAS generation</p>
+                    <button
+                      onClick={handleCreateTemplate}
+                      className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+                    >
+                      ➕ Create Template
+                    </button>
+                  </div>
+                )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Template Form Modal (Create/Edit) */}
+      {showTemplateFormModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {templateFormMode === 'create' ? '➕ Create New Template' : '✏️ Edit Template'}
+              </h2>
+              <button onClick={() => setShowTemplateFormModal(false)} className="text-gray-500 hover:text-gray-700">
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Basic Information */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Template Name *
+                </label>
+                <input
+                  type="text"
+                  value={templateForm.name}
+                  onChange={(e) => setTemplateForm({ ...templateForm, name: e.target.value })}
+                  placeholder="e.g., Standard Diploma Template"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Description *
+                </label>
+                <textarea
+                  value={templateForm.description}
+                  onChange={(e) => setTemplateForm({ ...templateForm, description: e.target.value })}
+                  placeholder="Describe the purpose and use case for this template..."
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Template Type *
+                  </label>
+                  <select
+                    value={templateForm.template_type}
+                    onChange={(e) => setTemplateForm({ ...templateForm, template_type: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    {TEMPLATE_TYPES.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    AQF Level *
+                  </label>
+                  <select
+                    value={templateForm.aqf_level}
+                    onChange={(e) => setTemplateForm({ ...templateForm, aqf_level: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    {AQF_LEVELS.map((level) => (
+                      <option key={level.value} value={level.value}>
+                        {level.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Default Sections */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Default Sections to Include
+                </label>
+                <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                  {DEFAULT_SECTIONS.map((section) => (
+                    <label key={section} className="flex items-center gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded">
+                      <input
+                        type="checkbox"
+                        checked={templateForm.default_sections.includes(section)}
+                        onChange={() => toggleSection(section)}
+                        className="w-4 h-4 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
+                      />
+                      <span className="text-sm font-medium text-gray-700">
+                        {section.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <div className="text-xs text-gray-500 mt-2">
+                  Selected: {templateForm.default_sections.length} of {DEFAULT_SECTIONS.length} sections
+                </div>
+              </div>
+
+              {/* GPT Prompts */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Custom GPT-4 Prompts (Optional)
+                </label>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm text-gray-600 mb-3">
+                    Define custom prompts for specific sections to guide GPT-4 generation. Leave blank to use defaults.
+                  </p>
+                  <div className="space-y-3">
+                    {templateForm.default_sections.slice(0, 3).map((section) => (
+                      <div key={section}>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          {section.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </label>
+                        <textarea
+                          value={templateForm.gpt_prompts[section] || ''}
+                          onChange={(e) => setTemplateForm({
+                            ...templateForm,
+                            gpt_prompts: { ...templateForm.gpt_prompts, [section]: e.target.value }
+                          })}
+                          placeholder={`Custom prompt for ${section.replace(/_/g, ' ')}...`}
+                          rows={2}
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
+                      </div>
+                    ))}
+                    {templateForm.default_sections.length > 3 && (
+                      <p className="text-xs text-gray-500 italic">
+                        + {templateForm.default_sections.length - 3} more sections (expand to customize all prompts)
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Toggle */}
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="template-active"
+                  checked={templateForm.is_active}
+                  onChange={(e) => setTemplateForm({ ...templateForm, is_active: e.target.checked })}
+                  className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
+                />
+                <label htmlFor="template-active" className="text-sm font-medium text-gray-700">
+                  ✅ Template is active and available for use
+                </label>
+              </div>
+            </div>
+
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex gap-3">
+              <button
+                onClick={() => {
+                  setShowTemplateFormModal(false);
+                  // Optionally return to templates list if user was browsing templates
+                  // setShowTemplatesListModal(true);
+                }}
+                disabled={savingTemplate}
+                className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveTemplate}
+                disabled={savingTemplate || !templateForm.name || !templateForm.description}
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+              >
+                {savingTemplate 
+                  ? '💾 Saving...' 
+                  : templateFormMode === 'create' 
+                    ? '➕ Create Template' 
+                    : '💾 Save Changes'
+                }
               </button>
             </div>
           </div>
