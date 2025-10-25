@@ -101,16 +101,32 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showVersionModal, setShowVersionModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showLogsModal, setShowLogsModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showTemplatesListModal, setShowTemplatesListModal] = useState(false);
   const [showTemplateFormModal, setShowTemplateFormModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<TASTemplate | null>(null);
   const [versions, setVersions] = useState<TASVersion[]>([]);
   const [logs, setLogs] = useState<GenerationLog[]>([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
+  const [savingEdit, setSavingEdit] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'draft' | 'approved' | 'published'>('all');
   const [generating, setGenerating] = useState(false);
   const [templateFormMode, setTemplateFormMode] = useState<'create' | 'edit'>('create');
   const [savingTemplate, setSavingTemplate] = useState(false);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
+
+  // Edit form state
+  const [editForm, setEditForm] = useState({
+    title: '',
+    description: '',
+    qualification_name: '',
+    training_package: '',
+    sections: [] as any[],
+    status: 'draft',
+    create_version: false,
+    change_summary: '',
+  });
 
   // Generate form state
   const [generateForm, setGenerateForm] = useState({
@@ -141,6 +157,144 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
   });
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+  // Load TAS documents from API
+  const loadTASDocuments = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/tenants/${params.tenantSlug}/tas/`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('TAS Documents API response:', data);
+        
+        // Handle both array and paginated response formats
+        if (Array.isArray(data)) {
+          setDocuments(data);
+        } else if (data.results && Array.isArray(data.results)) {
+          // DRF paginated response
+          setDocuments(data.results);
+        } else {
+          console.error('Unexpected TAS documents response format:', data);
+        }
+      } else {
+        console.error('Failed to load TAS documents:', response.status);
+      }
+    } catch (error) {
+      console.error('Error loading TAS documents:', error);
+    }
+  };
+
+  // Delete a TAS document
+  const handleDeleteTAS = async (doc: TAS) => {
+    if (!confirm(`Are you sure you want to delete "${doc.title}"?\n\nThis action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/api/tenants/${params.tenantSlug}/tas/${doc.id}/`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok || response.status === 204) {
+        alert('✅ TAS document deleted successfully!');
+        // Reload the list
+        await loadTASDocuments();
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to delete' }));
+        alert(`❌ Failed to delete TAS document:\n\n${JSON.stringify(errorData)}`);
+      }
+    } catch (error) {
+      console.error('Error deleting TAS:', error);
+      alert(`❌ Error deleting TAS document:\n\n${error}`);
+    }
+  };
+
+  // Open edit modal with document data
+  const handleEditDocument = (doc: TAS) => {
+    setSelectedDocument(doc);
+    setEditForm({
+      title: doc.title || '',
+      description: doc.description || '',
+      qualification_name: doc.qualification_name || '',
+      training_package: doc.training_package || '',
+      sections: doc.sections || [],
+      status: doc.status || 'draft',
+      create_version: false,
+      change_summary: '',
+    });
+    setShowPreviewModal(false); // Close preview modal if open
+    setShowEditModal(true);
+  };
+
+  // Save edited document
+  const handleSaveEdit = async () => {
+    if (!selectedDocument) return;
+
+    if (editForm.create_version && !editForm.change_summary.trim()) {
+      alert('⚠️ Please provide a change summary when creating a new version');
+      return;
+    }
+
+    setSavingEdit(true);
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/tenants/${params.tenantSlug}/tas/${selectedDocument.id}/update-content/`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(editForm),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Edit response:', data);
+        
+        alert(
+          editForm.create_version
+            ? `✅ New version created successfully!\n\nVersion: ${data.version}\n\n${data.message}`
+            : `✅ Document updated successfully!\n\n${data.message}`
+        );
+        
+        setShowEditModal(false);
+        setSelectedDocument(null);
+        
+        // Reload documents
+        await loadTASDocuments();
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to update' }));
+        console.error('Update error:', errorData);
+        alert(`❌ Failed to update document:\n\n${JSON.stringify(errorData, null, 2)}`);
+      }
+    } catch (error) {
+      console.error('Error updating document:', error);
+      alert(`❌ Error updating document:\n\n${error}`);
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  // Update section content
+  const updateSectionContent = (index: number, newContent: string) => {
+    const updatedSections = [...editForm.sections];
+    if (updatedSections[index]) {
+      updatedSections[index] = {
+        ...updatedSections[index],
+        content: newContent,
+      };
+      setEditForm({ ...editForm, sections: updatedSections });
+    }
+  };
 
   // Load templates from API
   const loadTemplates = async () => {
@@ -253,61 +407,53 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
   // Mock data for demonstration
   useEffect(() => {
     loadTemplates();
-    // Mock TAS documents
-    setDocuments([
-      {
-        id: 1,
-        tenant: 1,
-        title: 'BSB50120 - Diploma of Business',
-        code: 'BSB50120',
-        description: 'Diploma of Business qualification',
-        qualification_name: 'Diploma of Business',
-        aqf_level: 'diploma',
-        aqf_level_display: 'Diploma',
-        training_package: 'BSB',
-        template: 1,
-        template_details: null,
-        sections: [],
-        status: 'approved',
-        status_display: 'Approved',
-        version: 2,
-        is_current_version: true,
-        gpt_generated: true,
-        gpt_generation_date: '2025-10-15T10:30:00Z',
-        gpt_model_used: 'gpt-4',
-        gpt_tokens_used: 8500,
-        generation_time_seconds: 45.5,
-        content: {},
-        metadata: {},
-        time_saved: {
-          traditional_hours: 7.6,
-          gpt_hours: 0.01,
-          saved_hours: 6.8,
-          percentage_saved: 90,
-        },
-        version_count: 2,
-        created_by: 1,
-        created_by_details: {
-          id: 1,
-          username: 'admin',
-          email: 'admin@example.com',
-          first_name: 'Admin',
-          last_name: 'User',
-        },
-        created_at: '2025-10-15T10:30:00Z',
-        updated_at: '2025-10-20T14:20:00Z',
-      },
-    ]);
+    loadTASDocuments();
   }, []);
 
   const handleGenerate = async () => {
+    console.log('🚀 handleGenerate called');
+    console.log('📝 Generate form data:', generateForm);
+    
     setGenerating(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const url = `http://localhost:8000/api/tenants/${params.tenantSlug}/tas/generate/`;
+      console.log('📡 Calling API:', url);
+      console.log('📦 Request body:', JSON.stringify(generateForm, null, 2));
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(generateForm),
+      });
+
+      console.log('📨 Response status:', response.status);
+      console.log('📨 Response ok:', response.ok);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('❌ Error response:', errorData);
+        throw new Error(JSON.stringify(errorData));
+      }
+
+      const data = await response.json();
+      console.log('✅ Success response:', data);
+      
       setGenerating(false);
       setShowGenerateModal(false);
-      alert('TAS generated successfully! Estimated time saved: 6.8 hours (90% reduction)');
+      
+      // Show success message with generation details
+      alert(
+        `✅ ${data.message || 'TAS generated successfully!'}\n\n` +
+        `📊 Generation Details:\n` +
+        `- Model Used: ${generateForm.ai_model.toUpperCase()}\n` +
+        `- Generation Time: ${data.generation_log?.generation_time_seconds?.toFixed(1) || 'N/A'} seconds\n` +
+        `- Tokens Used: ${data.generation_log?.tokens_total || 'N/A'}\n` +
+        `- TAS ID: ${data.tas?.id}\n\n` +
+        `🎉 Your TAS document is ready!`
+      );
       
       // Reset form
       setGenerateForm({
@@ -324,7 +470,31 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
         use_gpt4: true,
         ai_model: 'gpt-4o',
       });
-    }, 3000);
+      
+      // Reload the TAS documents list to show the new document
+      console.log('🔄 Reloading TAS documents...');
+      await loadTASDocuments();
+      console.log('✅ TAS documents reloaded');
+      
+    } catch (err: any) {
+      setGenerating(false);
+      console.error('❌ Generation error:', err);
+      
+      // Parse error message
+      let errorMessage = 'Failed to generate TAS document.';
+      try {
+        const errorObj = JSON.parse(err.message);
+        if (typeof errorObj === 'object') {
+          errorMessage = Object.entries(errorObj)
+            .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+            .join('\n');
+        }
+      } catch {
+        errorMessage = err.message || errorMessage;
+      }
+      
+      alert(`❌ Generation Failed:\n\n${errorMessage}`);
+    }
   };
 
   const addUnit = () => {
@@ -559,66 +729,72 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
     }
   };
 
-  const loadVersions = (doc: TAS) => {
-    // Mock version history
-    setVersions([
-      {
-        id: 2,
-        tas: doc.id,
-        version_number: 2,
-        change_summary: 'Updated assessment strategy section',
-        changed_sections: ['assessment_strategy'],
-        content_diff: {},
-        was_regenerated: true,
-        regeneration_reason: 'Client requested changes to assessment methods',
-        created_by: 1,
-        created_by_details: {
-          id: 1,
-          username: 'admin',
-          email: 'admin@example.com',
-          first_name: 'Admin',
-          last_name: 'User',
+  const loadVersions = async (doc: TAS) => {
+    setVersions([]);
+    setShowVersionModal(true);
+    
+    try {
+      const response = await fetch(`${API_URL}/api/tenants/${params.tenantSlug}/tas/${doc.id}/versions/`, {
+        headers: {
+          'Content-Type': 'application/json',
         },
-        created_at: '2025-10-20T14:20:00Z',
-      },
-      {
-        id: 1,
-        tas: doc.id,
-        version_number: 1,
-        change_summary: 'Initial GPT-4 generated version',
-        changed_sections: [],
-        content_diff: {},
-        was_regenerated: true,
-        regeneration_reason: 'Initial generation',
-        created_by: 1,
-        created_by_details: {
-          id: 1,
-          username: 'admin',
-          email: 'admin@example.com',
-          first_name: 'Admin',
-          last_name: 'User',
-        },
-        created_at: '2025-10-15T10:30:00Z',
-      },
-    ]);
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Version history response:', data);
+        
+        // Handle both array and paginated response formats
+        if (Array.isArray(data)) {
+          setVersions(data);
+        } else if (data.results && Array.isArray(data.results)) {
+          setVersions(data.results);
+        } else {
+          console.error('Unexpected version history response format:', data);
+        }
+      } else {
+        console.error('Failed to load version history:', response.status);
+        alert('❌ Failed to load version history');
+      }
+    } catch (error) {
+      console.error('Error loading version history:', error);
+      alert('❌ Error loading version history');
+    }
   };
 
-  const loadLogs = (doc: TAS) => {
-    // Mock generation logs
-    setLogs([
-      {
-        id: 1,
-        tas: doc.id,
-        status: 'completed',
-        status_display: 'Completed',
-        model_version: 'gpt-4',
-        tokens_total: 8500,
-        generation_time_seconds: 45.5,
-        error_message: '',
-        created_at: '2025-10-15T10:30:00Z',
-        completed_at: '2025-10-15T10:31:15Z',
-      },
-    ]);
+  const loadLogs = async (doc: TAS) => {
+    setLoadingLogs(true);
+    setLogs([]);
+    
+    try {
+      const response = await fetch(`${API_URL}/api/tenants/${params.tenantSlug}/tas/${doc.id}/generation_logs/`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Generation logs response:', data);
+        
+        // Handle both array and paginated response formats
+        if (Array.isArray(data)) {
+          setLogs(data);
+        } else if (data.results && Array.isArray(data.results)) {
+          setLogs(data.results);
+        } else {
+          console.error('Unexpected logs response format:', data);
+        }
+      } else {
+        console.error('Failed to load logs:', response.status);
+        alert('Failed to load generation logs');
+      }
+    } catch (error) {
+      console.error('Error loading logs:', error);
+      alert(`Error loading logs: ${error}`);
+    } finally {
+      setLoadingLogs(false);
+    }
   };
 
   const filteredDocuments = documents.filter((doc) => {
@@ -777,7 +953,11 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
               </div>
               <div>
                 <div className="text-gray-500">Created By</div>
-                <div className="font-medium text-gray-900">{doc.created_by_details.first_name} {doc.created_by_details.last_name}</div>
+                <div className="font-medium text-gray-900">
+                  {doc.created_by_details 
+                    ? `${doc.created_by_details.first_name} ${doc.created_by_details.last_name}` 
+                    : 'System'}
+                </div>
               </div>
               <div>
                 <div className="text-gray-500">Last Updated</div>
@@ -810,10 +990,18 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 onClick={() => {
                   setSelectedDocument(doc);
                   loadLogs(doc);
+                  setShowLogsModal(true);
                 }}
                 className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
               >
                 📊 Logs
+              </button>
+              <button
+                onClick={() => handleDeleteTAS(doc)}
+                className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors font-medium"
+                title="Delete TAS document"
+              >
+                🗑️ Delete
               </button>
             </div>
           </div>
@@ -1506,6 +1694,640 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                     ? '➕ Create Template' 
                     : '💾 Save Changes'
                 }
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Document Modal */}
+      {showPreviewModal && selectedDocument && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold">📄 {selectedDocument.title}</h2>
+                  <div className="flex items-center gap-4 mt-2 text-sm">
+                    <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                      {selectedDocument.aqf_level_display}
+                    </span>
+                    <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                      Version {selectedDocument.version}
+                    </span>
+                    <span className={`px-3 py-1 rounded-full ${
+                      selectedDocument.status === 'approved' ? 'bg-green-500' :
+                      selectedDocument.status === 'published' ? 'bg-blue-500' :
+                      selectedDocument.status === 'in_review' ? 'bg-yellow-500' :
+                      'bg-gray-400'
+                    }`}>
+                      {selectedDocument.status_display}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowPreviewModal(false)}
+                  className="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="bg-gray-50 border-b border-gray-200 px-6 py-4 flex gap-3">
+              <button
+                onClick={() => {
+                  // TODO: Implement PDF export
+                  alert('📄 PDF Export functionality will be implemented here.\n\nThis will generate a formatted PDF of the TAS document.');
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+              >
+                📄 Export PDF
+              </button>
+              <button
+                onClick={() => handleEditDocument(selectedDocument)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                ✏️ Edit Document
+              </button>
+              <button
+                onClick={() => {
+                  // TODO: Implement regenerate section
+                  alert('🔄 Regenerate Section functionality will be implemented here.\n\nThis will use AI to regenerate specific sections of the TAS document.');
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+              >
+                🔄 Regenerate Section
+              </button>
+            </div>
+
+            {/* Document Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {/* Document Metadata */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                <h3 className="text-lg font-semibold text-blue-900 mb-4">📋 Document Information</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-blue-700 font-medium">Code:</span>
+                    <span className="ml-2 text-blue-900">{selectedDocument.code}</span>
+                  </div>
+                  <div>
+                    <span className="text-blue-700 font-medium">Qualification:</span>
+                    <span className="ml-2 text-blue-900">{selectedDocument.qualification_name}</span>
+                  </div>
+                  <div>
+                    <span className="text-blue-700 font-medium">Training Package:</span>
+                    <span className="ml-2 text-blue-900">{selectedDocument.training_package || 'N/A'}</span>
+                  </div>
+                  <div>
+                    <span className="text-blue-700 font-medium">AQF Level:</span>
+                    <span className="ml-2 text-blue-900">{selectedDocument.aqf_level_display}</span>
+                  </div>
+                  {selectedDocument.gpt_generated && (
+                    <>
+                      <div>
+                        <span className="text-blue-700 font-medium">AI Model:</span>
+                        <span className="ml-2 text-blue-900">{selectedDocument.gpt_model_used}</span>
+                      </div>
+                      <div>
+                        <span className="text-blue-700 font-medium">Generation Time:</span>
+                        <span className="ml-2 text-blue-900">{selectedDocument.generation_time_seconds.toFixed(2)}s</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Document Sections */}
+              {selectedDocument.sections && selectedDocument.sections.length > 0 ? (
+                <div className="space-y-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">📚 Document Sections</h3>
+                  {selectedDocument.sections.map((section: any, index: number) => (
+                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                        {section.title || section.name}
+                      </h4>
+                      <div 
+                        className="prose prose-sm max-w-none text-gray-700"
+                        dangerouslySetInnerHTML={{ __html: section.content }}
+                      />
+                      {section.generated_by && (
+                        <div className="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500">
+                          Generated by {section.generated_by} • {section.tokens} tokens
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-gray-50 rounded-lg">
+                  <div className="text-6xl mb-4">📝</div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No Content Yet</h3>
+                  <p className="text-gray-600">
+                    This TAS document doesn't have any sections yet.
+                    {selectedDocument.gpt_generated && ' Content generation may have been skipped.'}
+                  </p>
+                </div>
+              )}
+
+              {/* Description */}
+              {selectedDocument.description && (
+                <div className="mt-6 bg-gray-50 rounded-lg p-6">
+                  <h4 className="font-semibold text-gray-900 mb-2">Description</h4>
+                  <p className="text-gray-700">{selectedDocument.description}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="bg-gray-50 border-t border-gray-200 px-6 py-4 flex gap-3">
+              <button
+                onClick={() => setShowPreviewModal(false)}
+                className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setShowPreviewModal(false);
+                  loadVersions(selectedDocument);
+                  setShowVersionModal(true);
+                }}
+                className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+              >
+                📋 View Versions
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Generation Logs Modal */}
+      {showLogsModal && selectedDocument && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold">📊 Generation Logs</h2>
+                  <p className="text-blue-100 mt-1">{selectedDocument.title}</p>
+                </div>
+                <button
+                  onClick={() => setShowLogsModal(false)}
+                  className="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {loadingLogs ? (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">⏳</div>
+                  <p className="text-gray-600">Loading generation logs...</p>
+                </div>
+              ) : logs.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">📋</div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No logs found</h3>
+                  <p className="text-gray-600">This TAS document has no generation logs yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {logs.map((log) => (
+                    <div key={log.id} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                      {/* Log Header */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                              log.status === 'completed' ? 'bg-green-100 text-green-800' :
+                              log.status === 'failed' ? 'bg-red-100 text-red-800' :
+                              log.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {log.status_display || log.status}
+                            </span>
+                            <span className="text-sm text-gray-600">
+                              Log #{log.id}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-500">
+                            Created: {new Date(log.created_at).toLocaleString()}
+                          </p>
+                          {log.completed_at && (
+                            <p className="text-sm text-gray-500">
+                              Completed: {new Date(log.completed_at).toLocaleString()}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Log Details */}
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <div className="text-sm text-gray-500 mb-1">AI Model</div>
+                          <div className="font-semibold text-gray-900">{log.model_version}</div>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <div className="text-sm text-gray-500 mb-1">Generation Time</div>
+                          <div className="font-semibold text-gray-900">
+                            {log.generation_time_seconds.toFixed(2)}s
+                          </div>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <div className="text-sm text-gray-500 mb-1">Total Tokens</div>
+                          <div className="font-semibold text-gray-900">
+                            {log.tokens_total.toLocaleString()}
+                          </div>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <div className="text-sm text-gray-500 mb-1">Status</div>
+                          <div className="font-semibold text-gray-900">{log.status_display}</div>
+                        </div>
+                      </div>
+
+                      {/* Error Message */}
+                      {log.error_message && (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+                          <div className="flex items-start gap-2">
+                            <span className="text-red-600 text-xl">⚠️</span>
+                            <div className="flex-1">
+                              <div className="font-semibold text-red-800 mb-1">Error</div>
+                              <div className="text-sm text-red-700">{log.error_message}</div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="bg-gray-50 border-t border-gray-200 px-6 py-4">
+              <button
+                onClick={() => setShowLogsModal(false)}
+                className="w-full px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Version History Modal */}
+      {showVersionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-5 rounded-t-lg">
+              <h2 className="text-2xl font-bold">Version History</h2>
+              <p className="text-purple-100 mt-1">Track changes and regenerations over time</p>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {versions.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">📚</div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No version history</h3>
+                  <p className="text-gray-600">This TAS document has no previous versions.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {versions.map((version, index) => (
+                    <div key={version.id} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                      {/* Version Header */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                              index === 0 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {index === 0 ? '✓ Current Version' : `Version ${version.version_number}`}
+                            </span>
+                            <span className="text-sm text-gray-600">
+                              v{version.version_number}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-500">
+                            {new Date(version.created_at).toLocaleString()}
+                          </p>
+                        </div>
+                        {index !== 0 && (
+                          <button
+                            onClick={() => {
+                              alert('🔄 Restore Version\n\nThis will restore the TAS document to this version.\n\n(Feature coming soon)');
+                            }}
+                            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-semibold"
+                          >
+                            Restore This Version
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Change Summary */}
+                      {version.change_summary && (
+                        <div className="bg-white rounded-lg p-4 border border-gray-200 mb-4">
+                          <div className="text-sm text-gray-500 mb-1">Change Summary</div>
+                          <div className="text-gray-900">{version.change_summary}</div>
+                        </div>
+                      )}
+
+                      {/* Version Details */}
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        {version.was_regenerated && (
+                          <div className="bg-white rounded-lg p-4 border border-gray-200">
+                            <div className="text-sm text-gray-500 mb-1">Regenerated</div>
+                            <div className="font-semibold text-purple-600">✓ Yes</div>
+                          </div>
+                        )}
+                        {version.regeneration_reason && (
+                          <div className="bg-white rounded-lg p-4 border border-gray-200">
+                            <div className="text-sm text-gray-500 mb-1">Reason</div>
+                            <div className="text-sm text-gray-900">{version.regeneration_reason}</div>
+                          </div>
+                        )}
+                        {version.created_by_details && (
+                          <div className="bg-white rounded-lg p-4 border border-gray-200">
+                            <div className="text-sm text-gray-500 mb-1">Created By</div>
+                            <div className="font-semibold text-gray-900">
+                              {version.created_by_details.first_name} {version.created_by_details.last_name}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Changed Sections */}
+                      {version.changed_sections && version.changed_sections.length > 0 && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                          <div className="text-sm text-blue-800 font-semibold mb-2">
+                            Modified Sections ({version.changed_sections.length})
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {version.changed_sections.map((section, idx) => (
+                              <span
+                                key={idx}
+                                className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm"
+                              >
+                                {section.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="bg-gray-50 border-t border-gray-200 px-6 py-4">
+              <button
+                onClick={() => setShowVersionModal(false)}
+                className="w-full px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Document Modal */}
+      {showEditModal && selectedDocument && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-2xl max-w-6xl w-full max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-5 rounded-t-lg">
+              <h2 className="text-2xl font-bold">Edit TAS Document</h2>
+              <p className="text-blue-100 mt-1">Make changes to your TAS document content</p>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="space-y-6">
+                {/* Basic Information */}
+                <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 Basic Information</h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Document Title *
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.title}
+                        onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter document title"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Description
+                      </label>
+                      <textarea
+                        value={editForm.description}
+                        onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                        rows={3}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter document description"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Qualification Name *
+                        </label>
+                        <input
+                          type="text"
+                          value={editForm.qualification_name}
+                          onChange={(e) => setEditForm({ ...editForm, qualification_name: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="e.g., Certificate IV in IT"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Training Package
+                        </label>
+                        <input
+                          type="text"
+                          value={editForm.training_package}
+                          onChange={(e) => setEditForm({ ...editForm, training_package: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="e.g., ICT"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Status
+                      </label>
+                      <select
+                        value={editForm.status}
+                        onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="draft">Draft</option>
+                        <option value="in_review">In Review</option>
+                        <option value="approved">Approved</option>
+                        <option value="published">Published</option>
+                        <option value="archived">Archived</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sections Editor */}
+                <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">📝 Document Sections</h3>
+                  
+                  {editForm.sections.length === 0 ? (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-2">📄</div>
+                      <p className="text-gray-600">No sections available to edit</p>
+                      <p className="text-sm text-gray-500 mt-1">Sections will appear here once generated</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {editForm.sections.map((section: any, index: number) => (
+                        <div key={index} className="bg-white rounded-lg p-4 border border-gray-300">
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-semibold text-gray-900">
+                              {section.title || section.name || `Section ${index + 1}`}
+                            </h4>
+                            <span className="text-sm text-gray-500">
+                              {section.tokens || 0} tokens
+                            </span>
+                          </div>
+                          
+                          <textarea
+                            value={section.content || ''}
+                            onChange={(e) => updateSectionContent(index, e.target.value)}
+                            rows={6}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                            placeholder="Section content (HTML supported)"
+                          />
+                          
+                          <div className="mt-2 flex items-center justify-between">
+                            <span className="text-xs text-gray-500">
+                              💡 Tip: HTML markup is supported for formatting
+                            </span>
+                            <button
+                              onClick={() => {
+                                const preview = window.open('', '_blank');
+                                if (preview) {
+                                  preview.document.write(`
+                                    <html>
+                                      <head><title>Section Preview</title></head>
+                                      <body style="font-family: Arial, sans-serif; padding: 20px;">
+                                        ${section.content || '<p>No content</p>'}
+                                      </body>
+                                    </html>
+                                  `);
+                                  preview.document.close();
+                                }
+                              }}
+                              className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                              👁️ Preview
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Version Control */}
+                <div className="bg-yellow-50 rounded-lg p-6 border border-yellow-200">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">🔄 Version Control</h3>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        id="create-version"
+                        checked={editForm.create_version}
+                        onChange={(e) => setEditForm({ ...editForm, create_version: e.target.checked })}
+                        className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <div className="flex-1">
+                        <label htmlFor="create-version" className="font-medium text-gray-900 cursor-pointer">
+                          Create New Version
+                        </label>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Creates a new version instead of overwriting the current one. Recommended for major changes.
+                        </p>
+                      </div>
+                    </div>
+
+                    {editForm.create_version && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Change Summary * <span className="text-red-500">(Required for new version)</span>
+                        </label>
+                        <textarea
+                          value={editForm.change_summary}
+                          onChange={(e) => setEditForm({ ...editForm, change_summary: e.target.value })}
+                          rows={3}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Describe what changes you made (e.g., 'Updated assessment strategy section')"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-between">
+              <button
+                onClick={() => {
+                  setShowEditModal(false);
+                  setSelectedDocument(null);
+                }}
+                disabled={savingEdit}
+                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              
+              <button
+                onClick={handleSaveEdit}
+                disabled={savingEdit || !editForm.title || !editForm.qualification_name}
+                className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {savingEdit ? (
+                  <>
+                    <span className="animate-spin">⏳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <span>💾</span>
+                    {editForm.create_version ? 'Create New Version' : 'Save Changes'}
+                  </>
+                )}
               </button>
             </div>
           </div>
