@@ -125,6 +125,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
     assessment_methods: [] as string[],
     additional_context: '',
     use_gpt4: true,
+    ai_model: 'gpt-4o', // Default to GPT-4o
   });
 
   // Template form state
@@ -321,6 +322,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
         assessment_methods: [],
         additional_context: '',
         use_gpt4: true,
+        ai_model: 'gpt-4o',
       });
     }, 3000);
   };
@@ -1005,6 +1007,42 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 />
               </div>
 
+              {/* AI Model Selection */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  🤖 AI Model Selection
+                </label>
+                <select
+                  value={generateForm.ai_model}
+                  onChange={(e) => setGenerateForm({ ...generateForm, ai_model: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  disabled={!generateForm.use_gpt4}
+                >
+                  <optgroup label="GPT-4 Models (Recommended)">
+                    <option value="gpt-4o">GPT-4o (Latest, Fast & Intelligent)</option>
+                    <option value="gpt-4o-mini">GPT-4o Mini (Fast & Cost-Effective)</option>
+                    <option value="gpt-4-turbo">GPT-4 Turbo (128K context)</option>
+                    <option value="gpt-4">GPT-4 (Classic)</option>
+                  </optgroup>
+                  <optgroup label="GPT-3.5 Models">
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Fast & Economical)</option>
+                  </optgroup>
+                  <optgroup label="O1 Models (Advanced Reasoning)">
+                    <option value="o1-preview">O1 Preview (Advanced reasoning)</option>
+                    <option value="o1-mini">O1 Mini (Fast reasoning)</option>
+                  </optgroup>
+                </select>
+                <p className="text-xs text-gray-500 mt-1">
+                  {generateForm.ai_model === 'gpt-4o' && '🌟 Best for comprehensive TAS generation with fast responses'}
+                  {generateForm.ai_model === 'gpt-4o-mini' && '⚡ Optimized for speed while maintaining quality'}
+                  {generateForm.ai_model === 'gpt-4-turbo' && '📚 Large context window ideal for complex qualifications'}
+                  {generateForm.ai_model === 'gpt-4' && '🏆 Classic GPT-4 model with proven reliability'}
+                  {generateForm.ai_model === 'gpt-3.5-turbo' && '💨 Fastest and most economical option'}
+                  {generateForm.ai_model === 'o1-preview' && '🧠 Advanced reasoning for complex educational frameworks'}
+                  {generateForm.ai_model === 'o1-mini' && '🎯 Focused reasoning capabilities'}
+                </p>
+              </div>
+
               {/* GPT-4 Toggle */}
               <div className="flex items-center gap-3">
                 <input
@@ -1015,7 +1053,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
                 />
                 <label htmlFor="use-gpt4" className="text-sm font-medium text-gray-700">
-                  🤖 Use GPT-4 for content generation (90% time reduction)
+                  🤖 Use AI for content generation (90% time reduction)
                 </label>
               </div>
             </div>
@@ -1032,7 +1070,11 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 disabled={generating || !generateForm.code || !generateForm.qualification_name}
                 className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
               >
-                {generating ? '⚡ Generating with GPT-4...' : '✨ Generate TAS'}
+                {generating 
+                  ? `⚡ Generating with ${generateForm.ai_model.toUpperCase()}...` 
+                  : generateForm.use_gpt4 
+                    ? `✨ Generate TAS with ${generateForm.ai_model.toUpperCase()}` 
+                    : '✨ Generate TAS'}
               </button>
             </div>
           </div>
