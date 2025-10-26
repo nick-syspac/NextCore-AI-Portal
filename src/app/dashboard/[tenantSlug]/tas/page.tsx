@@ -96,6 +96,17 @@ interface GenerationLog {
 export default function TASGeneratorPage({ params }: { params: { tenantSlug: string } }) {
   const [documents, setDocuments] = useState<TAS[]>([]);
   const [templates, setTemplates] = useState<TASTemplate[]>([]);
+  const [qualifications, setQualifications] = useState<Array<{
+    code: string;
+    title: string;
+    aqf_level: string;
+    training_package: string;
+  }>>([]);
+  const [loadingQualifications, setLoadingQualifications] = useState(false);
+  const [qualificationSearch, setQualificationSearch] = useState('');
+  const [unitsData, setUnitsData] = useState<any>(null);
+  const [loadingUnits, setLoadingUnits] = useState(false);
+  const [selectedUnits, setSelectedUnits] = useState<string[]>([]);
   const [selectedDocument, setSelectedDocument] = useState<TAS | null>(null);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
@@ -411,29 +422,175 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
     ]);
   };
 
+  // Load qualifications from training.gov.au
+  const loadQualifications = async () => {
+    setLoadingQualifications(true);
+    try {
+      const response = await fetch(`${API_URL}/api/tenants/${params.tenantSlug}/tas/qualifications/`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Qualifications API response:', data);
+        
+        // Handle both array and paginated response formats
+        if (Array.isArray(data)) {
+          setQualifications(data);
+        } else if (data.results && Array.isArray(data.results)) {
+          setQualifications(data.results);
+        } else if (data.data && Array.isArray(data.data)) {
+          setQualifications(data.data);
+        } else {
+          console.error('Unexpected qualifications response format:', data);
+          // Fallback to mock data
+          loadMockQualifications();
+        }
+      } else {
+        console.error('Failed to load qualifications. Status:', response.status);
+        loadMockQualifications();
+      }
+    } catch (error) {
+      console.error('Error loading qualifications:', error);
+      loadMockQualifications();
+    } finally {
+      setLoadingQualifications(false);
+    }
+  };
+
+  // Load mock qualifications as fallback
+  const loadMockQualifications = () => {
+    setQualifications([
+      { code: 'BSB50120', title: 'Diploma of Business', aqf_level: 'diploma', training_package: 'BSB' },
+      { code: 'BSB40120', title: 'Certificate IV in Business', aqf_level: 'certificate_iv', training_package: 'BSB' },
+      { code: 'ICT50220', title: 'Diploma of Information Technology', aqf_level: 'diploma', training_package: 'ICT' },
+      { code: 'ICT40120', title: 'Certificate IV in Information Technology', aqf_level: 'certificate_iv', training_package: 'ICT' },
+      { code: 'CHC50113', title: 'Diploma of Early Childhood Education and Care', aqf_level: 'diploma', training_package: 'CHC' },
+      { code: 'CHC43015', title: 'Certificate IV in Ageing Support', aqf_level: 'certificate_iv', training_package: 'CHC' },
+      { code: 'SIT50416', title: 'Diploma of Hospitality Management', aqf_level: 'diploma', training_package: 'SIT' },
+      { code: 'SIT40516', title: 'Certificate IV in Commercial Cookery', aqf_level: 'certificate_iv', training_package: 'SIT' },
+    ]);
+  };
+
+  // Load units of competency for a qualification
+  const loadUnitsForQualification = async (qualCode: string) => {
+    console.log('🔍 Loading units for qualification:', qualCode);
+    setLoadingUnits(true);
+    setUnitsData(null);
+    setSelectedUnits([]);
+    
+    try {
+      const url = `${API_URL}/api/tenants/${params.tenantSlug}/tas/units/?qualification_code=${qualCode}`;
+      console.log('📡 Fetching units from:', url);
+      
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      console.log('📨 Units response status:', response.status, response.ok);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Units data loaded:', data);
+        console.log('📚 Number of groupings:', data.groupings?.length);
+        setUnitsData(data);
+        
+        // Auto-select all core units
+        if (data.groupings) {
+          const coreUnits = data.groupings
+            .filter((g: any) => g.type === 'core')
+            .flatMap((g: any) => g.units.map((u: any) => u.code));
+          console.log('🔒 Auto-selected core units:', coreUnits);
+          setSelectedUnits(coreUnits);
+        }
+      } else if (response.status === 404) {
+        console.warn('⚠️ No units data available for:', qualCode);
+        // Set a special marker to show "no units available" message
+        setUnitsData({ not_available: true, qualification_code: qualCode });
+      } else {
+        const errorText = await response.text();
+        console.error('❌ Failed to load units. Status:', response.status);
+        console.error('❌ Error response:', errorText);
+        setUnitsData(null);
+      }
+    } catch (error) {
+      console.error('💥 Error loading units:', error);
+      setUnitsData(null);
+    } finally {
+      console.log('✋ Loading units complete');
+      setLoadingUnits(false);
+    }
+  };
+
+  // Toggle unit selection
+  const toggleUnitSelection = (unitCode: string) => {
+    setSelectedUnits(prev => {
+      if (prev.includes(unitCode)) {
+        return prev.filter(code => code !== unitCode);
+      } else {
+        return [...prev, unitCode];
+      }
+    });
+  };
+
+  // Select all units in a grouping
+  const selectAllInGrouping = (grouping: any) => {
+    const unitCodes = grouping.units.map((u: any) => u.code);
+    setSelectedUnits(prev => {
+      const allSelected = unitCodes.every((code: string) => prev.includes(code));
+      if (allSelected) {
+        // Deselect all
+        return prev.filter(code => !unitCodes.includes(code));
+      } else {
+        // Select all
+        return [...new Set([...prev, ...unitCodes])];
+      }
+    });
+  };
+
+
   // Mock data for demonstration
   useEffect(() => {
     loadTemplates();
+    loadQualifications();
     loadTASDocuments();
   }, []);
 
   const handleGenerate = async () => {
     console.log('🚀 handleGenerate called');
     console.log('📝 Generate form data:', generateForm);
+    console.log('📚 Selected units:', selectedUnits);
+    
+    // Build units_of_competency from selected units
+    const selectedUnitsData = unitsData?.groupings
+      .flatMap((g: any) => g.units)
+      .filter((u: any) => selectedUnits.includes(u.code))
+      .map((u: any) => ({ code: u.code, title: u.title })) || [];
+    
+    const requestData = {
+      ...generateForm,
+      units_of_competency: selectedUnitsData,
+    };
+    
+    console.log('📦 Request data:', requestData);
     
     setGenerating(true);
     
     try {
       const url = `http://localhost:8000/api/tenants/${params.tenantSlug}/tas/generate/`;
       console.log('📡 Calling API:', url);
-      console.log('📦 Request body:', JSON.stringify(generateForm, null, 2));
+      console.log('📦 Request body:', JSON.stringify(requestData, null, 2));
       
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(generateForm),
+        body: JSON.stringify(requestData),
       });
 
       console.log('📨 Response status:', response.status);
@@ -477,6 +634,11 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
         use_gpt4: true,
         ai_model: 'gpt-4o',
       });
+      
+      // Clear units data
+      setUnitsData(null);
+      setSelectedUnits([]);
+      setQualificationSearch('');
       
       // Reload the TAS documents list to show the new document
       console.log('🔄 Reloading TAS documents...');
@@ -1060,7 +1222,221 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 </select>
               </div>
 
-              {/* Basic Information */}
+              {/* Qualification Selection from Training.gov.au */}
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">🎓</span>
+                  <h3 className="text-lg font-semibold text-gray-900">Select Qualification from Training.gov.au</h3>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Search & Select Qualification *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={qualificationSearch}
+                      onChange={(e) => setQualificationSearch(e.target.value)}
+                      placeholder="Type to search qualifications (e.g., Business, IT, Hospitality)..."
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    {loadingQualifications && (
+                      <div className="absolute right-3 top-3">
+                        <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {qualificationSearch && (
+                    <div className="mt-2 max-h-60 overflow-y-auto border border-gray-300 rounded-lg bg-white shadow-lg">
+                      {qualifications
+                        .filter(qual => 
+                          qual.code.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
+                          qual.title.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
+                          qual.training_package.toLowerCase().includes(qualificationSearch.toLowerCase())
+                        )
+                        .map((qual) => (
+                          <button
+                            key={qual.code}
+                            onClick={async () => {
+                              console.log('🎓 Qualification selected:', qual.code, qual.title);
+                              
+                              setGenerateForm({
+                                ...generateForm,
+                                code: qual.code,
+                                qualification_name: qual.title,
+                                aqf_level: qual.aqf_level,
+                                training_package: qual.training_package,
+                              });
+                              setQualificationSearch('');
+                              
+                              console.log('📚 About to load units...');
+                              
+                              // Load units for this qualification
+                              await loadUnitsForQualification(qual.code);
+                              
+                              console.log('✅ Qualification selection complete');
+                            }}
+                            className="w-full text-left px-4 py-3 hover:bg-blue-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                          >
+                            <div className="font-semibold text-gray-900">{qual.code}</div>
+                            <div className="text-sm text-gray-700">{qual.title}</div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              {qual.training_package} • {qual.aqf_level.replace('_', ' ').toUpperCase()}
+                            </div>
+                          </button>
+                        ))}
+                      {qualifications.filter(qual => 
+                        qual.code.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
+                        qual.title.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
+                        qual.training_package.toLowerCase().includes(qualificationSearch.toLowerCase())
+                      ).length === 0 && (
+                        <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                          No qualifications found. Try a different search term.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
+                {generateForm.code && (
+                  <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-green-600">✓</span>
+                      <span className="font-semibold text-green-900">Selected Qualification:</span>
+                    </div>
+                    <div className="text-sm text-gray-700">
+                      <div><strong>Code:</strong> {generateForm.code}</div>
+                      <div><strong>Title:</strong> {generateForm.qualification_name}</div>
+                      <div><strong>Package:</strong> {generateForm.training_package}</div>
+                      <div><strong>AQF Level:</strong> {generateForm.aqf_level.replace('_', ' ').toUpperCase()}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Units of Competency Selection */}
+              {loadingUnits && (
+                <div className="bg-gray-50 rounded-lg p-6 border border-gray-300">
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="animate-spin h-6 w-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
+                    <span className="text-gray-600">Loading units of competency...</span>
+                  </div>
+                </div>
+              )}
+
+              {unitsData && !loadingUnits && !unitsData.not_available && (
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-2xl">📚</span>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-900">Units of Competency</h3>
+                      <p className="text-sm text-gray-600">{unitsData.packaging_rules}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-semibold text-green-700">
+                        {selectedUnits.length} units selected
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 max-h-96 overflow-y-auto">
+                    {unitsData.groupings.map((grouping: any, groupIdx: number) => (
+                      <div key={groupIdx} className="bg-white rounded-lg border border-gray-300 overflow-hidden">
+                        {/* Grouping Header */}
+                        <div className={`px-4 py-3 ${grouping.type === 'core' ? 'bg-blue-100' : 'bg-purple-100'}`}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-gray-900">{grouping.name}</h4>
+                              {grouping.description && (
+                                <p className="text-sm text-gray-600 mt-1">{grouping.description}</p>
+                              )}
+                              <p className="text-sm text-gray-700 mt-1">
+                                <span className="font-medium">Required:</span> {grouping.required} units
+                                {grouping.type === 'core' && ' (All core units must be selected)'}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => selectAllInGrouping(grouping)}
+                              className="ml-4 px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors font-medium"
+                            >
+                              {grouping.units.every((u: any) => selectedUnits.includes(u.code)) ? '✓ Deselect All' : 'Select All'}
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Units List */}
+                        <div className="divide-y divide-gray-200">
+                          {grouping.units.map((unit: any, unitIdx: number) => (
+                            <label
+                              key={unitIdx}
+                              className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedUnits.includes(unit.code)}
+                                onChange={() => toggleUnitSelection(unit.code)}
+                                disabled={grouping.type === 'core'}
+                                className="mt-1 h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                              />
+                              <div className="flex-1">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <div className="font-semibold text-gray-900">{unit.code}</div>
+                                    <div className="text-sm text-gray-700 mt-1">{unit.title}</div>
+                                  </div>
+                                  <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded ${
+                                    unit.type === 'core' 
+                                      ? 'bg-blue-100 text-blue-800' 
+                                      : 'bg-purple-100 text-purple-800'
+                                  }`}>
+                                    {unit.type}
+                                  </span>
+                                </div>
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {unitsData.has_groupings && (
+                    <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <div className="flex items-start gap-2">
+                        <span className="text-yellow-600">💡</span>
+                        <div className="text-sm text-gray-700">
+                          <strong>Packaging Rules:</strong> This qualification has specialization options. 
+                          {' '}Core units are pre-selected and required. Choose elective units based on your desired specialization or learning pathway.
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Units not available message */}
+              {unitsData && unitsData.not_available && (
+                <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">ℹ️</span>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Units Data Not Available
+                      </h3>
+                      <p className="text-sm text-gray-700 mb-2">
+                        Detailed units data for <strong>{generateForm.code}</strong> is not yet available in our system.
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        You can still generate the TAS document, and manually add units in the section below, or the system will use general qualification information.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Basic Information - Now read-only/auto-populated */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -1069,26 +1445,22 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   <input
                     type="text"
                     value={generateForm.code}
-                    onChange={(e) => setGenerateForm({ ...generateForm, code: e.target.value })}
-                    placeholder="e.g., BSB50120"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    readOnly
+                    placeholder="Select from dropdown above"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     AQF Level *
                   </label>
-                  <select
-                    value={generateForm.aqf_level}
-                    onChange={(e) => setGenerateForm({ ...generateForm, aqf_level: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  >
-                    {AQF_LEVELS.map((level) => (
-                      <option key={level.value} value={level.value}>
-                        {level.label}
-                      </option>
-                    ))}
-                  </select>
+                  <input
+                    type="text"
+                    value={generateForm.aqf_level ? generateForm.aqf_level.replace('_', ' ').toUpperCase() : ''}
+                    readOnly
+                    placeholder="Auto-populated"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
+                  />
                 </div>
               </div>
 
@@ -1099,24 +1471,25 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 <input
                   type="text"
                   value={generateForm.qualification_name}
-                  onChange={(e) => setGenerateForm({ ...generateForm, qualification_name: e.target.value })}
-                  placeholder="e.g., Diploma of Business"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  readOnly
+                  placeholder="Auto-populated from selection"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Training Package
+                    Training Package (editable)
                   </label>
                   <input
                     type="text"
                     value={generateForm.training_package}
                     onChange={(e) => setGenerateForm({ ...generateForm, training_package: e.target.value })}
-                    placeholder="e.g., BSB"
+                    placeholder="Auto-populated, can override"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Auto-populated from qualification, but you can override if needed</p>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
