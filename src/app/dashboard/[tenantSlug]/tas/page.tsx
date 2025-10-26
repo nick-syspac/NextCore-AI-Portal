@@ -1,6 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
+
+// Dynamically import RichTextEditor to avoid SSR issues
+const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), { 
+  ssr: false,
+  loading: () => <div className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>
+});
 
 interface User {
   id: number;
@@ -134,6 +141,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
     qualification_name: '',
     training_package: '',
     sections: [] as any[],
+    units_of_competency: [] as Array<{ code: string; title: string }>,
     status: 'draft',
     create_version: false,
     change_summary: '',
@@ -240,6 +248,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
       qualification_name: doc.qualification_name || '',
       training_package: doc.training_package || '',
       sections: doc.sections || [],
+      units_of_competency: doc.metadata?.units_of_competency || [],
       status: doc.status || 'draft',
       create_version: false,
       change_summary: '',
@@ -303,16 +312,18 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
   };
 
   // Update section content
-  const updateSectionContent = (index: number, newContent: string) => {
-    const updatedSections = [...editForm.sections];
-    if (updatedSections[index]) {
-      updatedSections[index] = {
-        ...updatedSections[index],
-        content: newContent,
-      };
-      setEditForm({ ...editForm, sections: updatedSections });
-    }
-  };
+  const updateSectionContent = useCallback((index: number, newContent: string) => {
+    setEditForm(prevForm => {
+      const updatedSections = [...prevForm.sections];
+      if (updatedSections[index]) {
+        updatedSections[index] = {
+          ...updatedSections[index],
+          content: newContent,
+        };
+      }
+      return { ...prevForm, sections: updatedSections };
+    });
+  }, []);
 
   // Load templates from API
   const loadTemplates = async () => {
@@ -2634,6 +2645,58 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   </div>
                 </div>
 
+                {/* Units of Competency Table */}
+                <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">📚 Units of Competency</h3>
+                  
+                  {editForm.units_of_competency.length === 0 ? (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-2">📚</div>
+                      <p className="text-gray-600">No units of competency defined</p>
+                      <p className="text-sm text-gray-500 mt-1">Units will appear here once the TAS is generated with unit information</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full bg-white border border-gray-300 rounded-lg">
+                        <thead className="bg-gray-100">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-300">
+                              #
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-300">
+                              Unit Code
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-300">
+                              Unit Title
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {editForm.units_of_competency.map((unit: { code: string; title: string }, index: number) => (
+                            <tr key={index} className="hover:bg-gray-50 transition-colors">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                {index + 1}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
+                                {unit.code}
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-900">
+                                {unit.title}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <div className="mt-3 text-sm text-gray-600 flex items-center gap-2">
+                        <span className="font-medium">Total Units:</span>
+                        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-semibold">
+                          {editForm.units_of_competency.length}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Sections Editor */}
                 <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">📝 Document Sections</h3>
@@ -2645,49 +2708,99 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                       <p className="text-sm text-gray-500 mt-1">Sections will appear here once generated</p>
                     </div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       {editForm.sections.map((section: any, index: number) => (
-                        <div key={index} className="bg-white rounded-lg p-4 border border-gray-300">
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className="font-semibold text-gray-900">
+                        <div key={index} className="bg-white rounded-lg p-6 border border-gray-300 shadow-sm">
+                          <div className="flex items-center justify-between mb-4">
+                            <h4 className="font-semibold text-gray-900 text-lg">
                               {section.title || section.name || `Section ${index + 1}`}
                             </h4>
-                            <span className="text-sm text-gray-500">
-                              {section.tokens || 0} tokens
-                            </span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                                {section.tokens || 0} tokens
+                              </span>
+                              <button
+                                onClick={() => {
+                                  const preview = window.open('', '_blank');
+                                  if (preview) {
+                                    preview.document.write(`
+                                      <!DOCTYPE html>
+                                      <html>
+                                        <head>
+                                          <title>${section.title || 'Section'} Preview</title>
+                                          <style>
+                                            body {
+                                              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                                                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+                                              padding: 40px;
+                                              max-width: 800px;
+                                              margin: 0 auto;
+                                              line-height: 1.6;
+                                              color: #333;
+                                            }
+                                            h1, h2, h3, h4, h5, h6 {
+                                              margin-top: 1.5em;
+                                              margin-bottom: 0.5em;
+                                              color: #111;
+                                            }
+                                            p {
+                                              margin-bottom: 1em;
+                                            }
+                                            ul, ol {
+                                              margin-bottom: 1em;
+                                              padding-left: 2em;
+                                            }
+                                            blockquote {
+                                              border-left: 4px solid #ddd;
+                                              padding-left: 1em;
+                                              margin: 1em 0;
+                                              color: #666;
+                                            }
+                                            code {
+                                              background: #f4f4f4;
+                                              padding: 2px 6px;
+                                              border-radius: 3px;
+                                              font-family: 'Courier New', monospace;
+                                            }
+                                            pre {
+                                              background: #f4f4f4;
+                                              padding: 1em;
+                                              border-radius: 4px;
+                                              overflow-x: auto;
+                                            }
+                                          </style>
+                                        </head>
+                                        <body>
+                                          <h1>${section.title || 'Section Preview'}</h1>
+                                          ${section.content || '<p>No content</p>'}
+                                        </body>
+                                      </html>
+                                    `);
+                                    preview.document.close();
+                                  }
+                                }}
+                                className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1 rounded-lg transition-colors"
+                              >
+                                <span>👁️</span>
+                                <span className="font-medium">Preview</span>
+                              </button>
+                            </div>
                           </div>
                           
-                          <textarea
-                            value={section.content || ''}
-                            onChange={(e) => updateSectionContent(index, e.target.value)}
-                            rows={6}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-                            placeholder="Section content (HTML supported)"
-                          />
+                          <div className="mt-4">
+                            <RichTextEditor
+                              value={section.content || ''}
+                              onChange={(content) => updateSectionContent(index, content)}
+                              placeholder="Enter section content with rich formatting..."
+                              height="300px"
+                            />
+                          </div>
                           
-                          <div className="mt-2 flex items-center justify-between">
-                            <span className="text-xs text-gray-500">
-                              💡 Tip: HTML markup is supported for formatting
+                          <div className="mt-4 flex items-center justify-between text-xs text-gray-500 bg-blue-50 px-4 py-2 rounded-lg">
+                            <span className="flex items-center gap-2">
+                              <span>💡</span>
+                              <span>Use the toolbar above for rich text formatting (bold, italic, lists, headings, etc.)</span>
                             </span>
-                            <button
-                              onClick={() => {
-                                const preview = window.open('', '_blank');
-                                if (preview) {
-                                  preview.document.write(`
-                                    <html>
-                                      <head><title>Section Preview</title></head>
-                                      <body style="font-family: Arial, sans-serif; padding: 20px;">
-                                        ${section.content || '<p>No content</p>'}
-                                      </body>
-                                    </html>
-                                  `);
-                                  preview.document.close();
-                                }
-                              }}
-                              className="text-xs text-blue-600 hover:text-blue-800 font-medium"
-                            >
-                              👁️ Preview
-                            </button>
                           </div>
                         </div>
                       ))}
