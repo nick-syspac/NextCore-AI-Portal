@@ -218,6 +218,10 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
 
   // Open edit modal with document data
   const handleEditDocument = (doc: TAS) => {
+    console.log('🔧 Opening edit modal for doc:', doc.id);
+    console.log('📄 Document sections:', doc.sections);
+    console.log('📊 Sections count:', doc.sections?.length || 0);
+    
     setSelectedDocument(doc);
     setEditForm({
       title: doc.title || '',
@@ -229,6 +233,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
       create_version: false,
       change_summary: '',
     });
+    
+    console.log('✅ Edit form initialized with sections:', doc.sections?.length || 0);
+    
     setShowPreviewModal(false); // Close preview modal if open
     setShowEditModal(true);
   };
@@ -1806,9 +1813,67 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   <h3 className="text-xl font-bold text-gray-900 mb-4">📚 Document Sections</h3>
                   {selectedDocument.sections.map((section: any, index: number) => (
                     <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-3">
-                        {section.title || section.name}
-                      </h4>
+                      <div className="flex items-start justify-between mb-3">
+                        <h4 className="text-lg font-semibold text-gray-900">
+                          {section.title || section.name}
+                        </h4>
+                        <button
+                          onClick={async () => {
+                            if (!confirm(`Regenerate "${section.title || section.name}" section?`)) return;
+                            
+                            try {
+                              const response = await fetch(
+                                `${API_URL}/api/tenants/${params.tenantSlug}/tas/${selectedDocument.id}/regenerate_section/`,
+                                {
+                                  method: 'POST',
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                  },
+                                  body: JSON.stringify({
+                                    section_name: section.name,
+                                    ai_model: 'gpt-4o',
+                                  }),
+                                }
+                              );
+
+                              if (!response.ok) {
+                                const error = await response.json();
+                                throw new Error(error.message || 'Failed to regenerate section');
+                              }
+
+                              const result = await response.json();
+                              alert(result.message || 'Section regenerated successfully!');
+                              
+                              // Fetch the updated document directly from the API
+                              const docResponse = await fetch(
+                                `${API_URL}/api/tenants/${params.tenantSlug}/tas/${selectedDocument.id}/`,
+                                {
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                  },
+                                }
+                              );
+                              
+                              if (docResponse.ok) {
+                                const updatedDoc = await docResponse.json();
+                                console.log('✅ Document refreshed after regeneration:', updatedDoc.sections?.length || 0, 'sections');
+                                setSelectedDocument(updatedDoc);
+                              }
+                              
+                              // Refresh the document list for the grid view
+                              await loadTASDocuments();
+                            } catch (error: any) {
+                              console.error('❌ Regeneration error:', error);
+                              alert(`Error: ${error.message}`);
+                            }
+                          }}
+                          className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center gap-1"
+                          title="Regenerate this section"
+                        >
+                          <span>🔄</span>
+                          <span>Regenerate</span>
+                        </button>
+                      </div>
                       <div 
                         className="prose prose-sm max-w-none text-gray-700"
                         dangerouslySetInnerHTML={{ __html: section.content }}
