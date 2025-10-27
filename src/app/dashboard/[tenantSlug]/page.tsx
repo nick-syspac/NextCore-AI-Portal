@@ -473,7 +473,7 @@ export default function TenantDashboardPage() {
                 </p>
               </div>
               <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <div className="text-white text-sm font-medium">5 AI Tools</div>
+                <div className="text-white text-sm font-medium">6 AI Tools</div>
               </div>
             </div>
           </div>
@@ -565,6 +565,24 @@ export default function TenantDashboardPage() {
               <Link href={`/dashboard/${tenantSlug}/email-assistant`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
                   ✉️ Draft Replies
+                </button>
+              </Link>
+            </div>
+
+            {/* Micro-Credential Builder */}
+            <div className="bg-white rounded-lg shadow-md p-6 border-2 border-teal-200 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Micro-Credential Builder</h3>
+                <span className="px-3 py-1 bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-800 text-xs font-medium rounded-full">
+                  🎯 Curriculum Compression
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Generate short courses from units • Curriculum compression + metadata tagging • New course creation in minutes
+              </p>
+              <Link href={`/dashboard/${tenantSlug}/micro-credential`}>
+                <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
+                  🎓 Build Course
                 </button>
               </Link>
             </div>
