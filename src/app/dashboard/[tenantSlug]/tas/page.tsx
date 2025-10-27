@@ -2709,7 +2709,13 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                     </div>
                   ) : (
                     <div className="space-y-6">
-                      {editForm.sections.map((section: any, index: number) => (
+                      {editForm.sections
+                        .filter((section: any) => {
+                          // Skip the Units of Competency section - it's displayed in the dedicated table above
+                          const sectionTitle = (section.title || section.name || '').toLowerCase();
+                          return !sectionTitle.includes('units of competency');
+                        })
+                        .map((section: any, index: number) => (
                         <div key={index} className="bg-white rounded-lg p-6 border border-gray-300 shadow-sm">
                           <div className="flex items-center justify-between mb-4">
                             <h4 className="font-semibold text-gray-900 text-lg">
