@@ -1,3 +1,9 @@
+# [1.1.0](https://github.com/nick-syspac/NextCore-AI-Portal/compare/v1.0.0...v1.1.0) (2025-11-01)
+
+### Features
+
+- add scripts for local development and production server management ([367c765](https://github.com/nick-syspac/NextCore-AI-Portal/commit/367c765cb3732b2801439c311f982b5751983ef6))
+
 # 1.0.0 (2025-11-01)
 
 ### Bug Fixes
