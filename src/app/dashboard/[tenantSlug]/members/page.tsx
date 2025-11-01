@@ -21,7 +21,7 @@ export default function TeamMembersPage() {
   const params = useParams();
   const router = useRouter();
   const tenantSlug = params.tenantSlug as string;
-  
+
   const [users, setUsers] = useState<TenantUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -33,12 +33,13 @@ export default function TeamMembersPage() {
       return;
     }
 
-    api.getTenantUsers(tenantSlug, authToken)
-      .then((data) => {
+    api
+      .getTenantUsers(tenantSlug, authToken)
+      .then(data => {
         console.log('Tenant users data:', data);
         setUsers(data.results || data);
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Error fetching users:', err);
         setError('Failed to load team members');
       })
@@ -120,7 +121,7 @@ export default function TeamMembersPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {users.map((tenantUser) => (
+                {users.map(tenantUser => (
                   <tr key={tenantUser.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -133,9 +134,7 @@ export default function TeamMembersPage() {
                           <div className="text-sm font-medium text-gray-900">
                             @{tenantUser.user_username}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            User ID: {tenantUser.user}
-                          </div>
+                          <div className="text-sm text-gray-500">User ID: {tenantUser.user}</div>
                         </div>
                       </div>
                     </td>
@@ -143,7 +142,9 @@ export default function TeamMembersPage() {
                       <div className="text-sm text-gray-900">{tenantUser.user_email}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadgeColor(tenantUser.role)}`}>
+                      <span
+                        className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadgeColor(tenantUser.role)}`}
+                      >
                         {tenantUser.role.toUpperCase()}
                       </span>
                     </td>

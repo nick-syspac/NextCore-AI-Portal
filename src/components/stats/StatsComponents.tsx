@@ -27,9 +27,7 @@ export function StatCard({ title, value, change, subtitle, icon, trend }: StatCa
           <h3 className="text-sm font-medium text-gray-600">{title}</h3>
         </div>
         {change !== undefined && (
-          <span className={`text-sm font-medium ${getTrendColor()}`}>
-            {formatChange(change)}
-          </span>
+          <span className={`text-sm font-medium ${getTrendColor()}`}>{formatChange(change)}</span>
         )}
       </div>
       <p className="text-3xl font-bold text-gray-900 mb-1">{value}</p>
@@ -69,9 +67,15 @@ interface ProgressBarProps {
   showPercentage?: boolean;
 }
 
-export function ProgressBar({ label, value, max, color = 'blue', showPercentage = true }: ProgressBarProps) {
+export function ProgressBar({
+  label,
+  value,
+  max,
+  color = 'blue',
+  showPercentage = true,
+}: ProgressBarProps) {
   const percentage = Math.min((value / max) * 100, 100);
-  
+
   const colorClasses = {
     blue: 'bg-blue-600',
     green: 'bg-green-600',
@@ -83,9 +87,7 @@ export function ProgressBar({ label, value, max, color = 'blue', showPercentage 
     <div>
       <div className="flex justify-between text-sm mb-1">
         <span className="text-gray-700 font-medium">{label}</span>
-        {showPercentage && (
-          <span className="text-gray-600">{percentage.toFixed(0)}%</span>
-        )}
+        {showPercentage && <span className="text-gray-600">{percentage.toFixed(0)}%</span>}
       </div>
       <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
         <div

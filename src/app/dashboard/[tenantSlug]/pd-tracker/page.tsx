@@ -1,92 +1,92 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 
 interface PDActivity {
-  id: number
-  activity_number: string
-  activity_title: string
-  activity_type: string
-  start_date: string
-  end_date: string
-  hours_completed: number
-  status: string
-  verification_status: string
-  maintains_vocational_currency: boolean
-  maintains_industry_currency: boolean
-  maintains_teaching_currency: boolean
-  compliance_areas: string[]
-  description: string
-  provider: string
+  id: number;
+  activity_number: string;
+  activity_title: string;
+  activity_type: string;
+  start_date: string;
+  end_date: string;
+  hours_completed: number;
+  status: string;
+  verification_status: string;
+  maintains_vocational_currency: boolean;
+  maintains_industry_currency: boolean;
+  maintains_teaching_currency: boolean;
+  compliance_areas: string[];
+  description: string;
+  provider: string;
 }
 
 interface TrainerProfile {
-  id: number
-  profile_number: string
-  trainer_name: string
-  role: string
-  total_pd_hours: number
-  current_year_hours: number
-  annual_pd_goal_hours: number
-  vocational_currency_status: string
-  industry_currency_status: string
-  last_vocational_pd: string | null
-  last_industry_pd: string | null
-  vocational_currency_days_remaining: number | null
-  industry_currency_days_remaining: number | null
-  annual_progress_percentage: number
+  id: number;
+  profile_number: string;
+  trainer_name: string;
+  role: string;
+  total_pd_hours: number;
+  current_year_hours: number;
+  annual_pd_goal_hours: number;
+  vocational_currency_status: string;
+  industry_currency_status: string;
+  last_vocational_pd: string | null;
+  last_industry_pd: string | null;
+  vocational_currency_days_remaining: number | null;
+  industry_currency_days_remaining: number | null;
+  annual_progress_percentage: number;
 }
 
 interface PDSuggestion {
-  id: number
-  suggestion_number: string
-  activity_title: string
-  description: string
-  rationale: string
-  addresses_currency_gap: string
-  priority_level: string
-  estimated_hours: number
-  suggested_timeframe: string
-  status: string
-  is_urgent: boolean
+  id: number;
+  suggestion_number: string;
+  activity_title: string;
+  description: string;
+  rationale: string;
+  addresses_currency_gap: string;
+  priority_level: string;
+  estimated_hours: number;
+  suggested_timeframe: string;
+  status: string;
+  is_urgent: boolean;
 }
 
 interface ComplianceCheck {
-  id: number
-  check_number: string
-  check_date: string
-  overall_status: string
-  compliance_score: number
-  hours_required: number
-  hours_completed: number
-  hours_shortfall: number
-  findings: Array<{ issue: string }>
-  recommendations: Array<{ recommendation: string }>
+  id: number;
+  check_number: string;
+  check_date: string;
+  overall_status: string;
+  compliance_score: number;
+  hours_required: number;
+  hours_completed: number;
+  hours_shortfall: number;
+  findings: Array<{ issue: string }>;
+  recommendations: Array<{ recommendation: string }>;
 }
 
 interface DashboardStats {
-  total_activities: number
-  total_hours: number
-  activities_last_30_days: number
-  hours_last_30_days: number
-  trainers_current: number
-  trainers_expiring_soon: number
-  trainers_expired: number
-  activities_by_type: Record<string, number>
-  monthly_hours: Array<{ month: string; hours: number }>
+  total_activities: number;
+  total_hours: number;
+  activities_last_30_days: number;
+  hours_last_30_days: number;
+  trainers_current: number;
+  trainers_expiring_soon: number;
+  trainers_expired: number;
+  activities_by_type: Record<string, number>;
+  monthly_hours: Array<{ month: string; hours: number }>;
 }
 
 export default function PDTrackerPage() {
-  const params = useParams() as { tenantSlug: string }
-  
-  const [activities, setActivities] = useState<PDActivity[]>([])
-  const [profile, setProfile] = useState<TrainerProfile | null>(null)
-  const [suggestions, setSuggestions] = useState<PDSuggestion[]>([])
-  const [complianceChecks, setComplianceChecks] = useState<ComplianceCheck[]>([])
-  const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState('log')
+  const params = useParams() as { tenantSlug: string };
+
+  const [activities, setActivities] = useState<PDActivity[]>([]);
+  const [profile, setProfile] = useState<TrainerProfile | null>(null);
+  const [suggestions, setSuggestions] = useState<PDSuggestion[]>([]);
+  const [complianceChecks, setComplianceChecks] = useState<ComplianceCheck[]>([]);
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('log');
 
   const [activityForm, setActivityForm] = useState({
     trainer_id: 'TR001',
@@ -100,77 +100,77 @@ export default function PDTrackerPage() {
     hours_completed: 0,
     maintains_vocational_currency: false,
     maintains_industry_currency: false,
-    maintains_teaching_currency: false
-  })
+    maintains_teaching_currency: false,
+  });
 
   useEffect(() => {
-    loadDashboard()
-    loadProfile()
-    loadActivities()
-    loadSuggestions()
-  }, [params.tenantSlug])
+    loadDashboard();
+    loadProfile();
+    loadActivities();
+    loadSuggestions();
+  }, [params.tenantSlug]);
 
   const loadDashboard = async () => {
     try {
       const response = await fetch(
         `/api/tenants/${params.tenantSlug}/pd-tracker/checks/dashboard/?tenant=${params.tenantSlug}`
-      )
+      );
       if (response.ok) {
-        const data = await response.json()
-        setDashboardStats(data)
+        const data = await response.json();
+        setDashboardStats(data);
       }
     } catch (error) {
-      console.error('Failed to load dashboard:', error)
+      console.error('Failed to load dashboard:', error);
     }
-  }
+  };
 
   const loadProfile = async () => {
     try {
       const response = await fetch(
         `/api/tenants/${params.tenantSlug}/pd-tracker/profiles/?tenant=${params.tenantSlug}&trainer_id=TR001`
-      )
+      );
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json();
         if (data.results && data.results.length > 0) {
-          setProfile(data.results[0])
+          setProfile(data.results[0]);
         }
       }
     } catch (error) {
-      console.error('Failed to load profile:', error)
+      console.error('Failed to load profile:', error);
     }
-  }
+  };
 
   const loadActivities = async () => {
     try {
       const response = await fetch(
         `/api/tenants/${params.tenantSlug}/pd-tracker/activities/?tenant=${params.tenantSlug}&trainer_id=TR001`
-      )
+      );
       if (response.ok) {
-        const data = await response.json()
-        setActivities(data.results || [])
+        const data = await response.json();
+        setActivities(data.results || []);
       }
     } catch (error) {
-      console.error('Failed to load activities:', error)
+      console.error('Failed to load activities:', error);
     }
-  }
+  };
 
   const loadSuggestions = async () => {
     try {
       const response = await fetch(
         `/api/tenants/${params.tenantSlug}/pd-tracker/suggestions/?trainer_id=TR001`
-      )
+      );
       if (response.ok) {
-        const data = await response.json()
-        setSuggestions(data.results || [])
+        const data = await response.json();
+        setSuggestions(data.results || []);
       }
     } catch (error) {
-      console.error('Failed to load suggestions:', error)
+      console.error('Failed to load suggestions:', error);
     }
-  }
+  };
 
   const handleLogActivity = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     try {
       const response = await fetch(
@@ -180,16 +180,16 @@ export default function PDTrackerPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             tenant: params.tenantSlug,
-            ...activityForm
-          })
+            ...activityForm,
+          }),
         }
-      )
+      );
 
       if (response.ok) {
-        const data = await response.json()
-        setActivities([data.activity, ...activities])
-        setProfile(data.profile)
-        
+        const data = await response.json();
+        setActivities([data.activity, ...activities]);
+        setProfile(data.profile);
+
         setActivityForm({
           ...activityForm,
           activity_title: '',
@@ -200,20 +200,20 @@ export default function PDTrackerPage() {
           hours_completed: 0,
           maintains_vocational_currency: false,
           maintains_industry_currency: false,
-          maintains_teaching_currency: false
-        })
-        
-        loadDashboard()
+          maintains_teaching_currency: false,
+        });
+
+        loadDashboard();
       }
     } catch (error) {
-      console.error('Failed to log activity:', error)
+      console.error('Failed to log activity:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleGenerateSuggestions = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await fetch(
         `/api/tenants/${params.tenantSlug}/pd-tracker/suggestions/generate_suggestions/`,
@@ -222,28 +222,28 @@ export default function PDTrackerPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             trainer_id: 'TR001',
-            max_suggestions: 5
-          })
+            max_suggestions: 5,
+          }),
         }
-      )
+      );
 
       if (response.ok) {
-        const data = await response.json()
-        setSuggestions(data.suggestions || [])
+        const data = await response.json();
+        setSuggestions(data.suggestions || []);
       }
     } catch (error) {
-      console.error('Failed to generate suggestions:', error)
+      console.error('Failed to generate suggestions:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleRunComplianceCheck = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const today = new Date()
-      const oneYearAgo = new Date(today)
-      oneYearAgo.setFullYear(today.getFullYear() - 1)
+      const today = new Date();
+      const oneYearAgo = new Date(today);
+      oneYearAgo.setFullYear(today.getFullYear() - 1);
 
       const response = await fetch(
         `/api/tenants/${params.tenantSlug}/pd-tracker/checks/compliance_report/`,
@@ -254,21 +254,21 @@ export default function PDTrackerPage() {
             tenant: params.tenantSlug,
             period_start: oneYearAgo.toISOString().split('T')[0],
             period_end: today.toISOString().split('T')[0],
-            report_format: 'summary'
-          })
+            report_format: 'summary',
+          }),
         }
-      )
+      );
 
       if (response.ok) {
-        const data = await response.json()
-        setComplianceChecks(data.compliance_checks || [])
+        const data = await response.json();
+        setComplianceChecks(data.compliance_checks || []);
       }
     } catch (error) {
-      console.error('Failed to run compliance check:', error)
+      console.error('Failed to run compliance check:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -276,41 +276,41 @@ export default function PDTrackerPage() {
       case 'compliant':
       case 'verified':
       case 'completed':
-        return 'bg-green-100 text-green-800'
+        return 'bg-green-100 text-green-800';
       case 'expiring_soon':
       case 'at_risk':
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'bg-yellow-100 text-yellow-800';
       case 'expired':
       case 'non_compliant':
       case 'rejected':
-        return 'bg-red-100 text-red-800'
+        return 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-gray-100 text-gray-800';
     }
-  }
+  };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'critical':
-        return 'bg-red-100 text-red-800 border-red-300'
+        return 'bg-red-100 text-red-800 border-red-300';
       case 'high':
-        return 'bg-orange-100 text-orange-800 border-orange-300'
+        return 'bg-orange-100 text-orange-800 border-orange-300';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300'
+        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
       case 'low':
-        return 'bg-blue-100 text-blue-800 border-blue-300'
+        return 'bg-blue-100 text-blue-800 border-blue-300';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-300'
+        return 'bg-gray-100 text-gray-800 border-gray-300';
     }
-  }
+  };
 
   const formatActivityType = (type: string) => {
     return type
       .split('_')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-  }
+      .join(' ');
+  };
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -330,7 +330,9 @@ export default function PDTrackerPage() {
         <div className="grid gap-4 md:grid-cols-4 mb-6">
           <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
             <h3 className="text-sm font-medium text-gray-600 mb-2">Total PD Hours</h3>
-            <div className="text-2xl font-bold text-gray-900">{profile.total_pd_hours.toFixed(1)}</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {profile.total_pd_hours.toFixed(1)}
+            </div>
             <p className="text-xs text-gray-500 mt-1">All time</p>
           </div>
 
@@ -352,7 +354,9 @@ export default function PDTrackerPage() {
 
           <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
             <h3 className="text-sm font-medium text-gray-600 mb-2">Vocational Currency</h3>
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(profile.vocational_currency_status)}`}>
+            <span
+              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(profile.vocational_currency_status)}`}
+            >
               {formatActivityType(profile.vocational_currency_status)}
             </span>
             {profile.vocational_currency_days_remaining !== null && (
@@ -364,7 +368,9 @@ export default function PDTrackerPage() {
 
           <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
             <h3 className="text-sm font-medium text-gray-600 mb-2">Industry Currency</h3>
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(profile.industry_currency_status)}`}>
+            <span
+              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(profile.industry_currency_status)}`}
+            >
               {formatActivityType(profile.industry_currency_status)}
             </span>
             {profile.industry_currency_days_remaining !== null && (
@@ -385,8 +391,8 @@ export default function PDTrackerPage() {
               { id: 'suggestions', name: '💡 Suggestions' },
               { id: 'currency', name: '⏰ Currency' },
               { id: 'compliance', name: '🛡️ Compliance' },
-              { id: 'reports', name: '📊 Reports' }
-            ].map((tab) => (
+              { id: 'reports', name: '📊 Reports' },
+            ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -409,15 +415,19 @@ export default function PDTrackerPage() {
               <p className="text-gray-600 mb-6">
                 Record professional development activities and update trainer currency
               </p>
-              
+
               <form onSubmit={handleLogActivity} className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Activity Type</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Activity Type
+                    </label>
                     <select
                       className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                       value={activityForm.activity_type}
-                      onChange={(e) => setActivityForm({ ...activityForm, activity_type: e.target.value })}
+                      onChange={e =>
+                        setActivityForm({ ...activityForm, activity_type: e.target.value })
+                      }
                       required
                     >
                       <option value="formal_course">Formal Course/Training</option>
@@ -441,31 +451,39 @@ export default function PDTrackerPage() {
                       type="text"
                       className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                       value={activityForm.provider}
-                      onChange={(e) => setActivityForm({ ...activityForm, provider: e.target.value })}
+                      onChange={e => setActivityForm({ ...activityForm, provider: e.target.value })}
                       placeholder="Training provider"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Activity Title</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Activity Title
+                  </label>
                   <input
                     type="text"
                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                     value={activityForm.activity_title}
-                    onChange={(e) => setActivityForm({ ...activityForm, activity_title: e.target.value })}
+                    onChange={e =>
+                      setActivityForm({ ...activityForm, activity_title: e.target.value })
+                    }
                     placeholder="e.g., Advanced Training Techniques Workshop"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                  </label>
                   <textarea
                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                     rows={3}
                     value={activityForm.description}
-                    onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
+                    onChange={e =>
+                      setActivityForm({ ...activityForm, description: e.target.value })
+                    }
                     placeholder="Describe the PD activity"
                     required
                   />
@@ -473,12 +491,16 @@ export default function PDTrackerPage() {
 
                 <div className="grid gap-4 md:grid-cols-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Start Date
+                    </label>
                     <input
                       type="date"
                       className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                       value={activityForm.start_date}
-                      onChange={(e) => setActivityForm({ ...activityForm, start_date: e.target.value })}
+                      onChange={e =>
+                        setActivityForm({ ...activityForm, start_date: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -489,7 +511,7 @@ export default function PDTrackerPage() {
                       type="date"
                       className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                       value={activityForm.end_date}
-                      onChange={(e) => setActivityForm({ ...activityForm, end_date: e.target.value })}
+                      onChange={e => setActivityForm({ ...activityForm, end_date: e.target.value })}
                       required
                     />
                   </div>
@@ -502,21 +524,33 @@ export default function PDTrackerPage() {
                       min="0"
                       className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                       value={activityForm.hours_completed}
-                      onChange={(e) => setActivityForm({ ...activityForm, hours_completed: parseFloat(e.target.value) })}
+                      onChange={e =>
+                        setActivityForm({
+                          ...activityForm,
+                          hours_completed: parseFloat(e.target.value),
+                        })
+                      }
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Currency Maintained</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Currency Maintained
+                  </label>
                   <div className="space-y-2">
                     <label className="flex items-center space-x-2">
                       <input
                         type="checkbox"
                         className="rounded border-gray-300 text-teal-600"
                         checked={activityForm.maintains_vocational_currency}
-                        onChange={(e) => setActivityForm({ ...activityForm, maintains_vocational_currency: e.target.checked })}
+                        onChange={e =>
+                          setActivityForm({
+                            ...activityForm,
+                            maintains_vocational_currency: e.target.checked,
+                          })
+                        }
                       />
                       <span className="text-sm text-gray-700">Vocational Currency</span>
                     </label>
@@ -525,7 +559,12 @@ export default function PDTrackerPage() {
                         type="checkbox"
                         className="rounded border-gray-300 text-teal-600"
                         checked={activityForm.maintains_industry_currency}
-                        onChange={(e) => setActivityForm({ ...activityForm, maintains_industry_currency: e.target.checked })}
+                        onChange={e =>
+                          setActivityForm({
+                            ...activityForm,
+                            maintains_industry_currency: e.target.checked,
+                          })
+                        }
                       />
                       <span className="text-sm text-gray-700">Industry Currency</span>
                     </label>
@@ -534,7 +573,12 @@ export default function PDTrackerPage() {
                         type="checkbox"
                         className="rounded border-gray-300 text-teal-600"
                         checked={activityForm.maintains_teaching_currency}
-                        onChange={(e) => setActivityForm({ ...activityForm, maintains_teaching_currency: e.target.checked })}
+                        onChange={e =>
+                          setActivityForm({
+                            ...activityForm,
+                            maintains_teaching_currency: e.target.checked,
+                          })
+                        }
                       />
                       <span className="text-sm text-gray-700">Teaching Currency</span>
                     </label>
@@ -556,13 +600,18 @@ export default function PDTrackerPage() {
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-2">PD Activities</h2>
               <p className="text-gray-600 mb-6">View all recorded PD activities</p>
-              
+
               <div className="space-y-4">
-                {activities.map((activity) => (
-                  <div key={activity.id} className="border rounded-lg p-4 bg-white hover:shadow-md transition-shadow">
+                {activities.map(activity => (
+                  <div
+                    key={activity.id}
+                    className="border rounded-lg p-4 bg-white hover:shadow-md transition-shadow"
+                  >
                     <div className="flex justify-between mb-2">
                       <h3 className="font-semibold text-gray-900">{activity.activity_title}</h3>
-                      <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(activity.status)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs ${getStatusColor(activity.status)}`}
+                      >
                         {formatActivityType(activity.status)}
                       </span>
                     </div>
@@ -570,11 +619,15 @@ export default function PDTrackerPage() {
                     <div className="grid grid-cols-3 gap-4 text-sm">
                       <div>
                         <span className="text-gray-500">Type: </span>
-                        <span className="font-medium">{formatActivityType(activity.activity_type)}</span>
+                        <span className="font-medium">
+                          {formatActivityType(activity.activity_type)}
+                        </span>
                       </div>
                       <div>
                         <span className="text-gray-500">Date: </span>
-                        <span className="font-medium">{new Date(activity.start_date).toLocaleDateString()}</span>
+                        <span className="font-medium">
+                          {new Date(activity.start_date).toLocaleDateString()}
+                        </span>
                       </div>
                       <div>
                         <span className="text-gray-500">Hours: </span>
@@ -608,13 +661,18 @@ export default function PDTrackerPage() {
                   💡 Generate
                 </button>
               </div>
-              
+
               <div className="space-y-4">
-                {suggestions.map((suggestion) => (
-                  <div key={suggestion.id} className={`border-2 rounded-lg p-4 ${suggestion.is_urgent ? 'border-red-300 bg-red-50' : 'border-gray-200'}`}>
+                {suggestions.map(suggestion => (
+                  <div
+                    key={suggestion.id}
+                    className={`border-2 rounded-lg p-4 ${suggestion.is_urgent ? 'border-red-300 bg-red-50' : 'border-gray-200'}`}
+                  >
                     <div className="flex justify-between mb-2">
                       <h3 className="font-semibold">{suggestion.activity_title}</h3>
-                      <span className={`px-3 py-1 rounded-full text-xs border ${getPriorityColor(suggestion.priority_level)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs border ${getPriorityColor(suggestion.priority_level)}`}
+                      >
                         {suggestion.priority_level.toUpperCase()}
                       </span>
                     </div>
@@ -652,24 +710,32 @@ export default function PDTrackerPage() {
                 <div className="border rounded-lg p-4">
                   <div className="flex justify-between mb-2">
                     <h3 className="font-semibold">Vocational Currency</h3>
-                    <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(profile.vocational_currency_status)}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs ${getStatusColor(profile.vocational_currency_status)}`}
+                    >
                       {formatActivityType(profile.vocational_currency_status)}
                     </span>
                   </div>
                   {profile.vocational_currency_days_remaining !== null && (
-                    <p className="text-sm text-gray-600">{profile.vocational_currency_days_remaining} days remaining</p>
+                    <p className="text-sm text-gray-600">
+                      {profile.vocational_currency_days_remaining} days remaining
+                    </p>
                   )}
                 </div>
 
                 <div className="border rounded-lg p-4">
                   <div className="flex justify-between mb-2">
                     <h3 className="font-semibold">Industry Currency</h3>
-                    <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(profile.industry_currency_status)}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs ${getStatusColor(profile.industry_currency_status)}`}
+                    >
                       {formatActivityType(profile.industry_currency_status)}
                     </span>
                   </div>
                   {profile.industry_currency_days_remaining !== null && (
-                    <p className="text-sm text-gray-600">{profile.industry_currency_days_remaining} days remaining</p>
+                    <p className="text-sm text-gray-600">
+                      {profile.industry_currency_days_remaining} days remaining
+                    </p>
                   )}
                 </div>
               </div>
@@ -688,19 +754,23 @@ export default function PDTrackerPage() {
                   🛡️ Run Check
                 </button>
               </div>
-              
+
               <div className="space-y-4">
-                {complianceChecks.map((check) => (
+                {complianceChecks.map(check => (
                   <div key={check.id} className="border rounded-lg p-4">
                     <div className="flex justify-between mb-3">
                       <h3 className="font-semibold">{check.check_number}</h3>
-                      <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(check.overall_status)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs ${getStatusColor(check.overall_status)}`}
+                      >
                         {formatActivityType(check.overall_status)}
                       </span>
                     </div>
                     <div className="grid grid-cols-3 gap-4 mb-3">
                       <div className="text-center p-3 bg-blue-50 rounded">
-                        <p className="text-2xl font-bold text-blue-600">{check.compliance_score}%</p>
+                        <p className="text-2xl font-bold text-blue-600">
+                          {check.compliance_score}%
+                        </p>
                         <p className="text-xs text-gray-500">Score</p>
                       </div>
                       <div className="text-center p-3 bg-green-50 rounded">
@@ -747,15 +817,21 @@ export default function PDTrackerPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between p-2 bg-green-50 rounded">
                       <span>Current</span>
-                      <span className="font-bold text-green-600">{dashboardStats.trainers_current}</span>
+                      <span className="font-bold text-green-600">
+                        {dashboardStats.trainers_current}
+                      </span>
                     </div>
                     <div className="flex justify-between p-2 bg-yellow-50 rounded">
                       <span>Expiring</span>
-                      <span className="font-bold text-yellow-600">{dashboardStats.trainers_expiring_soon}</span>
+                      <span className="font-bold text-yellow-600">
+                        {dashboardStats.trainers_expiring_soon}
+                      </span>
                     </div>
                     <div className="flex justify-between p-2 bg-red-50 rounded">
                       <span>Expired</span>
-                      <span className="font-bold text-red-600">{dashboardStats.trainers_expired}</span>
+                      <span className="font-bold text-red-600">
+                        {dashboardStats.trainers_expired}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -765,5 +841,5 @@ export default function PDTrackerPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

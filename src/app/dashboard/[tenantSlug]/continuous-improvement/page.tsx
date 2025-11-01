@@ -66,12 +66,12 @@ export default function ContinuousImprovementPage() {
   const [actions, setActions] = useState<ImprovementAction[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [selectedAction, setSelectedAction] = useState<ImprovementAction | null>(null);
-  
+
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showAIClassifyModal, setShowAIClassifyModal] = useState(false);
-  
+
   // Form state
   const [newAction, setNewAction] = useState({
     action_number: '',
@@ -82,7 +82,7 @@ export default function ContinuousImprovementPage() {
     target_completion_date: '',
     is_critical_compliance: false,
   });
-  
+
   // AI Classification result
   const [aiClassification, setAIClassification] = useState<any>(null);
   const [classifying, setClassifying] = useState(false);
@@ -102,7 +102,8 @@ export default function ContinuousImprovementPage() {
         id: 1,
         action_number: 'CI-2024-001',
         title: 'Improve trainer qualification verification process',
-        description: 'Implement automated verification system for trainer qualifications against ASQA requirements including TAE40116 and industry experience validation.',
+        description:
+          'Implement automated verification system for trainer qualifications against ASQA requirements including TAE40116 and industry experience validation.',
         category_name: 'Trainer & Assessor Qualifications',
         priority: 'critical',
         priority_display: 'Critical',
@@ -112,7 +113,8 @@ export default function ContinuousImprovementPage() {
         source_display: 'Audit Finding',
         compliance_status: 'at_risk',
         compliance_status_display: 'At Risk',
-        ai_summary: 'Action focuses on automating trainer qualification verification. Key areas: automated, verification, trainer, qualifications, requirements.',
+        ai_summary:
+          'Action focuses on automating trainer qualification verification. Key areas: automated, verification, trainer, qualifications, requirements.',
         ai_keywords: ['trainer', 'qualification', 'verification', 'automated', 'tae40116'],
         ai_classified_category: 'trainer_qualifications',
         ai_classification_confidence: 0.92,
@@ -132,7 +134,8 @@ export default function ContinuousImprovementPage() {
         id: 2,
         action_number: 'CI-2024-002',
         title: 'Update assessment validation schedule',
-        description: 'Establish quarterly validation meetings with industry representatives to ensure assessment tools remain current and aligned with industry standards.',
+        description:
+          'Establish quarterly validation meetings with industry representatives to ensure assessment tools remain current and aligned with industry standards.',
         category_name: 'Training & Assessment',
         priority: 'high',
         priority_display: 'High',
@@ -142,7 +145,8 @@ export default function ContinuousImprovementPage() {
         source_display: 'Self Assessment',
         compliance_status: 'completed',
         compliance_status_display: 'Completed',
-        ai_summary: 'Quarterly validation meetings established. Key areas: quarterly, validation, assessment, industry, standards.',
+        ai_summary:
+          'Quarterly validation meetings established. Key areas: quarterly, validation, assessment, industry, standards.',
         ai_keywords: ['assessment', 'validation', 'quarterly', 'industry', 'standards'],
         ai_classified_category: 'training_assessment',
         ai_classification_confidence: 0.88,
@@ -162,7 +166,8 @@ export default function ContinuousImprovementPage() {
         id: 3,
         action_number: 'CI-2024-003',
         title: 'Implement student feedback survey system',
-        description: 'Deploy new online survey platform for collecting systematic student feedback on training delivery, facilities, and support services.',
+        description:
+          'Deploy new online survey platform for collecting systematic student feedback on training delivery, facilities, and support services.',
         category_name: 'Quality Assurance',
         priority: 'medium',
         priority_display: 'Medium',
@@ -172,7 +177,8 @@ export default function ContinuousImprovementPage() {
         source_display: 'Stakeholder Feedback',
         compliance_status: 'compliant',
         compliance_status_display: 'Compliant',
-        ai_summary: 'Online feedback system for student input. Key areas: student, feedback, survey, delivery, facilities.',
+        ai_summary:
+          'Online feedback system for student input. Key areas: student, feedback, survey, delivery, facilities.',
         ai_keywords: ['student', 'feedback', 'survey', 'online', 'delivery'],
         ai_classified_category: 'quality_assurance',
         ai_classification_confidence: 0.85,
@@ -192,7 +198,8 @@ export default function ContinuousImprovementPage() {
         id: 4,
         action_number: 'CI-2024-004',
         title: 'Review and update marketing materials compliance',
-        description: 'Audit all marketing materials to ensure compliance with ASQA Standards for Registered Training Organisations 2015, particularly Standard 4.',
+        description:
+          'Audit all marketing materials to ensure compliance with ASQA Standards for Registered Training Organisations 2015, particularly Standard 4.',
         category_name: 'Marketing & Recruitment',
         priority: 'high',
         priority_display: 'High',
@@ -202,10 +209,11 @@ export default function ContinuousImprovementPage() {
         source_display: 'Regulator Feedback',
         compliance_status: 'overdue',
         compliance_status_display: 'Overdue',
-        ai_summary: 'Marketing materials compliance audit required. Key areas: marketing, compliance, asqa, standard, materials.',
+        ai_summary:
+          'Marketing materials compliance audit required. Key areas: marketing, compliance, asqa, standard, materials.',
         ai_keywords: ['marketing', 'compliance', 'asqa', 'standard', 'audit'],
         ai_classified_category: 'marketing_recruitment',
-        ai_classification_confidence: 0.90,
+        ai_classification_confidence: 0.9,
         ai_related_standards: ['4.1', '4.2'],
         identified_date: '2024-09-01',
         target_completion_date: '2024-10-15',
@@ -315,40 +323,58 @@ export default function ContinuousImprovementPage() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'high':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low':
+        return 'bg-green-100 text-green-800 border-green-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in_progress': return 'bg-blue-100 text-blue-800';
-      case 'planned': return 'bg-purple-100 text-purple-800';
-      case 'identified': return 'bg-gray-100 text-gray-800';
-      case 'on_hold': return 'bg-yellow-100 text-yellow-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'in_progress':
+        return 'bg-blue-100 text-blue-800';
+      case 'planned':
+        return 'bg-purple-100 text-purple-800';
+      case 'identified':
+        return 'bg-gray-100 text-gray-800';
+      case 'on_hold':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getComplianceColor = (compliance: string) => {
     switch (compliance) {
-      case 'compliant': return 'bg-green-100 text-green-800';
-      case 'at_risk': return 'bg-yellow-100 text-yellow-800';
-      case 'overdue': return 'bg-red-100 text-red-800';
-      case 'completed': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'compliant':
+        return 'bg-green-100 text-green-800';
+      case 'at_risk':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'overdue':
+        return 'bg-red-100 text-red-800';
+      case 'completed':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const filteredActions = actions.filter(action => {
     if (filters.status !== 'all' && action.status !== filters.status) return false;
     if (filters.priority !== 'all' && action.priority !== filters.priority) return false;
-    if (filters.compliance !== 'all' && action.compliance_status !== filters.compliance) return false;
+    if (filters.compliance !== 'all' && action.compliance_status !== filters.compliance)
+      return false;
     return true;
   });
 
@@ -363,7 +389,9 @@ export default function ContinuousImprovementPage() {
               🤖 AI Classified
             </span>
           </div>
-          <p className="text-gray-600">Track improvement actions with AI classification and real-time compliance monitoring</p>
+          <p className="text-gray-600">
+            Track improvement actions with AI classification and real-time compliance monitoring
+          </p>
         </div>
 
         {/* Tabs */}
@@ -424,9 +452,7 @@ export default function ContinuousImprovementPage() {
               <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
                 <div className="text-3xl font-bold text-gray-900">{stats.at_risk_count}</div>
                 <div className="text-sm text-gray-600 mt-1">At Risk</div>
-                <div className="text-xs text-yellow-600 mt-2">
-                  Due within 7 days
-                </div>
+                <div className="text-xs text-yellow-600 mt-2">Due within 7 days</div>
               </div>
 
               <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
@@ -454,9 +480,13 @@ export default function ContinuousImprovementPage() {
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full ${
-                              status === 'completed' ? 'bg-green-500' :
-                              status === 'in_progress' ? 'bg-blue-500' :
-                              status === 'planned' ? 'bg-purple-500' : 'bg-gray-400'
+                              status === 'completed'
+                                ? 'bg-green-500'
+                                : status === 'in_progress'
+                                  ? 'bg-blue-500'
+                                  : status === 'planned'
+                                    ? 'bg-purple-500'
+                                    : 'bg-gray-400'
                             }`}
                             style={{ width: `${(count / stats.total_actions) * 100}%` }}
                           />
@@ -481,9 +511,13 @@ export default function ContinuousImprovementPage() {
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full ${
-                              priority === 'critical' ? 'bg-red-500' :
-                              priority === 'high' ? 'bg-orange-500' :
-                              priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                              priority === 'critical'
+                                ? 'bg-red-500'
+                                : priority === 'high'
+                                  ? 'bg-orange-500'
+                                  : priority === 'medium'
+                                    ? 'bg-yellow-500'
+                                    : 'bg-green-500'
                             }`}
                             style={{ width: `${(count / stats.total_actions) * 100}%` }}
                           />
@@ -497,38 +531,55 @@ export default function ContinuousImprovementPage() {
 
             {/* Real-time Alerts */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">🔴 Real-time Compliance Alerts</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                🔴 Real-time Compliance Alerts
+              </h3>
               <div className="space-y-3">
-                {actions.filter(a => a.is_overdue && a.is_critical_compliance).map(action => (
-                  <div key={action.id} className="border-l-4 border-red-500 bg-red-50 p-4 rounded">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-semibold text-red-900">{action.action_number} - {action.title}</h4>
-                        <p className="text-sm text-red-700 mt-1">
-                          Critical compliance action overdue by {Math.abs(action.days_until_due || 0)} days
-                        </p>
+                {actions
+                  .filter(a => a.is_overdue && a.is_critical_compliance)
+                  .map(action => (
+                    <div
+                      key={action.id}
+                      className="border-l-4 border-red-500 bg-red-50 p-4 rounded"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-semibold text-red-900">
+                            {action.action_number} - {action.title}
+                          </h4>
+                          <p className="text-sm text-red-700 mt-1">
+                            Critical compliance action overdue by{' '}
+                            {Math.abs(action.days_until_due || 0)} days
+                          </p>
+                        </div>
+                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-200 text-red-800">
+                          CRITICAL
+                        </span>
                       </div>
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-200 text-red-800">
-                        CRITICAL
-                      </span>
                     </div>
-                  </div>
-                ))}
-                {actions.filter(a => a.compliance_status === 'at_risk').map(action => (
-                  <div key={action.id} className="border-l-4 border-yellow-500 bg-yellow-50 p-4 rounded">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-semibold text-yellow-900">{action.action_number} - {action.title}</h4>
-                        <p className="text-sm text-yellow-700 mt-1">
-                          Due in {action.days_until_due} days - requires attention
-                        </p>
+                  ))}
+                {actions
+                  .filter(a => a.compliance_status === 'at_risk')
+                  .map(action => (
+                    <div
+                      key={action.id}
+                      className="border-l-4 border-yellow-500 bg-yellow-50 p-4 rounded"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-semibold text-yellow-900">
+                            {action.action_number} - {action.title}
+                          </h4>
+                          <p className="text-sm text-yellow-700 mt-1">
+                            Due in {action.days_until_due} days - requires attention
+                          </p>
+                        </div>
+                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-200 text-yellow-800">
+                          AT RISK
+                        </span>
                       </div>
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-200 text-yellow-800">
-                        AT RISK
-                      </span>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
           </div>
@@ -541,7 +592,7 @@ export default function ContinuousImprovementPage() {
               <div className="flex gap-4">
                 <select
                   value={filters.status}
-                  onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                  onChange={e => setFilters({ ...filters, status: e.target.value })}
                   className="px-4 py-2 border border-gray-300 rounded-lg"
                 >
                   <option value="all">All Status</option>
@@ -553,7 +604,7 @@ export default function ContinuousImprovementPage() {
 
                 <select
                   value={filters.priority}
-                  onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
+                  onChange={e => setFilters({ ...filters, priority: e.target.value })}
                   className="px-4 py-2 border border-gray-300 rounded-lg"
                 >
                   <option value="all">All Priority</option>
@@ -565,7 +616,7 @@ export default function ContinuousImprovementPage() {
 
                 <select
                   value={filters.compliance}
-                  onChange={(e) => setFilters({ ...filters, compliance: e.target.value })}
+                  onChange={e => setFilters({ ...filters, compliance: e.target.value })}
                   className="px-4 py-2 border border-gray-300 rounded-lg"
                 >
                   <option value="all">All Compliance</option>
@@ -589,9 +640,11 @@ export default function ContinuousImprovementPage() {
                 <div
                   key={action.id}
                   className={`bg-white rounded-lg shadow-md p-6 border-l-4 ${
-                    action.compliance_status === 'overdue' ? 'border-red-500' :
-                    action.compliance_status === 'at_risk' ? 'border-yellow-500' :
-                    'border-green-500'
+                    action.compliance_status === 'overdue'
+                      ? 'border-red-500'
+                      : action.compliance_status === 'at_risk'
+                        ? 'border-yellow-500'
+                        : 'border-green-500'
                   }`}
                 >
                   <div className="flex justify-between items-start mb-4">
@@ -607,7 +660,7 @@ export default function ContinuousImprovementPage() {
                         )}
                       </div>
                       <p className="text-sm text-gray-600 mb-3">{action.description}</p>
-                      
+
                       {/* AI Summary */}
                       {action.ai_summary && (
                         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
@@ -615,12 +668,18 @@ export default function ContinuousImprovementPage() {
                             <span className="text-green-600">🤖</span>
                             <div className="flex-1">
                               <div className="text-xs font-medium text-green-900 mb-1">
-                                AI Classification ({Math.round(action.ai_classification_confidence * 100)}% confidence)
+                                AI Classification (
+                                {Math.round(action.ai_classification_confidence * 100)}% confidence)
                               </div>
-                              <div className="text-sm text-green-800">{action.ai_summary.split('\n')[0]}</div>
+                              <div className="text-sm text-green-800">
+                                {action.ai_summary.split('\n')[0]}
+                              </div>
                               <div className="flex gap-2 mt-2 flex-wrap">
                                 {action.ai_keywords.slice(0, 5).map((kw, idx) => (
-                                  <span key={idx} className="px-2 py-1 rounded text-xs bg-green-100 text-green-700">
+                                  <span
+                                    key={idx}
+                                    className="px-2 py-1 rounded text-xs bg-green-100 text-green-700"
+                                  >
                                     {kw}
                                   </span>
                                 ))}
@@ -635,15 +694,21 @@ export default function ContinuousImprovementPage() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="flex flex-col gap-2 ml-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(action.status)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(action.status)}`}
+                      >
                         {action.status_display}
                       </span>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPriorityColor(action.priority)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium border ${getPriorityColor(action.priority)}`}
+                      >
                         {action.priority_display}
                       </span>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getComplianceColor(action.compliance_status)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${getComplianceColor(action.compliance_status)}`}
+                      >
                         {action.compliance_status_display}
                       </span>
                     </div>
@@ -656,12 +721,16 @@ export default function ContinuousImprovementPage() {
                     </div>
                     <div>
                       <span className="text-gray-500">Responsible:</span>
-                      <span className="ml-2 font-medium">{action.responsible_person_name || 'Unassigned'}</span>
+                      <span className="ml-2 font-medium">
+                        {action.responsible_person_name || 'Unassigned'}
+                      </span>
                     </div>
                     <div>
                       <span className="text-gray-500">Target Date:</span>
                       <span className="ml-2 font-medium">
-                        {action.target_completion_date ? new Date(action.target_completion_date).toLocaleDateString() : 'Not set'}
+                        {action.target_completion_date
+                          ? new Date(action.target_completion_date).toLocaleDateString()
+                          : 'Not set'}
                       </span>
                     </div>
                     <div>
@@ -707,7 +776,8 @@ export default function ContinuousImprovementPage() {
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="text-center mb-4">
                   <div className="text-5xl font-bold text-green-600">
-                    {Math.round((stats.by_compliance.compliant || 0) / stats.total_actions * 100)}%
+                    {Math.round(((stats.by_compliance.compliant || 0) / stats.total_actions) * 100)}
+                    %
                   </div>
                   <div className="text-sm text-gray-600 mt-2">Compliant Actions</div>
                 </div>
@@ -731,9 +801,7 @@ export default function ContinuousImprovementPage() {
                   <div className="text-5xl font-bold text-red-600">{stats.overdue_count}</div>
                   <div className="text-sm text-gray-600 mt-2">Overdue</div>
                 </div>
-                <div className="text-xs text-center text-gray-500">
-                  Immediate action required
-                </div>
+                <div className="text-xs text-center text-gray-500">Immediate action required</div>
               </div>
             </div>
 
@@ -751,25 +819,39 @@ export default function ContinuousImprovementPage() {
                   .map(action => (
                     <div key={action.id} className="flex items-center gap-4 p-4 border rounded-lg">
                       <div className="flex-shrink-0">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
-                          action.is_overdue ? 'bg-red-100 text-red-600' :
-                          action.compliance_status === 'at_risk' ? 'bg-yellow-100 text-yellow-600' :
-                          'bg-green-100 text-green-600'
-                        }`}>
-                          {action.days_until_due !== null ? (
-                            action.is_overdue ? `-${Math.abs(action.days_until_due)}` : action.days_until_due
-                          ) : '?'}
+                        <div
+                          className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
+                            action.is_overdue
+                              ? 'bg-red-100 text-red-600'
+                              : action.compliance_status === 'at_risk'
+                                ? 'bg-yellow-100 text-yellow-600'
+                                : 'bg-green-100 text-green-600'
+                          }`}
+                        >
+                          {action.days_until_due !== null
+                            ? action.is_overdue
+                              ? `-${Math.abs(action.days_until_due)}`
+                              : action.days_until_due
+                            : '?'}
                         </div>
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900">{action.action_number} - {action.title}</h4>
+                        <h4 className="font-semibold text-gray-900">
+                          {action.action_number} - {action.title}
+                        </h4>
                         <div className="text-sm text-gray-600 mt-1">
-                          {action.responsible_person_name && `Assigned to: ${action.responsible_person_name} • `}
-                          Target: {action.target_completion_date ? new Date(action.target_completion_date).toLocaleDateString() : 'Not set'}
+                          {action.responsible_person_name &&
+                            `Assigned to: ${action.responsible_person_name} • `}
+                          Target:{' '}
+                          {action.target_completion_date
+                            ? new Date(action.target_completion_date).toLocaleDateString()
+                            : 'Not set'}
                         </div>
                       </div>
                       <div className="flex-shrink-0">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getComplianceColor(action.compliance_status)}`}>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${getComplianceColor(action.compliance_status)}`}
+                        >
                           {action.compliance_status_display}
                         </span>
                       </div>
@@ -792,22 +874,28 @@ export default function ContinuousImprovementPage() {
               <div className="p-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Action Number</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Action Number
+                    </label>
                     <input
                       type="text"
                       value={newAction.action_number}
-                      onChange={(e) => setNewAction({ ...newAction, action_number: e.target.value })}
+                      onChange={e => setNewAction({ ...newAction, action_number: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                       placeholder="CI-2024-005"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Target Date</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Target Date
+                    </label>
                     <input
                       type="date"
                       value={newAction.target_completion_date}
-                      onChange={(e) => setNewAction({ ...newAction, target_completion_date: e.target.value })}
+                      onChange={e =>
+                        setNewAction({ ...newAction, target_completion_date: e.target.value })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     />
                   </div>
@@ -818,17 +906,19 @@ export default function ContinuousImprovementPage() {
                   <input
                     type="text"
                     value={newAction.title}
-                    onChange={(e) => setNewAction({ ...newAction, title: e.target.value })}
+                    onChange={e => setNewAction({ ...newAction, title: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     placeholder="Brief description of the improvement"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                  </label>
                   <textarea
                     value={newAction.description}
-                    onChange={(e) => setNewAction({ ...newAction, description: e.target.value })}
+                    onChange={e => setNewAction({ ...newAction, description: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     rows={5}
                     placeholder="Detailed description of the improvement action, including context and expected outcomes..."
@@ -840,7 +930,7 @@ export default function ContinuousImprovementPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
                     <select
                       value={newAction.priority}
-                      onChange={(e) => setNewAction({ ...newAction, priority: e.target.value })}
+                      onChange={e => setNewAction({ ...newAction, priority: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     >
                       <option value="low">Low</option>
@@ -854,7 +944,7 @@ export default function ContinuousImprovementPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Source</label>
                     <select
                       value={newAction.source}
-                      onChange={(e) => setNewAction({ ...newAction, source: e.target.value })}
+                      onChange={e => setNewAction({ ...newAction, source: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     >
                       <option value="audit">Audit Finding</option>
@@ -871,12 +961,12 @@ export default function ContinuousImprovementPage() {
                   <input
                     type="checkbox"
                     checked={newAction.is_critical_compliance}
-                    onChange={(e) => setNewAction({ ...newAction, is_critical_compliance: e.target.checked })}
+                    onChange={e =>
+                      setNewAction({ ...newAction, is_critical_compliance: e.target.checked })
+                    }
                     className="w-4 h-4"
                   />
-                  <label className="text-sm text-gray-700">
-                    Critical for RTO compliance
-                  </label>
+                  <label className="text-sm text-gray-700">Critical for RTO compliance</label>
                 </div>
               </div>
 
@@ -914,7 +1004,9 @@ export default function ContinuousImprovementPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-2xl">🤖</span>
                     <div>
-                      <div className="font-semibold text-green-900">Category: {aiClassification.category.replace('_', ' ')}</div>
+                      <div className="font-semibold text-green-900">
+                        Category: {aiClassification.category.replace('_', ' ')}
+                      </div>
                       <div className="text-sm text-green-700">
                         Confidence: {Math.round(aiClassification.confidence * 100)}%
                       </div>
@@ -930,7 +1022,10 @@ export default function ContinuousImprovementPage() {
                     <strong className="text-sm text-green-900">Keywords:</strong>
                     <div className="flex gap-2 mt-2 flex-wrap">
                       {aiClassification.keywords.map((kw: string, idx: number) => (
-                        <span key={idx} className="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700 font-medium">
+                        <span
+                          key={idx}
+                          className="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700 font-medium"
+                        >
                           {kw}
                         </span>
                       ))}
@@ -942,7 +1037,10 @@ export default function ContinuousImprovementPage() {
                       <strong className="text-sm text-green-900">Related ASQA Standards:</strong>
                       <div className="flex gap-2 mt-2">
                         {aiClassification.related_standards.map((std: string, idx: number) => (
-                          <span key={idx} className="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700 font-medium">
+                          <span
+                            key={idx}
+                            className="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700 font-medium"
+                          >
                             Standard {std}
                           </span>
                         ))}
@@ -995,7 +1093,10 @@ export default function ContinuousImprovementPage() {
                       <p className="text-sm text-green-800 mb-3">{selectedAction.ai_summary}</p>
                       <div className="flex gap-2 flex-wrap">
                         {selectedAction.ai_keywords.map((kw, idx) => (
-                          <span key={idx} className="px-2 py-1 rounded text-xs bg-green-100 text-green-700">
+                          <span
+                            key={idx}
+                            className="px-2 py-1 rounded text-xs bg-green-100 text-green-700"
+                          >
                             {kw}
                           </span>
                         ))}
@@ -1006,13 +1107,17 @@ export default function ContinuousImprovementPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-2">Status</h3>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedAction.status)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedAction.status)}`}
+                      >
                         {selectedAction.status_display}
                       </span>
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-2">Compliance</h3>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getComplianceColor(selectedAction.compliance_status)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getComplianceColor(selectedAction.compliance_status)}`}
+                      >
                         {selectedAction.compliance_status_display}
                       </span>
                     </div>

@@ -53,13 +53,13 @@ export default function AssessmentBuilderPage() {
   const params = useParams();
   const router = useRouter();
   const tenantSlug = params.tenantSlug as string;
-  
+
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [showGenerateForm, setShowGenerateForm] = useState(false);
-  
+
   // Form state
   const [unitCode, setUnitCode] = useState('');
   const [unitTitle, setUnitTitle] = useState('');
@@ -81,34 +81,34 @@ export default function AssessmentBuilderPage() {
     try {
       const authToken = localStorage.getItem('authToken');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      
+
       // Fetch assessments
       const assessmentsRes = await fetch(
         `${baseUrl}/api/tenants/${tenantSlug}/assessment-builder/assessments/`,
         {
           headers: {
-            'Authorization': `Token ${authToken}`,
+            Authorization: `Token ${authToken}`,
             'Content-Type': 'application/json',
           },
         }
       );
-      
+
       if (assessmentsRes.ok) {
         const data = await assessmentsRes.json();
         setAssessments(data.results || []);
       }
-      
+
       // Fetch stats
       const statsRes = await fetch(
         `${baseUrl}/api/tenants/${tenantSlug}/assessment-builder/assessments/dashboard_stats/`,
         {
           headers: {
-            'Authorization': `Token ${authToken}`,
+            Authorization: `Token ${authToken}`,
             'Content-Type': 'application/json',
           },
         }
       );
-      
+
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         setStats(statsData);
@@ -123,17 +123,17 @@ export default function AssessmentBuilderPage() {
   const handleGenerateAssessment = async (e: React.FormEvent) => {
     e.preventDefault();
     setGenerating(true);
-    
+
     try {
       const authToken = localStorage.getItem('authToken');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      
+
       const response = await fetch(
         `${baseUrl}/api/tenants/${tenantSlug}/assessment-builder/assessments/generate_assessment/`,
         {
           method: 'POST',
           headers: {
-            'Authorization': `Token ${authToken}`,
+            Authorization: `Token ${authToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -146,7 +146,7 @@ export default function AssessmentBuilderPage() {
           }),
         }
       );
-      
+
       if (response.ok) {
         const data = await response.json();
         // Refresh the assessments list
@@ -159,7 +159,7 @@ export default function AssessmentBuilderPage() {
         setTrainingPackage('');
         setNumberOfTasks(10);
         setIncludeContext(true);
-        
+
         // Navigate to the new assessment
         router.push(`/dashboard/${tenantSlug}/assessment-builder/${data.id}`);
       } else {
@@ -200,12 +200,13 @@ export default function AssessmentBuilderPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-4">
-              <Link href={`/dashboard/${tenantSlug}`} className="text-orange-600 hover:text-orange-800">
+              <Link
+                href={`/dashboard/${tenantSlug}`}
+                className="text-orange-600 hover:text-orange-800"
+              >
                 ← Back to Dashboard
               </Link>
-              <h1 className="text-xl font-semibold text-gray-900">
-                Assessment Builder
-              </h1>
+              <h1 className="text-xl font-semibold text-gray-900">Assessment Builder</h1>
             </div>
           </div>
         </div>
@@ -235,48 +236,56 @@ export default function AssessmentBuilderPage() {
               <div className="text-gray-600 text-sm font-medium mb-1">Total Assessments</div>
               <div className="text-3xl font-bold text-gray-900">{stats.total_assessments}</div>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="text-gray-600 text-sm font-medium mb-1">AI Generated</div>
               <div className="text-3xl font-bold text-orange-600">{stats.ai_generation_rate}%</div>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="text-gray-600 text-sm font-medium mb-1">Avg Compliance Score</div>
-              <div className="text-3xl font-bold text-green-600">{stats.avg_compliance_score.toFixed(0)}</div>
+              <div className="text-3xl font-bold text-green-600">
+                {stats.avg_compliance_score.toFixed(0)}
+              </div>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="text-gray-600 text-sm font-medium mb-1">In Review</div>
-              <div className="text-3xl font-bold text-yellow-600">{stats.by_status.review || 0}</div>
+              <div className="text-3xl font-bold text-yellow-600">
+                {stats.by_status.review || 0}
+              </div>
             </div>
           </div>
         )}
 
         {/* Bloom's Taxonomy Distribution */}
-        {stats && stats.blooms_distribution && Object.keys(stats.blooms_distribution).length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Bloom's Taxonomy Distribution</h3>
-            <div className="space-y-3">
-              {BLOOMS_LEVELS.map((level) => (
-                <div key={level.key}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-700">{level.label}</span>
-                    <span className="text-sm text-gray-600">
-                      {stats.blooms_distribution[level.key]?.toFixed(1) || 0}%
-                    </span>
+        {stats &&
+          stats.blooms_distribution &&
+          Object.keys(stats.blooms_distribution).length > 0 && (
+            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Bloom's Taxonomy Distribution
+              </h3>
+              <div className="space-y-3">
+                {BLOOMS_LEVELS.map(level => (
+                  <div key={level.key}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-gray-700">{level.label}</span>
+                      <span className="text-sm text-gray-600">
+                        {stats.blooms_distribution[level.key]?.toFixed(1) || 0}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className={`${level.color} h-2 rounded-full transition-all duration-500`}
+                        style={{ width: `${stats.blooms_distribution[level.key] || 0}%` }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className={`${level.color} h-2 rounded-full transition-all duration-500`}
-                      style={{ width: `${stats.blooms_distribution[level.key] || 0}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Generate Assessment Form */}
         {showGenerateForm && (
@@ -291,24 +300,24 @@ export default function AssessmentBuilderPage() {
                   <input
                     type="text"
                     value={unitCode}
-                    onChange={(e) => setUnitCode(e.target.value)}
+                    onChange={e => setUnitCode(e.target.value)}
                     placeholder="e.g., BSBWHS332X"
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Assessment Type *
                   </label>
                   <select
                     value={assessmentType}
-                    onChange={(e) => setAssessmentType(e.target.value)}
+                    onChange={e => setAssessmentType(e.target.value)}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
-                    {ASSESSMENT_TYPES.map((type) => (
+                    {ASSESSMENT_TYPES.map(type => (
                       <option key={type.value} value={type.value}>
                         {type.label}
                       </option>
@@ -316,21 +325,19 @@ export default function AssessmentBuilderPage() {
                   </select>
                 </div>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Unit Title *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Unit Title *</label>
                 <input
                   type="text"
                   value={unitTitle}
-                  onChange={(e) => setUnitTitle(e.target.value)}
+                  onChange={e => setUnitTitle(e.target.value)}
                   placeholder="e.g., Apply infection prevention and control procedures to own work activities"
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Training Package (Optional)
@@ -338,12 +345,12 @@ export default function AssessmentBuilderPage() {
                 <input
                   type="text"
                   value={trainingPackage}
-                  onChange={(e) => setTrainingPackage(e.target.value)}
+                  onChange={e => setTrainingPackage(e.target.value)}
                   placeholder="e.g., CHC Community Services Training Package"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
-              
+
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -354,17 +361,17 @@ export default function AssessmentBuilderPage() {
                     min="1"
                     max="50"
                     value={numberOfTasks}
-                    onChange={(e) => setNumberOfTasks(parseInt(e.target.value))}
+                    onChange={e => setNumberOfTasks(parseInt(e.target.value))}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
-                
+
                 <div className="flex items-center">
                   <label className="flex items-center cursor-pointer">
                     <input
                       type="checkbox"
                       checked={includeContext}
-                      onChange={(e) => setIncludeContext(e.target.checked)}
+                      onChange={e => setIncludeContext(e.target.checked)}
                       className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
                     />
                     <span className="ml-2 text-sm text-gray-700">
@@ -373,7 +380,7 @@ export default function AssessmentBuilderPage() {
                   </label>
                 </div>
               </div>
-              
+
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
@@ -399,14 +406,12 @@ export default function AssessmentBuilderPage() {
           <div className="px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">Assessments</h3>
           </div>
-          
+
           {assessments.length === 0 ? (
             <div className="p-12 text-center">
               <div className="text-6xl mb-4">📝</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No assessments yet</h3>
-              <p className="text-gray-600 mb-6">
-                Generate your first assessment to get started
-              </p>
+              <p className="text-gray-600 mb-6">Generate your first assessment to get started</p>
               <button
                 onClick={() => setShowGenerateForm(true)}
                 className="px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:from-orange-700 hover:to-red-700 transition-all shadow-md font-semibold"
@@ -446,12 +451,14 @@ export default function AssessmentBuilderPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {assessments.map((assessment) => (
+                  {assessments.map(assessment => (
                     <tr key={assessment.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           {assessment.ai_generated && (
-                            <span className="mr-2" title="AI Generated">🤖</span>
+                            <span className="mr-2" title="AI Generated">
+                              🤖
+                            </span>
                           )}
                           <div>
                             <div className="text-sm font-medium text-gray-900">
@@ -470,7 +477,9 @@ export default function AssessmentBuilderPage() {
                         {assessment.assessment_type}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(assessment.status)}`}>
+                        <span
+                          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(assessment.status)}`}
+                        >
                           {assessment.status}
                         </span>
                       </td>

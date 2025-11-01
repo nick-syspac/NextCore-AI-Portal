@@ -70,7 +70,7 @@ export default function InterventionTrackerPage() {
     totalInterventions: 42,
     activeInterventions: 12,
     successRate: 87.5,
-    followupRequired: 5
+    followupRequired: 5,
   });
 
   const handleCreateIntervention = async () => {
@@ -90,13 +90,13 @@ export default function InterventionTrackerPage() {
             priority_level: priorityLevel,
             action_description: actionDescription,
             action_taken_by: actionTakenBy,
-            communication_method: communicationMethod
-          })
+            communication_method: communicationMethod,
+          }),
         }
       );
       const data = await response.json();
       setInterventions([data, ...interventions]);
-      
+
       // Reset form
       setStudentId('');
       setStudentName('');
@@ -116,7 +116,7 @@ export default function InterventionTrackerPage() {
       low: 'bg-blue-100 text-blue-800 border-blue-300',
       medium: 'bg-yellow-100 text-yellow-800 border-yellow-300',
       high: 'bg-orange-100 text-orange-800 border-orange-300',
-      urgent: 'bg-red-100 text-red-800 border-red-300'
+      urgent: 'bg-red-100 text-red-800 border-red-300',
     };
     return colors[priority] || 'bg-gray-100 text-gray-800 border-gray-300';
   };
@@ -128,7 +128,7 @@ export default function InterventionTrackerPage() {
       completed: 'bg-green-500',
       escalated: 'bg-red-500',
       closed: 'bg-gray-500',
-      cancelled: 'bg-gray-400'
+      cancelled: 'bg-gray-400',
     };
     return colors[status] || 'bg-gray-500';
   };
@@ -139,7 +139,7 @@ export default function InterventionTrackerPage() {
       partial: '⚠️',
       unsuccessful: '❌',
       pending: '⏳',
-      not_applicable: '➖'
+      not_applicable: '➖',
     };
     return icons[outcome] || '❔';
   };
@@ -155,7 +155,8 @@ export default function InterventionTrackerPage() {
           <div>
             <h1 className="text-4xl font-bold text-gray-900">Intervention Tracker</h1>
             <p className="text-lg text-gray-600 mt-1">
-              Record trainer actions & outcomes • Workflow + rule engine • Documented learner support for audit
+              Record trainer actions & outcomes • Workflow + rule engine • Documented learner
+              support for audit
             </p>
           </div>
         </div>
@@ -182,7 +183,7 @@ export default function InterventionTrackerPage() {
 
         {/* Tab Navigation */}
         <div className="bg-white rounded-lg shadow-sm p-2 flex gap-2 mb-6">
-          {['tracker', 'workflow', 'rules', 'outcomes', 'audit'].map((tab) => (
+          {['tracker', 'workflow', 'rules', 'outcomes', 'audit'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -208,9 +209,12 @@ export default function InterventionTrackerPage() {
             {activeTab === 'tracker' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg p-6 border border-blue-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">📋 Intervention Recording</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    📋 Intervention Recording
+                  </h3>
                   <p className="text-sm text-gray-700">
-                    Document all trainer actions and student support activities. Each intervention is tracked for compliance and audit purposes.
+                    Document all trainer actions and student support activities. Each intervention
+                    is tracked for compliance and audit purposes.
                   </p>
                 </div>
 
@@ -219,50 +223,60 @@ export default function InterventionTrackerPage() {
                   <h4 className="font-semibold text-gray-900 mb-4">📝 Record New Intervention</h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Student ID *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Student ID *
+                      </label>
                       <input
                         type="text"
                         value={studentId}
-                        onChange={(e) => setStudentId(e.target.value)}
+                        onChange={e => setStudentId(e.target.value)}
                         placeholder="e.g., STU001"
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Student Name *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Student Name *
+                      </label>
                       <input
                         type="text"
                         value={studentName}
-                        onChange={(e) => setStudentName(e.target.value)}
+                        onChange={e => setStudentName(e.target.value)}
                         placeholder="e.g., Alex Johnson"
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Course ID</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Course ID
+                      </label>
                       <input
                         type="text"
                         value={courseId}
-                        onChange={(e) => setCourseId(e.target.value)}
+                        onChange={e => setCourseId(e.target.value)}
                         placeholder="e.g., COURSE001"
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Course Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Course Name
+                      </label>
                       <input
                         type="text"
                         value={courseName}
-                        onChange={(e) => setCourseName(e.target.value)}
+                        onChange={e => setCourseName(e.target.value)}
                         placeholder="e.g., Data Science 101"
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Intervention Type *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Intervention Type *
+                      </label>
                       <select
                         value={interventionType}
-                        onChange={(e) => setInterventionType(e.target.value)}
+                        onChange={e => setInterventionType(e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="academic_support">Academic Support</option>
@@ -278,10 +292,12 @@ export default function InterventionTrackerPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Priority Level</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Priority Level
+                      </label>
                       <select
                         value={priorityLevel}
-                        onChange={(e) => setPriorityLevel(e.target.value)}
+                        onChange={e => setPriorityLevel(e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="low">Low</option>
@@ -291,20 +307,24 @@ export default function InterventionTrackerPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Action Taken By *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Action Taken By *
+                      </label>
                       <input
                         type="text"
                         value={actionTakenBy}
-                        onChange={(e) => setActionTakenBy(e.target.value)}
+                        onChange={e => setActionTakenBy(e.target.value)}
                         placeholder="e.g., Sarah Smith (Trainer)"
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Communication Method</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Communication Method
+                      </label>
                       <select
                         value={communicationMethod}
-                        onChange={(e) => setCommunicationMethod(e.target.value)}
+                        onChange={e => setCommunicationMethod(e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="">Select method...</option>
@@ -318,10 +338,12 @@ export default function InterventionTrackerPage() {
                       </select>
                     </div>
                     <div className="col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Action Description *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Action Description *
+                      </label>
                       <textarea
                         value={actionDescription}
-                        onChange={(e) => setActionDescription(e.target.value)}
+                        onChange={e => setActionDescription(e.target.value)}
                         placeholder="Describe the intervention action taken, including details relevant for audit..."
                         rows={4}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -330,7 +352,9 @@ export default function InterventionTrackerPage() {
                   </div>
                   <button
                     onClick={handleCreateIntervention}
-                    disabled={loading || !studentId || !studentName || !actionDescription || !actionTakenBy}
+                    disabled={
+                      loading || !studentId || !studentName || !actionDescription || !actionTakenBy
+                    }
                     className="mt-4 w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
                   >
                     {loading ? '⏳ Recording...' : '📋 Record Intervention'}
@@ -342,21 +366,64 @@ export default function InterventionTrackerPage() {
                   <h4 className="font-semibold text-gray-900 mb-4">📑 Recent Interventions</h4>
                   <div className="space-y-3">
                     {[
-                      { number: 'INT-20241024-A1B2C3D4', student: 'Alex Johnson', type: 'Academic Support', priority: 'high', status: 'in_progress', outcome: 'pending', trainer: 'Sarah Smith', date: '2024-10-24' },
-                      { number: 'INT-20241023-E5F6G7H8', student: 'Jamie Lee', type: 'Attendance Follow-up', priority: 'urgent', status: 'completed', outcome: 'successful', trainer: 'Mike Brown', date: '2024-10-23' },
-                      { number: 'INT-20241023-I9J0K1L2', student: 'Pat Wilson', type: 'Wellbeing Check', priority: 'medium', status: 'completed', outcome: 'partial', trainer: 'Sarah Smith', date: '2024-10-23' },
-                      { number: 'INT-20241022-M3N4O5P6', student: 'Taylor Davis', type: 'Progress Review', priority: 'low', status: 'closed', outcome: 'successful', trainer: 'Chris Green', date: '2024-10-22' }
+                      {
+                        number: 'INT-20241024-A1B2C3D4',
+                        student: 'Alex Johnson',
+                        type: 'Academic Support',
+                        priority: 'high',
+                        status: 'in_progress',
+                        outcome: 'pending',
+                        trainer: 'Sarah Smith',
+                        date: '2024-10-24',
+                      },
+                      {
+                        number: 'INT-20241023-E5F6G7H8',
+                        student: 'Jamie Lee',
+                        type: 'Attendance Follow-up',
+                        priority: 'urgent',
+                        status: 'completed',
+                        outcome: 'successful',
+                        trainer: 'Mike Brown',
+                        date: '2024-10-23',
+                      },
+                      {
+                        number: 'INT-20241023-I9J0K1L2',
+                        student: 'Pat Wilson',
+                        type: 'Wellbeing Check',
+                        priority: 'medium',
+                        status: 'completed',
+                        outcome: 'partial',
+                        trainer: 'Sarah Smith',
+                        date: '2024-10-23',
+                      },
+                      {
+                        number: 'INT-20241022-M3N4O5P6',
+                        student: 'Taylor Davis',
+                        type: 'Progress Review',
+                        priority: 'low',
+                        status: 'closed',
+                        outcome: 'successful',
+                        trainer: 'Chris Green',
+                        date: '2024-10-22',
+                      },
                     ].map((intervention, index) => (
-                      <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div
+                        key={index}
+                        className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                      >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-3">
                             <div>
                               <p className="font-semibold text-gray-900">{intervention.number}</p>
-                              <p className="text-sm text-gray-600">{intervention.student} • {intervention.type}</p>
+                              <p className="text-sm text-gray-600">
+                                {intervention.student} • {intervention.type}
+                              </p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold border-2 ${getPriorityColor(intervention.priority)}`}>
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-semibold border-2 ${getPriorityColor(intervention.priority)}`}
+                            >
                               {intervention.priority.toUpperCase()}
                             </span>
                           </div>
@@ -368,8 +435,12 @@ export default function InterventionTrackerPage() {
                           </div>
                           <div className="flex items-center gap-2">
                             <div className="flex items-center gap-1">
-                              <div className={`w-3 h-3 rounded-full ${getStatusColor(intervention.status)}`}></div>
-                              <span className="text-xs font-medium text-gray-700">{intervention.status.replace('_', ' ')}</span>
+                              <div
+                                className={`w-3 h-3 rounded-full ${getStatusColor(intervention.status)}`}
+                              ></div>
+                              <span className="text-xs font-medium text-gray-700">
+                                {intervention.status.replace('_', ' ')}
+                              </span>
                             </div>
                             <span className="text-lg">{getOutcomeIcon(intervention.outcome)}</span>
                           </div>
@@ -385,9 +456,12 @@ export default function InterventionTrackerPage() {
             {activeTab === 'workflow' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg p-6 border border-purple-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">🔄 Intervention Workflows</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    🔄 Intervention Workflows
+                  </h3>
                   <p className="text-sm text-gray-700">
-                    Structured multi-step processes ensure consistent intervention delivery and comprehensive documentation.
+                    Structured multi-step processes ensure consistent intervention delivery and
+                    comprehensive documentation.
                   </p>
                 </div>
 
@@ -395,8 +469,12 @@ export default function InterventionTrackerPage() {
                 <div className="bg-white border border-gray-200 rounded-lg p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h4 className="font-semibold text-gray-900">WF-20241024-ABC123 - Academic Support Standard</h4>
-                      <p className="text-sm text-gray-600">5-step process for academic intervention</p>
+                      <h4 className="font-semibold text-gray-900">
+                        WF-20241024-ABC123 - Academic Support Standard
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        5-step process for academic intervention
+                      </p>
                     </div>
                     <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                       Active
@@ -405,13 +483,46 @@ export default function InterventionTrackerPage() {
 
                   <div className="space-y-3">
                     {[
-                      { step: 1, name: 'Initial Assessment', status: 'completed', duration: 15, required: true },
-                      { step: 2, name: 'Identify Learning Gaps', status: 'completed', duration: 20, required: true },
-                      { step: 3, name: 'Create Action Plan', status: 'in_progress', duration: null, required: true },
-                      { step: 4, name: 'Implement Support', status: 'pending', duration: null, required: true },
-                      { step: 5, name: 'Follow-up Review', status: 'pending', duration: null, required: false }
-                    ].map((step) => (
-                      <div key={step.step} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                      {
+                        step: 1,
+                        name: 'Initial Assessment',
+                        status: 'completed',
+                        duration: 15,
+                        required: true,
+                      },
+                      {
+                        step: 2,
+                        name: 'Identify Learning Gaps',
+                        status: 'completed',
+                        duration: 20,
+                        required: true,
+                      },
+                      {
+                        step: 3,
+                        name: 'Create Action Plan',
+                        status: 'in_progress',
+                        duration: null,
+                        required: true,
+                      },
+                      {
+                        step: 4,
+                        name: 'Implement Support',
+                        status: 'pending',
+                        duration: null,
+                        required: true,
+                      },
+                      {
+                        step: 5,
+                        name: 'Follow-up Review',
+                        status: 'pending',
+                        duration: null,
+                        required: false,
+                      },
+                    ].map(step => (
+                      <div
+                        key={step.step}
+                        className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg"
+                      >
                         <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white font-bold text-sm">
                           {step.step}
                         </div>
@@ -421,13 +532,21 @@ export default function InterventionTrackerPage() {
                             {step.required && <span className="ml-2 text-red-500">*</span>}
                           </p>
                           {step.duration && (
-                            <p className="text-xs text-gray-500">Completed in {step.duration} minutes</p>
+                            <p className="text-xs text-gray-500">
+                              Completed in {step.duration} minutes
+                            </p>
                           )}
                         </div>
                         <div className="flex items-center gap-2">
-                          {step.status === 'completed' && <span className="text-green-600 text-xl">✅</span>}
-                          {step.status === 'in_progress' && <span className="text-yellow-600 text-xl">🔄</span>}
-                          {step.status === 'pending' && <span className="text-gray-400 text-xl">⏳</span>}
+                          {step.status === 'completed' && (
+                            <span className="text-green-600 text-xl">✅</span>
+                          )}
+                          {step.status === 'in_progress' && (
+                            <span className="text-yellow-600 text-xl">🔄</span>
+                          )}
+                          {step.status === 'pending' && (
+                            <span className="text-gray-400 text-xl">⏳</span>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -447,12 +566,20 @@ export default function InterventionTrackerPage() {
                 {/* Other Workflows */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
-                    { name: 'Attendance Intervention', steps: 4, type: 'attendance_followup', used: 23 },
+                    {
+                      name: 'Attendance Intervention',
+                      steps: 4,
+                      type: 'attendance_followup',
+                      used: 23,
+                    },
                     { name: 'Wellbeing Support', steps: 6, type: 'wellbeing_check', used: 15 },
                     { name: 'Referral Process', steps: 7, type: 'referral', used: 8 },
-                    { name: 'Extension Approval', steps: 3, type: 'extension_approval', used: 34 }
+                    { name: 'Extension Approval', steps: 3, type: 'extension_approval', used: 34 },
                   ].map((workflow, index) => (
-                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div
+                      key={index}
+                      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    >
                       <h5 className="font-semibold text-gray-900">{workflow.name}</h5>
                       <div className="mt-2 flex items-center justify-between text-sm text-gray-600">
                         <span>{workflow.steps} steps</span>
@@ -468,25 +595,70 @@ export default function InterventionTrackerPage() {
             {activeTab === 'rules' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-green-100 to-teal-100 rounded-lg p-6 border border-green-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">⚙️ Automated Rule Engine</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    ⚙️ Automated Rule Engine
+                  </h3>
                   <p className="text-sm text-gray-700">
-                    Rules automatically trigger interventions when student metrics meet specified conditions. Ensures timely support and compliance.
+                    Rules automatically trigger interventions when student metrics meet specified
+                    conditions. Ensures timely support and compliance.
                   </p>
                 </div>
 
                 {/* Active Rules */}
                 <div className="space-y-4">
                   {[
-                    { rule: 'RULE-20241024-ABC', name: 'Low Attendance Alert', condition: 'Attendance < 75%', type: 'Attendance Follow-up', priority: 8, triggers: 12, active: true },
-                    { rule: 'RULE-20241024-DEF', name: 'Failing Grade Intervention', condition: 'Grade < 50%', type: 'Academic Support', priority: 10, triggers: 5, active: true },
-                    { rule: 'RULE-20241024-GHI', name: 'Low Engagement Alert', condition: 'Engagement < 60%', type: 'Re-engagement', priority: 6, triggers: 8, active: true },
-                    { rule: 'RULE-20241024-JKL', name: 'High Risk Score', condition: 'Risk Score > 70%', type: 'Wellbeing Check', priority: 9, triggers: 3, active: true },
-                    { rule: 'RULE-20241024-MNO', name: 'Multiple Late Submissions', condition: '3+ late submissions', type: 'Progress Review', priority: 5, triggers: 15, active: false }
+                    {
+                      rule: 'RULE-20241024-ABC',
+                      name: 'Low Attendance Alert',
+                      condition: 'Attendance < 75%',
+                      type: 'Attendance Follow-up',
+                      priority: 8,
+                      triggers: 12,
+                      active: true,
+                    },
+                    {
+                      rule: 'RULE-20241024-DEF',
+                      name: 'Failing Grade Intervention',
+                      condition: 'Grade < 50%',
+                      type: 'Academic Support',
+                      priority: 10,
+                      triggers: 5,
+                      active: true,
+                    },
+                    {
+                      rule: 'RULE-20241024-GHI',
+                      name: 'Low Engagement Alert',
+                      condition: 'Engagement < 60%',
+                      type: 'Re-engagement',
+                      priority: 6,
+                      triggers: 8,
+                      active: true,
+                    },
+                    {
+                      rule: 'RULE-20241024-JKL',
+                      name: 'High Risk Score',
+                      condition: 'Risk Score > 70%',
+                      type: 'Wellbeing Check',
+                      priority: 9,
+                      triggers: 3,
+                      active: true,
+                    },
+                    {
+                      rule: 'RULE-20241024-MNO',
+                      name: 'Multiple Late Submissions',
+                      condition: '3+ late submissions',
+                      type: 'Progress Review',
+                      priority: 5,
+                      triggers: 15,
+                      active: false,
+                    },
                   ].map((rule, index) => (
                     <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${rule.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                          <div
+                            className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${rule.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}
+                          >
                             {rule.priority}
                           </div>
                           <div>
@@ -495,7 +667,9 @@ export default function InterventionTrackerPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${rule.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${rule.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}
+                          >
                             {rule.active ? 'Active' : 'Inactive'}
                           </span>
                         </div>
@@ -521,7 +695,9 @@ export default function InterventionTrackerPage() {
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                   <h5 className="font-semibold text-gray-900 mb-2">💡 How Rules Work</h5>
                   <ul className="space-y-1 text-sm text-gray-700">
-                    <li>• Rules continuously evaluate student metrics against defined thresholds</li>
+                    <li>
+                      • Rules continuously evaluate student metrics against defined thresholds
+                    </li>
                     <li>• When conditions are met, interventions are automatically created</li>
                     <li>• Staff are notified immediately for timely action</li>
                     <li>• All rule activations are logged for compliance auditing</li>
@@ -535,9 +711,12 @@ export default function InterventionTrackerPage() {
             {activeTab === 'outcomes' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-orange-100 to-red-100 rounded-lg p-6 border border-orange-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">📊 Intervention Outcomes</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    📊 Intervention Outcomes
+                  </h3>
                   <p className="text-sm text-gray-700">
-                    Track measurable improvements and impact. Evidence-based analysis of intervention effectiveness.
+                    Track measurable improvements and impact. Evidence-based analysis of
+                    intervention effectiveness.
                   </p>
                 </div>
 
@@ -615,15 +794,41 @@ export default function InterventionTrackerPage() {
                   <h5 className="font-semibold text-gray-900 mb-4">📊 Impact Analysis</h5>
                   <div className="space-y-3">
                     {[
-                      { type: 'Attendance Improvement', interventions: 12, significant: 8, moderate: 3, minimal: 1 },
-                      { type: 'Grade Improvement', interventions: 8, significant: 5, moderate: 2, minimal: 1 },
-                      { type: 'Engagement Increase', interventions: 10, significant: 6, moderate: 3, minimal: 1 },
-                      { type: 'Behaviour Change', interventions: 5, significant: 4, moderate: 1, minimal: 0 }
+                      {
+                        type: 'Attendance Improvement',
+                        interventions: 12,
+                        significant: 8,
+                        moderate: 3,
+                        minimal: 1,
+                      },
+                      {
+                        type: 'Grade Improvement',
+                        interventions: 8,
+                        significant: 5,
+                        moderate: 2,
+                        minimal: 1,
+                      },
+                      {
+                        type: 'Engagement Increase',
+                        interventions: 10,
+                        significant: 6,
+                        moderate: 3,
+                        minimal: 1,
+                      },
+                      {
+                        type: 'Behaviour Change',
+                        interventions: 5,
+                        significant: 4,
+                        moderate: 1,
+                        minimal: 0,
+                      },
                     ].map((metric, index) => (
                       <div key={index} className="pb-3 border-b border-gray-100 last:border-0">
                         <div className="flex items-center justify-between mb-2">
                           <p className="font-medium text-gray-900">{metric.type}</p>
-                          <p className="text-sm text-gray-600">{metric.interventions} interventions</p>
+                          <p className="text-sm text-gray-600">
+                            {metric.interventions} interventions
+                          </p>
                         </div>
                         <div className="flex gap-2">
                           <div className="flex-1 bg-green-100 rounded-lg p-2 text-center">
@@ -650,32 +855,98 @@ export default function InterventionTrackerPage() {
             {activeTab === 'audit' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-gray-100 to-slate-100 rounded-lg p-6 border border-gray-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">📜 Comprehensive Audit Trail</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    📜 Comprehensive Audit Trail
+                  </h3>
                   <p className="text-sm text-gray-700">
-                    Complete documentation of all actions for compliance reporting. Every intervention, workflow step, and outcome change is logged.
+                    Complete documentation of all actions for compliance reporting. Every
+                    intervention, workflow step, and outcome change is logged.
                   </p>
                 </div>
 
                 {/* Audit Log */}
                 <div className="space-y-2">
                   {[
-                    { log: 'LOG-20241024143025-ABC', action: 'Intervention Created', intervention: 'INT-20241024-A1B2C3D4', user: 'Sarah Smith', role: 'Trainer', time: '2024-10-24 14:30:25', details: 'Academic Support intervention created for Alex Johnson' },
-                    { log: 'LOG-20241024143532-DEF', action: 'Workflow Step Completed', intervention: 'INT-20241024-A1B2C3D4', user: 'Sarah Smith', role: 'Trainer', time: '2024-10-24 14:35:32', details: 'Step 1: Initial Assessment - completed' },
-                    { log: 'LOG-20241024144120-GHI', action: 'Status Changed', intervention: 'INT-20241024-A1B2C3D4', user: 'Sarah Smith', role: 'Trainer', time: '2024-10-24 14:41:20', details: 'Status changed from initiated to in_progress' },
-                    { log: 'LOG-20241024150015-JKL', action: 'Outcome Recorded', intervention: 'INT-20241023-E5F6G7H8', user: 'Mike Brown', role: 'Trainer', time: '2024-10-24 15:00:15', details: 'Attendance improvement: 85% (target achieved)' },
-                    { log: 'LOG-20241024151245-MNO', action: 'Document Attached', intervention: 'INT-20241023-E5F6G7H8', user: 'Mike Brown', role: 'Trainer', time: '2024-10-24 15:12:45', details: 'Student action plan document uploaded' },
-                    { log: 'LOG-20241024152530-PQR', action: 'Notification Sent', intervention: 'INT-20241024-A1B2C3D4', user: 'System', role: 'Automated', time: '2024-10-24 15:25:30', details: 'Follow-up reminder sent to trainer' }
+                    {
+                      log: 'LOG-20241024143025-ABC',
+                      action: 'Intervention Created',
+                      intervention: 'INT-20241024-A1B2C3D4',
+                      user: 'Sarah Smith',
+                      role: 'Trainer',
+                      time: '2024-10-24 14:30:25',
+                      details: 'Academic Support intervention created for Alex Johnson',
+                    },
+                    {
+                      log: 'LOG-20241024143532-DEF',
+                      action: 'Workflow Step Completed',
+                      intervention: 'INT-20241024-A1B2C3D4',
+                      user: 'Sarah Smith',
+                      role: 'Trainer',
+                      time: '2024-10-24 14:35:32',
+                      details: 'Step 1: Initial Assessment - completed',
+                    },
+                    {
+                      log: 'LOG-20241024144120-GHI',
+                      action: 'Status Changed',
+                      intervention: 'INT-20241024-A1B2C3D4',
+                      user: 'Sarah Smith',
+                      role: 'Trainer',
+                      time: '2024-10-24 14:41:20',
+                      details: 'Status changed from initiated to in_progress',
+                    },
+                    {
+                      log: 'LOG-20241024150015-JKL',
+                      action: 'Outcome Recorded',
+                      intervention: 'INT-20241023-E5F6G7H8',
+                      user: 'Mike Brown',
+                      role: 'Trainer',
+                      time: '2024-10-24 15:00:15',
+                      details: 'Attendance improvement: 85% (target achieved)',
+                    },
+                    {
+                      log: 'LOG-20241024151245-MNO',
+                      action: 'Document Attached',
+                      intervention: 'INT-20241023-E5F6G7H8',
+                      user: 'Mike Brown',
+                      role: 'Trainer',
+                      time: '2024-10-24 15:12:45',
+                      details: 'Student action plan document uploaded',
+                    },
+                    {
+                      log: 'LOG-20241024152530-PQR',
+                      action: 'Notification Sent',
+                      intervention: 'INT-20241024-A1B2C3D4',
+                      user: 'System',
+                      role: 'Automated',
+                      time: '2024-10-24 15:25:30',
+                      details: 'Follow-up reminder sent to trainer',
+                    },
                   ].map((log, index) => (
-                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+                    <div
+                      key={index}
+                      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
+                    >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-start gap-3">
                           <div className="mt-1">
-                            {log.action === 'Intervention Created' && <span className="text-2xl">➕</span>}
-                            {log.action === 'Workflow Step Completed' && <span className="text-2xl">✅</span>}
-                            {log.action === 'Status Changed' && <span className="text-2xl">🔄</span>}
-                            {log.action === 'Outcome Recorded' && <span className="text-2xl">📊</span>}
-                            {log.action === 'Document Attached' && <span className="text-2xl">📎</span>}
-                            {log.action === 'Notification Sent' && <span className="text-2xl">📧</span>}
+                            {log.action === 'Intervention Created' && (
+                              <span className="text-2xl">➕</span>
+                            )}
+                            {log.action === 'Workflow Step Completed' && (
+                              <span className="text-2xl">✅</span>
+                            )}
+                            {log.action === 'Status Changed' && (
+                              <span className="text-2xl">🔄</span>
+                            )}
+                            {log.action === 'Outcome Recorded' && (
+                              <span className="text-2xl">📊</span>
+                            )}
+                            {log.action === 'Document Attached' && (
+                              <span className="text-2xl">📎</span>
+                            )}
+                            {log.action === 'Notification Sent' && (
+                              <span className="text-2xl">📧</span>
+                            )}
                           </div>
                           <div>
                             <p className="font-semibold text-gray-900">{log.action}</p>
@@ -687,7 +958,9 @@ export default function InterventionTrackerPage() {
                         <div className="flex items-center gap-4">
                           <span>🆔 {log.log}</span>
                           <span>📋 {log.intervention}</span>
-                          <span>👤 {log.user} ({log.role})</span>
+                          <span>
+                            👤 {log.user} ({log.role})
+                          </span>
                         </div>
                         <span>🕐 {log.time}</span>
                       </div>

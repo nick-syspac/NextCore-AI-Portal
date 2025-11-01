@@ -58,7 +58,7 @@ export default function AutoMarkerPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showMarkForm, setShowMarkForm] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null);
-  
+
   // Form states
   const [formData, setFormData] = useState({
     title: '',
@@ -66,8 +66,8 @@ export default function AutoMarkerPage() {
     model_answer: '',
     max_marks: 10,
     answer_type: 'short_answer',
-    similarity_threshold: 0.70,
-    min_similarity_for_credit: 0.40,
+    similarity_threshold: 0.7,
+    min_similarity_for_credit: 0.4,
     use_keywords: true,
     keywords: '',
   });
@@ -91,16 +91,28 @@ export default function AutoMarkerPage() {
       setMarkers(markersData.results || markersData || []);
 
       // Fetch recent responses
-      const responsesRes = await fetch(`/api/tenants/${tenantSlug}/auto-marker/responses/?limit=20`);
+      const responsesRes = await fetch(
+        `/api/tenants/${tenantSlug}/auto-marker/responses/?limit=20`
+      );
       const responsesData = await responsesRes.json();
       setResponses(responsesData.results || responsesData || []);
 
       // Calculate stats
       const totalMarkers = markersData.results?.length || markersData?.length || 0;
-      const totalResponses = markersData.results?.reduce((sum: number, m: AutoMarker) => sum + m.total_responses_marked, 0) || 0;
-      const avgSim = markersData.results?.reduce((sum: number, m: AutoMarker) => sum + m.average_similarity_score, 0) / (totalMarkers || 1) || 0;
-      const needsReview = (responsesData.results || responsesData || []).filter((r: MarkedResponse) => r.requires_review).length;
-      
+      const totalResponses =
+        markersData.results?.reduce(
+          (sum: number, m: AutoMarker) => sum + m.total_responses_marked,
+          0
+        ) || 0;
+      const avgSim =
+        markersData.results?.reduce(
+          (sum: number, m: AutoMarker) => sum + m.average_similarity_score,
+          0
+        ) / (totalMarkers || 1) || 0;
+      const needsReview = (responsesData.results || responsesData || []).filter(
+        (r: MarkedResponse) => r.requires_review
+      ).length;
+
       // Calculate time saved (70% faster = traditional time * 0.7)
       // Assume traditional marking takes 5 min per response
       const timeSaved = totalResponses * 5 * 0.7;
@@ -121,7 +133,7 @@ export default function AutoMarkerPage() {
 
   const handleCreateMarker = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const keywordsArray = formData.keywords
       .split(',')
       .map(k => k.trim())
@@ -145,8 +157,8 @@ export default function AutoMarkerPage() {
           model_answer: '',
           max_marks: 10,
           answer_type: 'short_answer',
-          similarity_threshold: 0.70,
-          min_similarity_for_credit: 0.40,
+          similarity_threshold: 0.7,
+          min_similarity_for_credit: 0.4,
           use_keywords: true,
           keywords: '',
         });
@@ -159,7 +171,7 @@ export default function AutoMarkerPage() {
 
   const handleMarkResponse = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedMarker) return;
 
     try {
@@ -235,27 +247,29 @@ export default function AutoMarkerPage() {
           <div className="text-sm text-gray-600 uppercase font-semibold">Total Markers</div>
           <div className="text-3xl font-bold text-gray-900 mt-2">{stats.total_markers}</div>
         </div>
-        
+
         <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
           <div className="text-sm text-gray-600 uppercase font-semibold">Responses Marked</div>
           <div className="text-3xl font-bold text-gray-900 mt-2">{stats.total_responses}</div>
         </div>
-        
+
         <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
           <div className="text-sm text-gray-600 uppercase font-semibold">Avg Similarity</div>
           <div className={`text-3xl font-bold mt-2 ${getScoreColor(stats.avg_similarity)}`}>
             {(stats.avg_similarity * 100).toFixed(1)}%
           </div>
         </div>
-        
+
         <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500">
           <div className="text-sm text-gray-600 uppercase font-semibold">Needs Review</div>
           <div className="text-3xl font-bold text-gray-900 mt-2">{stats.needs_review}</div>
         </div>
-        
+
         <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500">
           <div className="text-sm text-gray-600 uppercase font-semibold">⚡ Time Saved</div>
-          <div className="text-3xl font-bold text-indigo-600 mt-2">{Math.round(stats.time_saved)} min</div>
+          <div className="text-3xl font-bold text-indigo-600 mt-2">
+            {Math.round(stats.time_saved)} min
+          </div>
           <div className="text-xs text-gray-500 mt-1">70% faster turnaround</div>
         </div>
       </div>
@@ -274,7 +288,7 @@ export default function AutoMarkerPage() {
                   type="text"
                   required
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  onChange={e => setFormData({ ...formData, title: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                   placeholder="e.g., Python Basics Quiz"
                 />
@@ -286,7 +300,7 @@ export default function AutoMarkerPage() {
                 </label>
                 <select
                   value={formData.answer_type}
-                  onChange={(e) => setFormData({ ...formData, answer_type: e.target.value })}
+                  onChange={e => setFormData({ ...formData, answer_type: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="short_answer">Short Answer</option>
@@ -305,7 +319,7 @@ export default function AutoMarkerPage() {
               <textarea
                 required
                 value={formData.question_text}
-                onChange={(e) => setFormData({ ...formData, question_text: e.target.value })}
+                onChange={e => setFormData({ ...formData, question_text: e.target.value })}
                 rows={3}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                 placeholder="Enter the question students will answer..."
@@ -319,7 +333,7 @@ export default function AutoMarkerPage() {
               <textarea
                 required
                 value={formData.model_answer}
-                onChange={(e) => setFormData({ ...formData, model_answer: e.target.value })}
+                onChange={e => setFormData({ ...formData, model_answer: e.target.value })}
                 rows={4}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                 placeholder="Enter the ideal/model answer for comparison..."
@@ -328,15 +342,13 @@ export default function AutoMarkerPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Max Marks
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Max Marks</label>
                 <input
                   type="number"
                   min="1"
                   max="100"
                   value={formData.max_marks}
-                  onChange={(e) => setFormData({ ...formData, max_marks: parseInt(e.target.value) })}
+                  onChange={e => setFormData({ ...formData, max_marks: parseInt(e.target.value) })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                 />
               </div>
@@ -351,7 +363,9 @@ export default function AutoMarkerPage() {
                   max="1"
                   step="0.05"
                   value={formData.similarity_threshold}
-                  onChange={(e) => setFormData({ ...formData, similarity_threshold: parseFloat(e.target.value) })}
+                  onChange={e =>
+                    setFormData({ ...formData, similarity_threshold: parseFloat(e.target.value) })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                 />
                 <p className="text-xs text-gray-500 mt-1">Min score for full marks (0-1)</p>
@@ -367,7 +381,12 @@ export default function AutoMarkerPage() {
                   max="1"
                   step="0.05"
                   value={formData.min_similarity_for_credit}
-                  onChange={(e) => setFormData({ ...formData, min_similarity_for_credit: parseFloat(e.target.value) })}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      min_similarity_for_credit: parseFloat(e.target.value),
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                 />
                 <p className="text-xs text-gray-500 mt-1">Min score for partial credit</p>
@@ -381,7 +400,7 @@ export default function AutoMarkerPage() {
               <input
                 type="text"
                 value={formData.keywords}
-                onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
+                onChange={e => setFormData({ ...formData, keywords: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                 placeholder="Python, programming, high-level, interpreted"
               />
@@ -421,7 +440,7 @@ export default function AutoMarkerPage() {
                   type="text"
                   required
                   value={markingData.student_id}
-                  onChange={(e) => setMarkingData({ ...markingData, student_id: e.target.value })}
+                  onChange={e => setMarkingData({ ...markingData, student_id: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                   placeholder="e.g., S12345"
                 />
@@ -435,7 +454,7 @@ export default function AutoMarkerPage() {
                   type="text"
                   required
                   value={markingData.student_name}
-                  onChange={(e) => setMarkingData({ ...markingData, student_name: e.target.value })}
+                  onChange={e => setMarkingData({ ...markingData, student_name: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                   placeholder="e.g., John Doe"
                 />
@@ -449,7 +468,7 @@ export default function AutoMarkerPage() {
               <textarea
                 required
                 value={markingData.response_text}
-                onChange={(e) => setMarkingData({ ...markingData, response_text: e.target.value })}
+                onChange={e => setMarkingData({ ...markingData, response_text: e.target.value })}
                 rows={6}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                 placeholder="Paste or type the student's response here..."
@@ -478,7 +497,7 @@ export default function AutoMarkerPage() {
       {/* Auto-Markers List */}
       <div className="bg-white rounded-xl shadow-lg p-8">
         <h3 className="text-2xl font-bold mb-6 text-gray-900">Active Auto-Markers</h3>
-        
+
         {markers.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <div className="text-6xl mb-4">📝</div>
@@ -486,8 +505,11 @@ export default function AutoMarkerPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {markers.map((marker) => (
-              <div key={marker.id} className="border border-gray-200 rounded-lg p-6 hover:border-purple-300 transition-all">
+            {markers.map(marker => (
+              <div
+                key={marker.id}
+                className="border border-gray-200 rounded-lg p-6 hover:border-purple-300 transition-all"
+              >
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
@@ -495,15 +517,21 @@ export default function AutoMarkerPage() {
                       <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded-full">
                         {marker.marker_number}
                       </span>
-                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        marker.status === 'active' ? 'bg-green-100 text-green-800' :
-                        marker.status === 'draft' ? 'bg-gray-100 text-gray-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
+                      <span
+                        className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                          marker.status === 'active'
+                            ? 'bg-green-100 text-green-800'
+                            : marker.status === 'draft'
+                              ? 'bg-gray-100 text-gray-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                        }`}
+                      >
                         {marker.status}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">{marker.question_text}</p>
+                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                      {marker.question_text}
+                    </p>
                   </div>
                   <button
                     onClick={() => {
@@ -519,11 +547,15 @@ export default function AutoMarkerPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-100">
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Responses Marked</div>
-                    <div className="text-lg font-bold text-gray-900">{marker.total_responses_marked}</div>
+                    <div className="text-lg font-bold text-gray-900">
+                      {marker.total_responses_marked}
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Avg Similarity</div>
-                    <div className={`text-lg font-bold ${getScoreColor(marker.average_similarity_score)}`}>
+                    <div
+                      className={`text-lg font-bold ${getScoreColor(marker.average_similarity_score)}`}
+                    >
                       {(marker.average_similarity_score * 100).toFixed(1)}%
                     </div>
                   </div>
@@ -547,7 +579,7 @@ export default function AutoMarkerPage() {
       {/* Recent Responses */}
       <div className="bg-white rounded-xl shadow-lg p-8">
         <h3 className="text-2xl font-bold mb-6 text-gray-900">Recent Marked Responses</h3>
-        
+
         {responses.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <div className="text-6xl mb-4">📊</div>
@@ -558,18 +590,34 @@ export default function AutoMarkerPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b-2 border-gray-200">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Response ID</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Words</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Similarity</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Marks</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Confidence</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Marked</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Student
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Response ID
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Words
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Similarity
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Marks
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Confidence
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Marked
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {responses.map((response) => (
+                {responses.map(response => (
                   <tr key={response.id} className="hover:bg-gray-50">
                     <td className="px-4 py-4">
                       <div className="font-semibold text-gray-900">{response.student_name}</div>
@@ -583,10 +631,14 @@ export default function AutoMarkerPage() {
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="font-bold text-gray-900">{response.marks_awarded.toFixed(1)}</span>
+                      <span className="font-bold text-gray-900">
+                        {response.marks_awarded.toFixed(1)}
+                      </span>
                     </td>
                     <td className="px-4 py-4">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded ${getScoreBadgeColor(response.confidence_score)}`}>
+                      <span
+                        className={`px-2 py-1 text-xs font-semibold rounded ${getScoreBadgeColor(response.confidence_score)}`}
+                      >
                         {(response.confidence_score * 100).toFixed(0)}%
                       </span>
                     </td>

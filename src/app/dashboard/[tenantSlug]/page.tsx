@@ -43,9 +43,7 @@ export default function TenantDashboardPage() {
               <Link href="/dashboard" className="text-blue-600 hover:text-blue-800">
                 ← Back to Dashboard
               </Link>
-              <h1 className="text-xl font-semibold text-gray-900">
-                {tenantSlug}
-              </h1>
+              <h1 className="text-xl font-semibold text-gray-900">{tenantSlug}</h1>
             </div>
             <button
               onClick={handleLogout}
@@ -62,9 +60,7 @@ export default function TenantDashboardPage() {
           <h2 className="text-3xl font-bold text-gray-900 capitalize">
             {tenantSlug.replace(/-/g, ' ')} Dashboard
           </h2>
-          <p className="text-gray-600 mt-2">
-            Tenant-specific features and management
-          </p>
+          <p className="text-gray-600 mt-2">Tenant-specific features and management</p>
         </div>
 
         {/* Usage Overview Widget */}
@@ -222,7 +218,7 @@ export default function TenantDashboardPage() {
                 </button>
               </Link>
             </div>
-            
+
             {/* Rubric Generator */}
             <div className="bg-white rounded-lg shadow-md p-6 border-2 border-pink-200 hover:shadow-xl transition-shadow">
               <div className="flex items-center justify-between mb-4">
@@ -250,7 +246,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Grade short answers automatically • Semantic similarity scoring • 70% faster turnaround
+                Grade short answers automatically • Semantic similarity scoring • 70% faster
+                turnaround
               </p>
               <Link href={`/dashboard/${tenantSlug}/auto-marker`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-md font-semibold">
@@ -268,7 +265,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Generate personalised feedback • Sentiment control + rubric mapping • Professional feedback at scale
+                Generate personalised feedback • Sentiment control + rubric mapping • Professional
+                feedback at scale
               </p>
               <Link href={`/dashboard/${tenantSlug}/feedback-assistant`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
@@ -286,7 +284,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Compare assessor decisions • Outlier detection + bias scoring • Validation & fairness evidence
+                Compare assessor decisions • Outlier detection + bias scoring • Validation &
+                fairness evidence
               </p>
               <Link href={`/dashboard/${tenantSlug}/moderation-tool`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-lg hover:from-emerald-700 hover:to-green-700 transition-all shadow-md font-semibold">
@@ -304,7 +303,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Tag submissions to criteria • Text extraction + embedding search • Stronger audit trail
+                Tag submissions to criteria • Text extraction + embedding search • Stronger audit
+                trail
               </p>
               <Link href={`/dashboard/${tenantSlug}/evidence-mapper`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-lg hover:from-indigo-700 hover:to-violet-700 transition-all shadow-md font-semibold">
@@ -322,7 +322,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Plagiarism + metadata verification • Embedding + anomaly detection • Academic integrity compliance
+                Plagiarism + metadata verification • Embedding + anomaly detection • Academic
+                integrity compliance
               </p>
               <Link href={`/dashboard/${tenantSlug}/authenticity-check`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-lg hover:from-red-700 hover:to-orange-700 transition-all shadow-md font-semibold">
@@ -396,7 +397,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Recommend next learning step • Collaborative filtering + embeddings • Higher course completion rates
+                Recommend next learning step • Collaborative filtering + embeddings • Higher course
+                completion rates
               </p>
               <Link href={`/dashboard/${tenantSlug}/adaptive-pathway`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-md font-semibold">
@@ -414,7 +416,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Track attendance, LMS use, discussion tone • Sentiment & activity analysis • Visual risk dashboard
+                Track attendance, LMS use, discussion tone • Sentiment & activity analysis • Visual
+                risk dashboard
               </p>
               <Link href={`/dashboard/${tenantSlug}/engagement-heatmap`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-lg hover:from-orange-700 hover:to-amber-700 transition-all shadow-md font-semibold">
@@ -450,7 +453,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Record trainer actions & outcomes • Workflow + rule engine • Documented learner support for audit
+                Record trainer actions & outcomes • Workflow + rule engine • Documented learner
+                support for audit
               </p>
               <Link href={`/dashboard/${tenantSlug}/intervention-tracker`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md font-semibold">
@@ -488,7 +492,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Log PD, auto-suggest future activities • LLM + compliance rule mapping • Maintains RTO trainer currency
+                Log PD, auto-suggest future activities • LLM + compliance rule mapping • Maintains
+                RTO trainer currency
               </p>
               <Link href={`/dashboard/${tenantSlug}/pd-tracker`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
@@ -506,7 +511,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Auto-summarise teaching sessions • Speech-to-text + AI summarisation • Daily evidence creation
+                Auto-summarise teaching sessions • Speech-to-text + AI summarisation • Daily
+                evidence creation
               </p>
               <Link href={`/dashboard/${tenantSlug}/trainer-diary`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
@@ -524,7 +530,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Scan LinkedIn/GitHub for relevance • NLP entity extraction + web scraping • Automated currency evidence
+                Scan LinkedIn/GitHub for relevance • NLP entity extraction + web scraping •
+                Automated currency evidence
               </p>
               <Link href={`/dashboard/${tenantSlug}/industry-currency`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
@@ -542,7 +549,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Cross-check trainer quals vs units • Graph-matching model • Compliance for trainer matrix
+                Cross-check trainer quals vs units • Graph-matching model • Compliance for trainer
+                matrix
               </p>
               <Link href={`/dashboard/${tenantSlug}/competency-gap`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
@@ -560,7 +568,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Draft replies to student queries • Tone-controlled LLM generation • 50% admin time reduction
+                Draft replies to student queries • Tone-controlled LLM generation • 50% admin time
+                reduction
               </p>
               <Link href={`/dashboard/${tenantSlug}/email-assistant`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
@@ -578,7 +587,8 @@ export default function TenantDashboardPage() {
                 </span>
               </div>
               <p className="text-gray-600 text-sm mb-4">
-                Generate short courses from units • Curriculum compression + metadata tagging • New course creation in minutes
+                Generate short courses from units • Curriculum compression + metadata tagging • New
+                course creation in minutes
               </p>
               <Link href={`/dashboard/${tenantSlug}/micro-credential`}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-semibold">
@@ -615,9 +625,7 @@ export default function TenantDashboardPage() {
                   Active
                 </span>
               </div>
-              <p className="text-gray-600 text-sm mb-4">
-                Access AI models and manage API keys
-              </p>
+              <p className="text-gray-600 text-sm mb-4">Access AI models and manage API keys</p>
               <Link href={`/dashboard/${tenantSlug}/api-keys`}>
                 <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   Manage API Keys
@@ -633,9 +641,7 @@ export default function TenantDashboardPage() {
                   5 Users
                 </span>
               </div>
-              <p className="text-gray-600 text-sm mb-4">
-                Invite and manage team members
-              </p>
+              <p className="text-gray-600 text-sm mb-4">Invite and manage team members</p>
               <Link href={`/dashboard/${tenantSlug}/members`}>
                 <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   View Team Members
@@ -651,9 +657,7 @@ export default function TenantDashboardPage() {
                   24h
                 </span>
               </div>
-              <p className="text-gray-600 text-sm mb-4">
-                View activity and security events
-              </p>
+              <p className="text-gray-600 text-sm mb-4">View activity and security events</p>
               <Link href={`/dashboard/${tenantSlug}/logs`}>
                 <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   View Logs
@@ -666,9 +670,7 @@ export default function TenantDashboardPage() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Settings</h3>
               </div>
-              <p className="text-gray-600 text-sm mb-4">
-                Configure tenant preferences
-              </p>
+              <p className="text-gray-600 text-sm mb-4">Configure tenant preferences</p>
               <Link href={`/dashboard/${tenantSlug}/settings`}>
                 <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   Manage Settings
@@ -684,9 +686,7 @@ export default function TenantDashboardPage() {
                   Paid
                 </span>
               </div>
-              <p className="text-gray-600 text-sm mb-4">
-                Subscription and payment info
-              </p>
+              <p className="text-gray-600 text-sm mb-4">Subscription and payment info</p>
               <Link href={`/dashboard/${tenantSlug}/billing`}>
                 <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   View Billing
@@ -699,9 +699,7 @@ export default function TenantDashboardPage() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Integrations</h3>
               </div>
-              <p className="text-gray-600 text-sm mb-4">
-                Connect Axcelerate, Canvas, Xero, MYOB
-              </p>
+              <p className="text-gray-600 text-sm mb-4">Connect Axcelerate, Canvas, Xero, MYOB</p>
               <Link href={`/dashboard/${tenantSlug}/integrations`}>
                 <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   Manage Integrations
@@ -717,8 +715,9 @@ export default function TenantDashboardPage() {
             🚧 Feature Implementation In Progress
           </h3>
           <p className="text-blue-800">
-            This is a placeholder dashboard. The actual tenant-specific features (API keys, user management, audit logs, etc.) 
-            will be implemented based on your requirements. Each card above represents a planned feature area.
+            This is a placeholder dashboard. The actual tenant-specific features (API keys, user
+            management, audit logs, etc.) will be implemented based on your requirements. Each card
+            above represents a planned feature area.
           </p>
         </div>
       </main>

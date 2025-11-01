@@ -29,12 +29,12 @@ export default function AuditLogsPage() {
   const params = useParams();
   const router = useRouter();
   const tenantSlug = params.tenantSlug as string;
-  
+
   const [logs, setLogs] = useState<AuditEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedLog, setSelectedLog] = useState<AuditEvent | null>(null);
-  
+
   // Filters
   const [eventTypeFilter, setEventTypeFilter] = useState('');
   const [severityFilter, setSeverityFilter] = useState('');
@@ -61,7 +61,7 @@ export default function AuditLogsPage() {
         search: searchQuery || undefined,
         page: currentPage,
       });
-      
+
       setLogs(data.results || data);
       setTotalCount(data.count || 0);
     } catch (err) {
@@ -84,11 +84,15 @@ export default function AuditLogsPage() {
     try {
       const tenantId = logs[0].tenant_id;
       const result = await api.verifyAuditLog(tenantId, authToken);
-      
+
       if (result.chain_valid) {
-        alert(`✓ Audit chain verified!\n\nVerified ${result.verified_count} of ${result.total_events} events.\nChain integrity: VALID`);
+        alert(
+          `✓ Audit chain verified!\n\nVerified ${result.verified_count} of ${result.total_events} events.\nChain integrity: VALID`
+        );
       } else {
-        alert(`✗ Audit chain verification FAILED!\n\nVerified: ${result.verified_count}/${result.total_events}\nBroken links: ${result.broken_links?.length || 0}\n\nSee console for details.`);
+        alert(
+          `✗ Audit chain verification FAILED!\n\nVerified: ${result.verified_count}/${result.total_events}\nBroken links: ${result.broken_links?.length || 0}\n\nSee console for details.`
+        );
         console.error('Audit chain broken:', result.broken_links);
       }
     } catch (err) {
@@ -113,9 +117,7 @@ export default function AuditLogsPage() {
   };
 
   const getStatusColor = (status: string) => {
-    return status === 'success' 
-      ? 'bg-green-100 text-green-800' 
-      : 'bg-red-100 text-red-800';
+    return status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
   };
 
   const formatTimestamp = (timestamp: string) => {
@@ -158,12 +160,10 @@ export default function AuditLogsPage() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
           <div className="grid md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Event Type
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Event Type</label>
               <select
                 value={eventTypeFilter}
-                onChange={(e) => setEventTypeFilter(e.target.value)}
+                onChange={e => setEventTypeFilter(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All Events</option>
@@ -176,12 +176,10 @@ export default function AuditLogsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Severity
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Severity</label>
               <select
                 value={severityFilter}
-                onChange={(e) => setSeverityFilter(e.target.value)}
+                onChange={e => setSeverityFilter(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All Levels</option>
@@ -193,13 +191,11 @@ export default function AuditLogsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Search
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search logs..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -217,9 +213,7 @@ export default function AuditLogsPage() {
             >
               Clear Filters
             </button>
-            <div className="text-sm text-gray-600">
-              {totalCount} total events
-            </div>
+            <div className="text-sm text-gray-600">{totalCount} total events</div>
           </div>
         </div>
 
@@ -233,9 +227,7 @@ export default function AuditLogsPage() {
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <div className="text-6xl mb-4">📋</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No Audit Logs</h3>
-            <p className="text-gray-600">
-              No events match your current filters
-            </p>
+            <p className="text-gray-600">No events match your current filters</p>
           </div>
         ) : (
           <>
@@ -265,34 +257,32 @@ export default function AuditLogsPage() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {logs.map((log) => (
+                    {logs.map(log => (
                       <tr key={log.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {formatTimestamp(log.timestamp)}
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {log.action}
-                          </div>
+                          <div className="text-sm font-medium text-gray-900">{log.action}</div>
                           <div className="text-sm text-gray-500">
                             {log.event_type} • {log.resource_type}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            {log.actor_username}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {log.ip_address}
-                          </div>
+                          <div className="text-sm text-gray-900">{log.actor_username}</div>
+                          <div className="text-sm text-gray-500">{log.ip_address}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getSeverityColor(log.severity)}`}>
+                          <span
+                            className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getSeverityColor(log.severity)}`}
+                          >
                             {log.severity.toUpperCase()}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(log.status)}`}>
+                          <span
+                            className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(log.status)}`}
+                          >
                             {log.status}
                           </span>
                         </td>
@@ -327,9 +317,7 @@ export default function AuditLogsPage() {
               >
                 Previous
               </button>
-              <span className="text-sm text-gray-600">
-                Page {currentPage}
-              </span>
+              <span className="text-sm text-gray-600">Page {currentPage}</span>
               <button
                 onClick={() => setCurrentPage(p => p + 1)}
                 disabled={logs.length < 20}
@@ -343,9 +331,7 @@ export default function AuditLogsPage() {
 
         {/* Info Box */}
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-blue-900 mb-2">
-            🔍 Audit Log Features
-          </h3>
+          <h3 className="text-lg font-semibold text-blue-900 mb-2">🔍 Audit Log Features</h3>
           <ul className="text-blue-800 space-y-1 text-sm">
             <li>• All events are cryptographically signed for tamper detection</li>
             <li>• Logs are immutable and form a verifiable chain</li>
@@ -362,15 +348,18 @@ export default function AuditLogsPage() {
           <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-start mb-6">
-                <h3 className="text-xl font-bold text-gray-900">
-                  Event Details
-                </h3>
+                <h3 className="text-xl font-bold text-gray-900">Event Details</h3>
                 <button
                   onClick={() => setSelectedLog(null)}
                   className="text-gray-400 hover:text-gray-600"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -383,7 +372,9 @@ export default function AuditLogsPage() {
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-500">Timestamp</label>
-                    <p className="text-sm text-gray-900">{formatTimestamp(selectedLog.timestamp)}</p>
+                    <p className="text-sm text-gray-900">
+                      {formatTimestamp(selectedLog.timestamp)}
+                    </p>
                   </div>
                 </div>
 
@@ -414,13 +405,17 @@ export default function AuditLogsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-gray-500">Severity</label>
-                    <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full border ${getSeverityColor(selectedLog.severity)}`}>
+                    <span
+                      className={`inline-block px-3 py-1 text-xs font-semibold rounded-full border ${getSeverityColor(selectedLog.severity)}`}
+                    >
                       {selectedLog.severity.toUpperCase()}
                     </span>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-500">Status</label>
-                    <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedLog.status)}`}>
+                    <span
+                      className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedLog.status)}`}
+                    >
                       {selectedLog.status}
                     </span>
                   </div>
@@ -446,14 +441,22 @@ export default function AuditLogsPage() {
                 <div>
                   <label className="text-sm font-medium text-gray-500">Event Hash</label>
                   <p className="text-xs text-gray-900 font-mono break-all">
-                    {selectedLog.hash ? (typeof selectedLog.hash === 'string' ? selectedLog.hash : '[Binary Data]') : 'N/A'}
+                    {selectedLog.hash
+                      ? typeof selectedLog.hash === 'string'
+                        ? selectedLog.hash
+                        : '[Binary Data]'
+                      : 'N/A'}
                   </p>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium text-gray-500">Previous Hash</label>
                   <p className="text-xs text-gray-900 font-mono break-all">
-                    {selectedLog.prev_hash ? (typeof selectedLog.prev_hash === 'string' ? selectedLog.prev_hash : '[Binary Data]') : 'Genesis Block'}
+                    {selectedLog.prev_hash
+                      ? typeof selectedLog.prev_hash === 'string'
+                        ? selectedLog.prev_hash
+                        : '[Binary Data]'
+                      : 'Genesis Block'}
                   </p>
                 </div>
               </div>

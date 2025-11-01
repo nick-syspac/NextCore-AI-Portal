@@ -26,13 +26,13 @@ export function UsageOverview({ tenantSlug }: UsageOverviewProps) {
   const loadUsageData = async () => {
     // Mock data - replace with actual API call
     // const result = await api.getMiniUsageStats(tenantSlug, authToken);
-    
+
     setTimeout(() => {
       setData({
         calls: 15847,
         tokens: 2845692,
         cost: 127.45,
-        successRate: 95.9
+        successRate: 95.9,
       });
       setLoading(false);
     }, 300);
@@ -72,7 +72,7 @@ export function UsageOverview({ tenantSlug }: UsageOverviewProps) {
           This Month
         </span>
       </div>
-      
+
       {data && (
         <>
           <div className="grid grid-cols-2 gap-3 mb-4">

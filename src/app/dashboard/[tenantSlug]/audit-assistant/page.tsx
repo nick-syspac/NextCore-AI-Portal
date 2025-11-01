@@ -85,17 +85,17 @@ export default function AuditAssistantPage() {
   const tenantSlug = params?.tenantSlug as string;
 
   const [activeTab, setActiveTab] = useState<'evidence' | 'reports' | 'gaps'>('evidence');
-  
+
   // Evidence state
   const [evidenceList, setEvidenceList] = useState<Evidence[]>([]);
   const [selectedEvidence, setSelectedEvidence] = useState<Evidence | null>(null);
   const [taggedClauses, setTaggedClauses] = useState<ClauseEvidence[]>([]);
-  
+
   // Report state
   const [auditReports, setAuditReports] = useState<AuditReport[]>([]);
   const [selectedReport, setSelectedReport] = useState<AuditReport | null>(null);
   const [reportClauses, setReportClauses] = useState<AuditReportClause[]>([]);
-  
+
   // Upload modal
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -108,11 +108,11 @@ export default function AuditAssistantPage() {
     auto_tag: true,
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  
+
   // Report modal
   const [showReportModal, setShowReportModal] = useState(false);
   const [showClauseModal, setShowClauseModal] = useState(false);
-  
+
   // NER entities modal
   const [showNERModal, setShowNERModal] = useState(false);
 
@@ -129,7 +129,8 @@ export default function AuditAssistantPage() {
         file_url: '/evidence/assessment-policy.pdf',
         file_name: 'assessment-policy.pdf',
         file_size: 524288,
-        extracted_text: 'This policy outlines the assessment and validation procedures per Standard 1.8...',
+        extracted_text:
+          'This policy outlines the assessment and validation procedures per Standard 1.8...',
         ner_entities: [
           { entity: 'Standard 1.8', type: 'STANDARD', start: 75, end: 86, value: '1.8' },
           { entity: 'Clause 1.8.1', type: 'CLAUSE', start: 120, end: 131, value: '1.8.1' },
@@ -235,11 +236,19 @@ export default function AuditAssistantPage() {
 
       // Simulate NER processing after 2 seconds
       setTimeout(() => {
-        setEvidenceList(prev => prev.map(ev => 
-          ev.id === newEvidence.id 
-            ? { ...ev, status: 'tagged', tagged_clauses_count: 3, auto_tagged_count: 3, ner_processed_at: new Date().toISOString() }
-            : ev
-        ));
+        setEvidenceList(prev =>
+          prev.map(ev =>
+            ev.id === newEvidence.id
+              ? {
+                  ...ev,
+                  status: 'tagged',
+                  tagged_clauses_count: 3,
+                  auto_tagged_count: 3,
+                  ner_processed_at: new Date().toISOString(),
+                }
+              : ev
+          )
+        );
       }, 2000);
     }, 1500);
   };
@@ -306,14 +315,16 @@ export default function AuditAssistantPage() {
         verified_evidence_count: 0,
         finding: 'Limited evidence, requires additional documentation',
         severity: 'minor',
-        recommendation: 'Upload additional trainer qualification records and industry experience documentation',
+        recommendation:
+          'Upload additional trainer qualification records and industry experience documentation',
         evidence_details: [evidenceList[1]],
       },
       {
         id: 3,
         clause_number: '2.1',
         clause_title: 'Recruitment Requirements',
-        clause_text: 'The RTO must have recruitment processes that ensure trainers meet qualification requirements.',
+        clause_text:
+          'The RTO must have recruitment processes that ensure trainers meet qualification requirements.',
         compliance_status: 'non_compliant',
         compliance_status_display: 'Non-Compliant',
         evidence_count: 0,
@@ -329,42 +340,63 @@ export default function AuditAssistantPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'uploaded': return 'bg-gray-100 text-gray-800';
-      case 'processing': return 'bg-blue-100 text-blue-800';
-      case 'tagged': return 'bg-green-100 text-green-800';
-      case 'reviewed': return 'bg-purple-100 text-purple-800';
-      case 'approved': return 'bg-emerald-100 text-emerald-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'uploaded':
+        return 'bg-gray-100 text-gray-800';
+      case 'processing':
+        return 'bg-blue-100 text-blue-800';
+      case 'tagged':
+        return 'bg-green-100 text-green-800';
+      case 'reviewed':
+        return 'bg-purple-100 text-purple-800';
+      case 'approved':
+        return 'bg-emerald-100 text-emerald-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getComplianceColor = (status: string) => {
     switch (status) {
-      case 'compliant': return 'text-green-600';
-      case 'partial': return 'text-yellow-600';
-      case 'non_compliant': return 'text-red-600';
-      default: return 'text-gray-600';
+      case 'compliant':
+        return 'text-green-600';
+      case 'partial':
+        return 'text-yellow-600';
+      case 'non_compliant':
+        return 'text-red-600';
+      default:
+        return 'text-gray-600';
     }
   };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'major': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'minor': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'major':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'minor':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getNERTypeColor = (type: string) => {
     switch (type) {
-      case 'STANDARD': return 'bg-blue-100 text-blue-800';
-      case 'CLAUSE': return 'bg-indigo-100 text-indigo-800';
-      case 'QUALIFICATION': return 'bg-purple-100 text-purple-800';
-      case 'ORG': return 'bg-cyan-100 text-cyan-800';
-      case 'DATE': return 'bg-pink-100 text-pink-800';
-      case 'POLICY': return 'bg-teal-100 text-teal-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'STANDARD':
+        return 'bg-blue-100 text-blue-800';
+      case 'CLAUSE':
+        return 'bg-indigo-100 text-indigo-800';
+      case 'QUALIFICATION':
+        return 'bg-purple-100 text-purple-800';
+      case 'ORG':
+        return 'bg-cyan-100 text-cyan-800';
+      case 'DATE':
+        return 'bg-pink-100 text-pink-800';
+      case 'POLICY':
+        return 'bg-teal-100 text-teal-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -379,7 +411,9 @@ export default function AuditAssistantPage() {
               🤖 NER Powered
             </span>
           </div>
-          <p className="text-gray-600">Upload evidence, auto-tag with NER, generate clause-by-clause audit reports</p>
+          <p className="text-gray-600">
+            Upload evidence, auto-tag with NER, generate clause-by-clause audit reports
+          </p>
         </div>
 
         {/* Tabs */}
@@ -435,13 +469,20 @@ export default function AuditAssistantPage() {
             {/* Evidence Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {evidenceList.map(evidence => (
-                <div key={evidence.id} className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200 hover:border-purple-300 transition-colors">
+                <div
+                  key={evidence.id}
+                  className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200 hover:border-purple-300 transition-colors"
+                >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{evidence.evidence_number}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {evidence.evidence_number}
+                      </h3>
                       <p className="text-gray-600">{evidence.title}</p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(evidence.status)}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(evidence.status)}`}
+                    >
                       {evidence.status.replace('_', ' ').toUpperCase()}
                     </span>
                   </div>
@@ -449,7 +490,9 @@ export default function AuditAssistantPage() {
                   <div className="space-y-2 mb-4 text-sm">
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500">Type:</span>
-                      <span className="font-medium">{evidence.evidence_type.replace('_', ' ')}</span>
+                      <span className="font-medium">
+                        {evidence.evidence_type.replace('_', ' ')}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500">File:</span>
@@ -457,7 +500,9 @@ export default function AuditAssistantPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500">Date:</span>
-                      <span className="font-medium">{new Date(evidence.evidence_date).toLocaleDateString()}</span>
+                      <span className="font-medium">
+                        {new Date(evidence.evidence_date).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
 
@@ -472,7 +517,10 @@ export default function AuditAssistantPage() {
                       </div>
                       <div className="flex gap-2 flex-wrap">
                         {evidence.ner_entities.slice(0, 3).map((entity, idx) => (
-                          <span key={idx} className={`px-2 py-1 rounded text-xs font-medium ${getNERTypeColor(entity.type)}`}>
+                          <span
+                            key={idx}
+                            className={`px-2 py-1 rounded text-xs font-medium ${getNERTypeColor(entity.type)}`}
+                          >
                             {entity.entity}
                           </span>
                         ))}
@@ -495,11 +543,15 @@ export default function AuditAssistantPage() {
                   <div className="flex items-center gap-4 mb-4 text-sm">
                     <div className="flex items-center gap-1">
                       <span className="text-gray-500">Auto-tagged:</span>
-                      <span className="font-semibold text-purple-600">{evidence.auto_tagged_count}</span>
+                      <span className="font-semibold text-purple-600">
+                        {evidence.auto_tagged_count}
+                      </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <span className="text-gray-500">Total clauses:</span>
-                      <span className="font-semibold text-gray-900">{evidence.tagged_clauses_count}</span>
+                      <span className="font-semibold text-gray-900">
+                        {evidence.tagged_clauses_count}
+                      </span>
                     </div>
                   </div>
 
@@ -534,16 +586,23 @@ export default function AuditAssistantPage() {
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">Audit Reports</h2>
-                <p className="text-sm text-gray-600">Clause-by-clause audit reports with evidence mapping</p>
+                <p className="text-sm text-gray-600">
+                  Clause-by-clause audit reports with evidence mapping
+                </p>
               </div>
             </div>
 
             <div className="space-y-6">
               {auditReports.map(report => (
-                <div key={report.id} className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200">
+                <div
+                  key={report.id}
+                  className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200"
+                >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{report.report_number}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        {report.report_number}
+                      </h3>
                       <p className="text-gray-600">{report.title}</p>
                     </div>
                     <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -554,19 +613,27 @@ export default function AuditAssistantPage() {
                   {/* Compliance Metrics */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="text-2xl font-bold text-gray-900">{report.compliance_percentage}%</div>
+                      <div className="text-2xl font-bold text-gray-900">
+                        {report.compliance_percentage}%
+                      </div>
                       <div className="text-sm text-gray-600">Overall Compliance</div>
                     </div>
                     <div className="bg-purple-50 rounded-lg p-4">
-                      <div className="text-2xl font-bold text-purple-900">{report.clauses_with_evidence}</div>
+                      <div className="text-2xl font-bold text-purple-900">
+                        {report.clauses_with_evidence}
+                      </div>
                       <div className="text-sm text-purple-700">Clauses with Evidence</div>
                     </div>
                     <div className="bg-pink-50 rounded-lg p-4">
-                      <div className="text-2xl font-bold text-pink-900">{report.auto_tagged_count}</div>
+                      <div className="text-2xl font-bold text-pink-900">
+                        {report.auto_tagged_count}
+                      </div>
                       <div className="text-sm text-pink-700">Auto-tagged</div>
                     </div>
                     <div className="bg-emerald-50 rounded-lg p-4">
-                      <div className="text-2xl font-bold text-emerald-900">{report.critical_compliance_percentage}%</div>
+                      <div className="text-2xl font-bold text-emerald-900">
+                        {report.critical_compliance_percentage}%
+                      </div>
                       <div className="text-sm text-emerald-700">Critical Clauses</div>
                     </div>
                   </div>
@@ -575,7 +642,9 @@ export default function AuditAssistantPage() {
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-gray-600">Evidence Coverage</span>
-                      <span className="font-medium">{report.clauses_with_evidence}/{report.total_clauses} clauses</span>
+                      <span className="font-medium">
+                        {report.clauses_with_evidence}/{report.total_clauses} clauses
+                      </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-3">
                       <div
@@ -610,10 +679,14 @@ export default function AuditAssistantPage() {
                 <div className="border-2 border-red-200 rounded-lg p-4 bg-red-50">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h3 className="font-semibold text-gray-900">Clause 2.1 - Recruitment Requirements</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        Clause 2.1 - Recruitment Requirements
+                      </h3>
                       <p className="text-sm text-gray-600">Critical • Standard 2</p>
                     </div>
-                    <span className={`px-3 py-1 rounded text-xs font-medium border-2 ${getSeverityColor('critical')}`}>
+                    <span
+                      className={`px-3 py-1 rounded text-xs font-medium border-2 ${getSeverityColor('critical')}`}
+                    >
                       CRITICAL GAP
                     </span>
                   </div>
@@ -633,10 +706,14 @@ export default function AuditAssistantPage() {
                 <div className="border-2 border-yellow-200 rounded-lg p-4 bg-yellow-50">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h3 className="font-semibold text-gray-900">Clause 1.13 - Trainer Qualifications</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        Clause 1.13 - Trainer Qualifications
+                      </h3>
                       <p className="text-sm text-gray-600">Critical • Standard 1</p>
                     </div>
-                    <span className={`px-3 py-1 rounded text-xs font-medium border-2 ${getSeverityColor('minor')}`}>
+                    <span
+                      className={`px-3 py-1 rounded text-xs font-medium border-2 ${getSeverityColor('minor')}`}
+                    >
                       MINOR GAP
                     </span>
                   </div>
@@ -667,11 +744,15 @@ export default function AuditAssistantPage() {
 
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Evidence Number</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Evidence Number
+                  </label>
                   <input
                     type="text"
                     value={uploadForm.evidence_number}
-                    onChange={(e) => setUploadForm({ ...uploadForm, evidence_number: e.target.value })}
+                    onChange={e =>
+                      setUploadForm({ ...uploadForm, evidence_number: e.target.value })
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     placeholder="EV-2024-003"
                   />
@@ -682,17 +763,19 @@ export default function AuditAssistantPage() {
                   <input
                     type="text"
                     value={uploadForm.title}
-                    onChange={(e) => setUploadForm({ ...uploadForm, title: e.target.value })}
+                    onChange={e => setUploadForm({ ...uploadForm, title: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     placeholder="Document title"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                  </label>
                   <textarea
                     value={uploadForm.description}
-                    onChange={(e) => setUploadForm({ ...uploadForm, description: e.target.value })}
+                    onChange={e => setUploadForm({ ...uploadForm, description: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     rows={3}
                     placeholder="Brief description"
@@ -701,10 +784,14 @@ export default function AuditAssistantPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Evidence Type</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Evidence Type
+                    </label>
                     <select
                       value={uploadForm.evidence_type}
-                      onChange={(e) => setUploadForm({ ...uploadForm, evidence_type: e.target.value })}
+                      onChange={e =>
+                        setUploadForm({ ...uploadForm, evidence_type: e.target.value })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     >
                       <option value="policy">Policy Document</option>
@@ -719,32 +806,40 @@ export default function AuditAssistantPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Evidence Date</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Evidence Date
+                    </label>
                     <input
                       type="date"
                       value={uploadForm.evidence_date}
-                      onChange={(e) => setUploadForm({ ...uploadForm, evidence_date: e.target.value })}
+                      onChange={e =>
+                        setUploadForm({ ...uploadForm, evidence_date: e.target.value })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">File Upload</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    File Upload
+                  </label>
                   <input
                     type="file"
-                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                    onChange={e => setSelectedFile(e.target.files?.[0] || null)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     accept=".pdf,.docx,.doc,.xlsx,.xls,.txt,.jpg,.jpeg,.png"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Supported: PDF, Word, Excel, Text, Images</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Supported: PDF, Word, Excel, Text, Images
+                  </p>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     checked={uploadForm.auto_tag}
-                    onChange={(e) => setUploadForm({ ...uploadForm, auto_tag: e.target.checked })}
+                    onChange={e => setUploadForm({ ...uploadForm, auto_tag: e.target.checked })}
                     className="w-4 h-4"
                   />
                   <label className="text-sm text-gray-700">
@@ -780,7 +875,9 @@ export default function AuditAssistantPage() {
                 </button>
                 <button
                   onClick={handleUploadEvidence}
-                  disabled={uploading || !selectedFile || !uploadForm.evidence_number || !uploadForm.title}
+                  disabled={
+                    uploading || !selectedFile || !uploadForm.evidence_number || !uploadForm.title
+                  }
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {uploading ? 'Uploading...' : 'Upload & Process'}
@@ -795,22 +892,30 @@ export default function AuditAssistantPage() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900">NER Entities - {selectedEvidence.evidence_number}</h2>
-                <p className="text-gray-600">{selectedEvidence.ner_entities.length} entities identified</p>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  NER Entities - {selectedEvidence.evidence_number}
+                </h2>
+                <p className="text-gray-600">
+                  {selectedEvidence.ner_entities.length} entities identified
+                </p>
               </div>
 
               <div className="p-6">
                 <div className="space-y-3">
                   {selectedEvidence.ner_entities.map((entity, idx) => (
                     <div key={idx} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getNERTypeColor(entity.type)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${getNERTypeColor(entity.type)}`}
+                      >
                         {entity.type}
                       </span>
                       <span className="font-medium text-gray-900">{entity.entity}</span>
                       {entity.value && (
                         <span className="text-sm text-gray-600">→ {entity.value}</span>
                       )}
-                      <span className="text-xs text-gray-500 ml-auto">Position: {entity.start}-{entity.end}</span>
+                      <span className="text-xs text-gray-500 ml-auto">
+                        Position: {entity.start}-{entity.end}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -833,8 +938,12 @@ export default function AuditAssistantPage() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900">Tagged Clauses - {selectedEvidence.evidence_number}</h2>
-                <p className="text-gray-600">{taggedClauses.length} ASQA clauses automatically tagged</p>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Tagged Clauses - {selectedEvidence.evidence_number}
+                </h2>
+                <p className="text-gray-600">
+                  {taggedClauses.length} ASQA clauses automatically tagged
+                </p>
               </div>
 
               <div className="p-6 space-y-4">
@@ -842,8 +951,12 @@ export default function AuditAssistantPage() {
                   <div key={clause.id} className="border-2 border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900">{clause.clause_number} - {clause.clause_title}</h3>
-                        <span className="text-sm text-gray-600">{clause.clause_compliance_level}</span>
+                        <h3 className="font-semibold text-gray-900">
+                          {clause.clause_number} - {clause.clause_title}
+                        </h3>
+                        <span className="text-sm text-gray-600">
+                          {clause.clause_compliance_level}
+                        </span>
                       </div>
                       <div className="flex gap-2">
                         <span className="px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
@@ -866,26 +979,38 @@ export default function AuditAssistantPage() {
                             style={{ width: `${clause.confidence_score * 100}%` }}
                           />
                         </div>
-                        <span className="text-sm font-semibold">{Math.round(clause.confidence_score * 100)}%</span>
+                        <span className="text-sm font-semibold">
+                          {Math.round(clause.confidence_score * 100)}%
+                        </span>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <div className="text-sm font-medium text-gray-700 mb-1">Matched Keywords</div>
+                        <div className="text-sm font-medium text-gray-700 mb-1">
+                          Matched Keywords
+                        </div>
                         <div className="flex gap-1 flex-wrap">
                           {clause.matched_keywords.map((kw, idx) => (
-                            <span key={idx} className="px-2 py-1 rounded text-xs bg-green-100 text-green-800">
+                            <span
+                              key={idx}
+                              className="px-2 py-1 rounded text-xs bg-green-100 text-green-800"
+                            >
                               {kw}
                             </span>
                           ))}
                         </div>
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-gray-700 mb-1">Matched Entities</div>
+                        <div className="text-sm font-medium text-gray-700 mb-1">
+                          Matched Entities
+                        </div>
                         <div className="flex gap-1 flex-wrap">
                           {clause.matched_entities.map((entity, idx) => (
-                            <span key={idx} className={`px-2 py-1 rounded text-xs ${getNERTypeColor(entity.type)}`}>
+                            <span
+                              key={idx}
+                              className={`px-2 py-1 rounded text-xs ${getNERTypeColor(entity.type)}`}
+                            >
                               {entity.entity}
                             </span>
                           ))}
@@ -922,26 +1047,39 @@ export default function AuditAssistantPage() {
 
               <div className="p-6 space-y-4">
                 {reportClauses.map(clause => (
-                  <div key={clause.id} className={`border-2 rounded-lg p-4 ${
-                    clause.compliance_status === 'compliant' ? 'border-green-200 bg-green-50' :
-                    clause.compliance_status === 'partial' ? 'border-yellow-200 bg-yellow-50' :
-                    'border-red-200 bg-red-50'
-                  }`}>
+                  <div
+                    key={clause.id}
+                    className={`border-2 rounded-lg p-4 ${
+                      clause.compliance_status === 'compliant'
+                        ? 'border-green-200 bg-green-50'
+                        : clause.compliance_status === 'partial'
+                          ? 'border-yellow-200 bg-yellow-50'
+                          : 'border-red-200 bg-red-50'
+                    }`}
+                  >
                     <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900">{clause.clause_number} - {clause.clause_title}</h3>
+                        <h3 className="font-semibold text-gray-900">
+                          {clause.clause_number} - {clause.clause_title}
+                        </h3>
                         <p className="text-sm text-gray-600 mt-1">{clause.clause_text}</p>
                       </div>
                       <div className="flex gap-2">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          clause.compliance_status === 'compliant' ? 'bg-green-100 text-green-800' :
-                          clause.compliance_status === 'partial' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            clause.compliance_status === 'compliant'
+                              ? 'bg-green-100 text-green-800'
+                              : clause.compliance_status === 'partial'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
+                          }`}
+                        >
                           {clause.compliance_status_display}
                         </span>
                         {clause.severity && (
-                          <span className={`px-3 py-1 rounded text-xs font-medium border ${getSeverityColor(clause.severity)}`}>
+                          <span
+                            className={`px-3 py-1 rounded text-xs font-medium border ${getSeverityColor(clause.severity)}`}
+                          >
                             {clause.severity.toUpperCase()}
                           </span>
                         )}
@@ -955,11 +1093,15 @@ export default function AuditAssistantPage() {
                       </div>
                       <div className="bg-white rounded p-2">
                         <div className="text-xs text-gray-600">Verified</div>
-                        <div className="text-lg font-semibold text-green-600">{clause.verified_evidence_count}</div>
+                        <div className="text-lg font-semibold text-green-600">
+                          {clause.verified_evidence_count}
+                        </div>
                       </div>
                       <div className="bg-white rounded p-2">
                         <div className="text-xs text-gray-600">Status</div>
-                        <div className={`text-sm font-semibold ${getComplianceColor(clause.compliance_status)}`}>
+                        <div
+                          className={`text-sm font-semibold ${getComplianceColor(clause.compliance_status)}`}
+                        >
                           {clause.compliance_status_display}
                         </div>
                       </div>
@@ -974,7 +1116,9 @@ export default function AuditAssistantPage() {
 
                     {clause.recommendation && (
                       <div className="bg-blue-50 border border-blue-200 rounded p-3">
-                        <div className="text-sm font-medium text-blue-900 mb-1">Recommendation:</div>
+                        <div className="text-sm font-medium text-blue-900 mb-1">
+                          Recommendation:
+                        </div>
                         <div className="text-sm text-blue-800">{clause.recommendation}</div>
                       </div>
                     )}

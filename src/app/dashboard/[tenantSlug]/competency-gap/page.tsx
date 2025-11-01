@@ -96,7 +96,7 @@ export default function CompetencyGapPage() {
     qualification_name: '',
     issuing_organization: '',
     date_obtained: '',
-    industry_experience_years: 0
+    industry_experience_years: 0,
   });
 
   const [unitForm, setUnitForm] = useState({
@@ -106,7 +106,7 @@ export default function CompetencyGapPage() {
     qualification_code: '',
     requires_tae: true,
     requires_industry_currency: true,
-    required_industry_experience: 0
+    required_industry_experience: 0,
   });
 
   const [selectedTrainer, setSelectedTrainer] = useState('');
@@ -126,7 +126,9 @@ export default function CompetencyGapPage() {
   const loadDashboard = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/competency-gap/qualifications/dashboard/?tenant=${tenantSlug}`);
+      const response = await fetch(
+        `/api/competency-gap/qualifications/dashboard/?tenant=${tenantSlug}`
+      );
       const data = await response.json();
       setDashboardStats(data);
     } catch (error) {
@@ -168,7 +170,9 @@ export default function CompetencyGapPage() {
 
   const loadGaps = async () => {
     try {
-      const response = await fetch(`/api/competency-gap/gaps/?tenant=${tenantSlug}&is_resolved=false`);
+      const response = await fetch(
+        `/api/competency-gap/gaps/?tenant=${tenantSlug}&is_resolved=false`
+      );
       const data = await response.json();
       setGaps(data);
     } catch (error) {
@@ -186,8 +190,8 @@ export default function CompetencyGapPage() {
           ...qualificationForm,
           verification_status: 'verified',
           competency_areas: [],
-          units_covered: []
-        })
+          units_covered: [],
+        }),
       });
 
       if (response.ok) {
@@ -201,7 +205,7 @@ export default function CompetencyGapPage() {
           qualification_name: '',
           issuing_organization: '',
           date_obtained: '',
-          industry_experience_years: 0
+          industry_experience_years: 0,
         });
       }
     } catch (error) {
@@ -222,8 +226,8 @@ export default function CompetencyGapPage() {
           required_competency_areas: [],
           learning_outcomes: [],
           assessment_methods: [],
-          technical_skills: []
-        })
+          technical_skills: [],
+        }),
       });
 
       if (response.ok) {
@@ -237,7 +241,7 @@ export default function CompetencyGapPage() {
           qualification_code: '',
           requires_tae: true,
           requires_industry_currency: true,
-          required_industry_experience: 0
+          required_industry_experience: 0,
         });
       }
     } catch (error) {
@@ -259,13 +263,15 @@ export default function CompetencyGapPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           trainer_id: selectedTrainer,
-          unit_id: selectedUnit
-        })
+          unit_id: selectedUnit,
+        }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        alert(`Compliance Score: ${data.compliance_score.toFixed(1)}%\n\nGaps Found: ${data.gaps_found.length}\n\n${data.message}`);
+        alert(
+          `Compliance Score: ${data.compliance_score.toFixed(1)}%\n\nGaps Found: ${data.gaps_found.length}\n\n${data.message}`
+        );
         loadGaps();
       }
     } catch (error) {
@@ -290,13 +296,15 @@ export default function CompetencyGapPage() {
           tenant: tenantSlug,
           trainer_id: selectedTrainer,
           unit_id: selectedUnit,
-          check_compliance: true
-        })
+          check_compliance: true,
+        }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        alert(`Assignment ${data.assignment_status}! Compliance: ${data.compliance_score.toFixed(1)}%`);
+        alert(
+          `Assignment ${data.assignment_status}! Compliance: ${data.compliance_score.toFixed(1)}%`
+        );
         loadAssignments();
         loadGaps();
         loadDashboard();
@@ -310,17 +318,22 @@ export default function CompetencyGapPage() {
   const handleValidateMatrix = async () => {
     try {
       setValidating(true);
-      const response = await fetch(`/api/competency-gap/qualifications/validate-matrix/?tenant=${tenantSlug}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          check_type: 'full_matrix'
-        })
-      });
+      const response = await fetch(
+        `/api/competency-gap/qualifications/validate-matrix/?tenant=${tenantSlug}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            check_type: 'full_matrix',
+          }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
-        alert(`Matrix Validation Complete!\n\nCompliance: ${data.compliance_percentage.toFixed(1)}%\nTotal Assignments: ${data.total_assignments}\nCompliant: ${data.compliant_assignments}\nNon-Compliant: ${data.non_compliant_assignments}\nGaps Found: ${data.gaps_found}`);
+        alert(
+          `Matrix Validation Complete!\n\nCompliance: ${data.compliance_percentage.toFixed(1)}%\nTotal Assignments: ${data.total_assignments}\nCompliant: ${data.compliant_assignments}\nNon-Compliant: ${data.non_compliant_assignments}\nGaps Found: ${data.gaps_found}`
+        );
         loadDashboard();
       }
     } catch (error) {
@@ -338,7 +351,7 @@ export default function CompetencyGapPage() {
       expired: 'bg-red-100 text-red-800',
       approved: 'bg-teal-100 text-teal-800',
       under_review: 'bg-yellow-100 text-yellow-800',
-      rejected: 'bg-red-100 text-red-800'
+      rejected: 'bg-red-100 text-red-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
@@ -348,7 +361,7 @@ export default function CompetencyGapPage() {
       critical: 'bg-red-100 text-red-800 border-red-300',
       high: 'bg-orange-100 text-orange-800 border-orange-300',
       medium: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-      low: 'bg-blue-100 text-blue-800 border-blue-300'
+      low: 'bg-blue-100 text-blue-800 border-blue-300',
     };
     return colors[severity] || 'bg-gray-100 text-gray-800 border-gray-300';
   };
@@ -382,7 +395,9 @@ export default function CompetencyGapPage() {
             Graph-Matching Model
           </span>
         </div>
-        <p className="text-gray-600">Cross-check trainer quals vs units • Graph-matching model • Compliance for trainer matrix</p>
+        <p className="text-gray-600">
+          Cross-check trainer quals vs units • Graph-matching model • Compliance for trainer matrix
+        </p>
       </div>
 
       {/* Dashboard Stats */}
@@ -390,26 +405,40 @@ export default function CompetencyGapPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-white border-2 border-teal-200 rounded-lg p-4 shadow-sm">
             <div className="text-sm text-gray-600 mb-1">Trainer Qualifications</div>
-            <div className="text-2xl font-bold text-teal-600">{dashboardStats.total_qualifications}</div>
-            <div className="text-xs text-gray-500 mt-1">{dashboardStats.verified_qualifications} verified</div>
+            <div className="text-2xl font-bold text-teal-600">
+              {dashboardStats.total_qualifications}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              {dashboardStats.verified_qualifications} verified
+            </div>
           </div>
-          
+
           <div className="bg-white border-2 border-blue-200 rounded-lg p-4 shadow-sm">
             <div className="text-sm text-gray-600 mb-1">Units of Competency</div>
             <div className="text-2xl font-bold text-blue-600">{dashboardStats.total_units}</div>
-            <div className="text-xs text-gray-500 mt-1">{dashboardStats.core_units} core, {dashboardStats.elective_units} elective</div>
+            <div className="text-xs text-gray-500 mt-1">
+              {dashboardStats.core_units} core, {dashboardStats.elective_units} elective
+            </div>
           </div>
-          
+
           <div className="bg-white border-2 border-purple-200 rounded-lg p-4 shadow-sm">
             <div className="text-sm text-gray-600 mb-1">Assignments</div>
-            <div className="text-2xl font-bold text-purple-600">{dashboardStats.total_assignments}</div>
-            <div className="text-xs text-gray-500 mt-1">{dashboardStats.approved_assignments} approved</div>
+            <div className="text-2xl font-bold text-purple-600">
+              {dashboardStats.total_assignments}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              {dashboardStats.approved_assignments} approved
+            </div>
           </div>
-          
+
           <div className="bg-white border-2 border-orange-200 rounded-lg p-4 shadow-sm">
             <div className="text-sm text-gray-600 mb-1">Compliance Score</div>
-            <div className="text-2xl font-bold text-orange-600">{dashboardStats.overall_compliance_score.toFixed(1)}%</div>
-            <div className="text-xs text-gray-500 mt-1">{dashboardStats.unresolved_gaps} unresolved gaps</div>
+            <div className="text-2xl font-bold text-orange-600">
+              {dashboardStats.overall_compliance_score.toFixed(1)}%
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              {dashboardStats.unresolved_gaps} unresolved gaps
+            </div>
           </div>
         </div>
       )}
@@ -423,8 +452,8 @@ export default function CompetencyGapPage() {
             { id: 'units', label: '📚 Units' },
             { id: 'check', label: '🔍 Check Gaps' },
             { id: 'assignments', label: '✅ Assignments' },
-            { id: 'gaps', label: '⚠️ Gaps' }
-          ].map((tab) => (
+            { id: 'gaps', label: '⚠️ Gaps' },
+          ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -446,22 +475,28 @@ export default function CompetencyGapPage() {
         {activeTab === 'dashboard' && dashboardStats && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Compliance Overview</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-lg p-6 border border-teal-200">
                 <h3 className="font-semibold text-gray-900 mb-4">Qualification Status</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700">Total Qualifications</span>
-                    <span className="font-bold text-teal-600">{dashboardStats.total_qualifications}</span>
+                    <span className="font-bold text-teal-600">
+                      {dashboardStats.total_qualifications}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700">✓ Verified</span>
-                    <span className="font-bold text-green-600">{dashboardStats.verified_qualifications}</span>
+                    <span className="font-bold text-green-600">
+                      {dashboardStats.verified_qualifications}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700">⚠ Expired</span>
-                    <span className="font-bold text-red-600">{dashboardStats.expired_qualifications}</span>
+                    <span className="font-bold text-red-600">
+                      {dashboardStats.expired_qualifications}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -516,7 +551,7 @@ export default function CompetencyGapPage() {
         {activeTab === 'qualifications' && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Trainer Qualifications</h2>
-            
+
             {/* Add Qualification Form */}
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
               <h3 className="font-semibold text-gray-900 mb-3">Add Qualification</h3>
@@ -524,13 +559,20 @@ export default function CompetencyGapPage() {
                 <input
                   type="text"
                   value={qualificationForm.trainer_name}
-                  onChange={(e) => setQualificationForm({ ...qualificationForm, trainer_name: e.target.value })}
+                  onChange={e =>
+                    setQualificationForm({ ...qualificationForm, trainer_name: e.target.value })
+                  }
                   placeholder="Trainer Name"
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
                 <select
                   value={qualificationForm.qualification_type}
-                  onChange={(e) => setQualificationForm({ ...qualificationForm, qualification_type: e.target.value })}
+                  onChange={e =>
+                    setQualificationForm({
+                      ...qualificationForm,
+                      qualification_type: e.target.value,
+                    })
+                  }
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="certificate_iii">Certificate III</option>
@@ -542,34 +584,56 @@ export default function CompetencyGapPage() {
                 <input
                   type="text"
                   value={qualificationForm.qualification_code}
-                  onChange={(e) => setQualificationForm({ ...qualificationForm, qualification_code: e.target.value })}
+                  onChange={e =>
+                    setQualificationForm({
+                      ...qualificationForm,
+                      qualification_code: e.target.value,
+                    })
+                  }
                   placeholder="Qualification Code (e.g., ICT40120)"
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
                 <input
                   type="text"
                   value={qualificationForm.qualification_name}
-                  onChange={(e) => setQualificationForm({ ...qualificationForm, qualification_name: e.target.value })}
+                  onChange={e =>
+                    setQualificationForm({
+                      ...qualificationForm,
+                      qualification_name: e.target.value,
+                    })
+                  }
                   placeholder="Qualification Name"
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
                 <input
                   type="text"
                   value={qualificationForm.issuing_organization}
-                  onChange={(e) => setQualificationForm({ ...qualificationForm, issuing_organization: e.target.value })}
+                  onChange={e =>
+                    setQualificationForm({
+                      ...qualificationForm,
+                      issuing_organization: e.target.value,
+                    })
+                  }
                   placeholder="Issuing Organization"
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
                 <input
                   type="date"
                   value={qualificationForm.date_obtained}
-                  onChange={(e) => setQualificationForm({ ...qualificationForm, date_obtained: e.target.value })}
+                  onChange={e =>
+                    setQualificationForm({ ...qualificationForm, date_obtained: e.target.value })
+                  }
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
                 <input
                   type="number"
                   value={qualificationForm.industry_experience_years}
-                  onChange={(e) => setQualificationForm({ ...qualificationForm, industry_experience_years: parseInt(e.target.value) })}
+                  onChange={e =>
+                    setQualificationForm({
+                      ...qualificationForm,
+                      industry_experience_years: parseInt(e.target.value),
+                    })
+                  }
                   placeholder="Years of Experience"
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
@@ -589,22 +653,31 @@ export default function CompetencyGapPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {qualifications.map((qual) => (
-                  <div key={qual.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                {qualifications.map(qual => (
+                  <div
+                    key={qual.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-bold text-gray-900">{qual.trainer_name}</h3>
-                        <p className="text-sm text-gray-600">{qual.qualification_code} • {qual.qualification_name}</p>
+                        <p className="text-sm text-gray-600">
+                          {qual.qualification_code} • {qual.qualification_name}
+                        </p>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(qual.verification_status)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(qual.verification_status)}`}
+                      >
                         {qual.verification_status}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-3 gap-4 text-sm">
                       <div>
                         <span className="text-gray-600">Type:</span>
-                        <span className="ml-2 font-medium">{qual.qualification_type.replace('_', ' ')}</span>
+                        <span className="ml-2 font-medium">
+                          {qual.qualification_type.replace('_', ' ')}
+                        </span>
                       </div>
                       <div>
                         <span className="text-gray-600">Obtained:</span>
@@ -612,7 +685,9 @@ export default function CompetencyGapPage() {
                       </div>
                       <div>
                         <span className="text-gray-600">Experience:</span>
-                        <span className="ml-2 font-medium">{qual.industry_experience_years} years</span>
+                        <span className="ml-2 font-medium">
+                          {qual.industry_experience_years} years
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -626,7 +701,7 @@ export default function CompetencyGapPage() {
         {activeTab === 'units' && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Units of Competency</h2>
-            
+
             {/* Add Unit Form */}
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
               <h3 className="font-semibold text-gray-900 mb-3">Add Unit</h3>
@@ -634,20 +709,20 @@ export default function CompetencyGapPage() {
                 <input
                   type="text"
                   value={unitForm.unit_code}
-                  onChange={(e) => setUnitForm({ ...unitForm, unit_code: e.target.value })}
+                  onChange={e => setUnitForm({ ...unitForm, unit_code: e.target.value })}
                   placeholder="Unit Code (e.g., ICTICT418)"
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
                 <input
                   type="text"
                   value={unitForm.unit_name}
-                  onChange={(e) => setUnitForm({ ...unitForm, unit_name: e.target.value })}
+                  onChange={e => setUnitForm({ ...unitForm, unit_name: e.target.value })}
                   placeholder="Unit Name"
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
                 <select
                   value={unitForm.unit_type}
-                  onChange={(e) => setUnitForm({ ...unitForm, unit_type: e.target.value })}
+                  onChange={e => setUnitForm({ ...unitForm, unit_type: e.target.value })}
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="core">Core Unit</option>
@@ -657,14 +732,19 @@ export default function CompetencyGapPage() {
                 <input
                   type="text"
                   value={unitForm.qualification_code}
-                  onChange={(e) => setUnitForm({ ...unitForm, qualification_code: e.target.value })}
+                  onChange={e => setUnitForm({ ...unitForm, qualification_code: e.target.value })}
                   placeholder="Qualification Code (e.g., ICT40120)"
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
                 <input
                   type="number"
                   value={unitForm.required_industry_experience}
-                  onChange={(e) => setUnitForm({ ...unitForm, required_industry_experience: parseInt(e.target.value) })}
+                  onChange={e =>
+                    setUnitForm({
+                      ...unitForm,
+                      required_industry_experience: parseInt(e.target.value),
+                    })
+                  }
                   placeholder="Required Experience (years)"
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
@@ -673,7 +753,7 @@ export default function CompetencyGapPage() {
                     <input
                       type="checkbox"
                       checked={unitForm.requires_tae}
-                      onChange={(e) => setUnitForm({ ...unitForm, requires_tae: e.target.checked })}
+                      onChange={e => setUnitForm({ ...unitForm, requires_tae: e.target.checked })}
                       className="w-4 h-4 text-teal-600"
                     />
                     <span className="text-sm">Requires TAE</span>
@@ -682,7 +762,9 @@ export default function CompetencyGapPage() {
                     <input
                       type="checkbox"
                       checked={unitForm.requires_industry_currency}
-                      onChange={(e) => setUnitForm({ ...unitForm, requires_industry_currency: e.target.checked })}
+                      onChange={e =>
+                        setUnitForm({ ...unitForm, requires_industry_currency: e.target.checked })
+                      }
                       className="w-4 h-4 text-teal-600"
                     />
                     <span className="text-sm">Requires Currency</span>
@@ -704,8 +786,11 @@ export default function CompetencyGapPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {units.map((unit) => (
-                  <div key={unit.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                {units.map(unit => (
+                  <div
+                    key={unit.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-bold text-gray-900">{unit.unit_code}</h3>
@@ -715,7 +800,7 @@ export default function CompetencyGapPage() {
                         {unit.unit_type}
                       </span>
                     </div>
-                    
+
                     <div className="flex flex-wrap gap-2 text-xs mb-2">
                       {unit.requires_tae && (
                         <span className="px-2 py-1 bg-teal-100 text-teal-700 rounded">
@@ -733,7 +818,7 @@ export default function CompetencyGapPage() {
                         </span>
                       )}
                     </div>
-                    
+
                     <div className="text-sm text-gray-600">
                       Qualification: {unit.qualification_code}
                     </div>
@@ -748,7 +833,7 @@ export default function CompetencyGapPage() {
         {activeTab === 'check' && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Check Competency Gaps</h2>
-            
+
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
               <h3 className="font-semibold text-blue-900 mb-2">How It Works</h3>
               <ol className="list-decimal list-inside text-sm text-blue-800 space-y-1">
@@ -759,13 +844,15 @@ export default function CompetencyGapPage() {
                 <li>Provides recommendations for closing gaps</li>
               </ol>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Select Trainer</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Trainer
+                </label>
                 <select
                   value={selectedTrainer}
-                  onChange={(e) => setSelectedTrainer(e.target.value)}
+                  onChange={e => setSelectedTrainer(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="">-- Select a trainer --</option>
@@ -776,16 +863,16 @@ export default function CompetencyGapPage() {
                   ))}
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Select Unit</label>
                 <select
                   value={selectedUnit || ''}
-                  onChange={(e) => setSelectedUnit(parseInt(e.target.value))}
+                  onChange={e => setSelectedUnit(parseInt(e.target.value))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="">-- Select a unit --</option>
-                  {units.map((unit) => (
+                  {units.map(unit => (
                     <option key={unit.id} value={unit.id}>
                       {unit.unit_code} - {unit.unit_name}
                     </option>
@@ -793,7 +880,7 @@ export default function CompetencyGapPage() {
                 </select>
               </div>
             </div>
-            
+
             <div className="flex gap-3">
               <button
                 onClick={handleCheckGaps}
@@ -802,7 +889,7 @@ export default function CompetencyGapPage() {
               >
                 {checking ? '🔄 Checking...' : '🔍 Check Gaps'}
               </button>
-              
+
               <button
                 onClick={handleAssignTrainer}
                 disabled={!selectedTrainer || !selectedUnit}
@@ -818,22 +905,26 @@ export default function CompetencyGapPage() {
         {activeTab === 'assignments' && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Trainer Assignments</h2>
-            
+
             {assignments.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
                 No assignments yet. Use the "Check Gaps" tab to assign trainers to units.
               </div>
             ) : (
               <div className="space-y-4">
-                {assignments.map((assignment) => (
+                {assignments.map(assignment => (
                   <div key={assignment.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div>
                         <h3 className="font-bold text-gray-900">{assignment.trainer_name}</h3>
-                        <p className="text-sm text-gray-600">{assignment.unit.unit_code} - {assignment.unit.unit_name}</p>
+                        <p className="text-sm text-gray-600">
+                          {assignment.unit.unit_code} - {assignment.unit.unit_name}
+                        </p>
                       </div>
                       <div className="text-right">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(assignment.assignment_status)}`}>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(assignment.assignment_status)}`}
+                        >
                           {assignment.assignment_status.replace('_', ' ')}
                         </span>
                         <div className="text-sm font-semibold text-gray-700 mt-1">
@@ -841,10 +932,12 @@ export default function CompetencyGapPage() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="bg-teal-50 rounded-lg p-3 mb-3">
                       <div className="text-sm text-gray-600">Compliance Score</div>
-                      <div className="text-2xl font-bold text-teal-600">{assignment.compliance_score.toFixed(1)}%</div>
+                      <div className="text-2xl font-bold text-teal-600">
+                        {assignment.compliance_score.toFixed(1)}%
+                      </div>
                       <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                         <div
                           className="bg-teal-600 h-2 rounded-full"
@@ -852,10 +945,12 @@ export default function CompetencyGapPage() {
                         ></div>
                       </div>
                     </div>
-                    
+
                     {assignment.gaps_identified && assignment.gaps_identified.length > 0 && (
                       <div>
-                        <div className="text-sm font-medium text-gray-700 mb-2">Identified Gaps:</div>
+                        <div className="text-sm font-medium text-gray-700 mb-2">
+                          Identified Gaps:
+                        </div>
                         <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
                           {assignment.gaps_identified.map((gap, idx) => (
                             <li key={idx}>{gap}</li>
@@ -874,37 +969,44 @@ export default function CompetencyGapPage() {
         {activeTab === 'gaps' && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Competency Gaps</h2>
-            
+
             {gaps.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
                 No unresolved gaps found. All trainer assignments meet requirements!
               </div>
             ) : (
               <div className="space-y-4">
-                {gaps.map((gap) => (
-                  <div key={gap.id} className={`border-2 rounded-lg p-4 ${getSeverityColor(gap.gap_severity)}`}>
+                {gaps.map(gap => (
+                  <div
+                    key={gap.id}
+                    className={`border-2 rounded-lg p-4 ${getSeverityColor(gap.gap_severity)}`}
+                  >
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-bold text-gray-900">{gap.trainer_name}</h3>
                         <p className="text-sm text-gray-600">{gap.gap_id}</p>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getSeverityColor(gap.gap_severity)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getSeverityColor(gap.gap_severity)}`}
+                      >
                         {gap.gap_severity.toUpperCase()}
                       </span>
                     </div>
-                    
+
                     <div className="mb-3">
                       <div className="text-sm font-medium text-gray-700">Gap Type:</div>
                       <div className="text-sm text-gray-900">{gap.gap_type.replace('_', ' ')}</div>
                     </div>
-                    
+
                     <div className="mb-3">
                       <div className="text-sm font-medium text-gray-700">Description:</div>
                       <div className="text-sm text-gray-900">{gap.gap_description}</div>
                     </div>
-                    
+
                     <div className="bg-white bg-opacity-50 rounded-lg p-3">
-                      <div className="text-sm font-medium text-gray-700 mb-1">Recommended Action:</div>
+                      <div className="text-sm font-medium text-gray-700 mb-1">
+                        Recommended Action:
+                      </div>
                       <div className="text-sm text-gray-900">{gap.recommended_action}</div>
                     </div>
                   </div>

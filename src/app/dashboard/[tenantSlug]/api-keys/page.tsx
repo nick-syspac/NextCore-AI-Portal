@@ -21,7 +21,7 @@ export default function APIKeysPage() {
   const params = useParams();
   const router = useRouter();
   const tenantSlug = params.tenantSlug as string;
-  
+
   const [apiKeys, setApiKeys] = useState<APIKey[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -38,8 +38,9 @@ export default function APIKeysPage() {
     }
 
     // Get tenant ID first
-    api.getMyTenants(authToken)
-      .then((tenants) => {
+    api
+      .getMyTenants(authToken)
+      .then(tenants => {
         const tenant = tenants.find((t: any) => t.tenant_slug === tenantSlug);
         if (tenant) {
           setTenantId(tenant.tenant_id);
@@ -47,10 +48,10 @@ export default function APIKeysPage() {
         }
         throw new Error('Tenant not found');
       })
-      .then((data) => {
+      .then(data => {
         setApiKeys(data.results || data);
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Error fetching API keys:', err);
         setError('Failed to load API keys');
       })
@@ -71,14 +72,14 @@ export default function APIKeysPage() {
         },
         authToken
       );
-      
+
       // Show the full key (only shown once)
       setCreatedKey(response.key);
-      
+
       // Refresh the list
       const data = await api.getAPIKeys(tenantSlug, authToken);
       setApiKeys(data.results || data);
-      
+
       // Reset form but keep modal open to show the key
       setNewKeyData({ name: '', description: '' });
     } catch (err: any) {
@@ -97,7 +98,7 @@ export default function APIKeysPage() {
 
     try {
       await api.revokeAPIKey(keyId, authToken);
-      
+
       // Refresh the list
       const data = await api.getAPIKeys(tenantSlug, authToken);
       setApiKeys(data.results || data);
@@ -144,9 +145,7 @@ export default function APIKeysPage() {
         <div className="mb-8 flex justify-between items-center">
           <div>
             <h2 className="text-3xl font-bold text-gray-900">API Keys</h2>
-            <p className="text-gray-600 mt-2">
-              Manage API keys for accessing AI Gateway
-            </p>
+            <p className="text-gray-600 mt-2">Manage API keys for accessing AI Gateway</p>
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
@@ -202,7 +201,7 @@ export default function APIKeysPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {apiKeys.map((key) => (
+                {apiKeys.map(key => (
                   <tr key={key.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div>
@@ -218,18 +217,16 @@ export default function APIKeysPage() {
                       </code>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        key.is_active 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
+                      <span
+                        className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          key.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}
+                      >
                         {key.is_active ? 'Active' : 'Revoked'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {key.last_used_at 
-                        ? new Date(key.last_used_at).toLocaleDateString()
-                        : 'Never'}
+                      {key.last_used_at ? new Date(key.last_used_at).toLocaleDateString() : 'Never'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(key.created_at).toLocaleDateString()}
@@ -253,9 +250,7 @@ export default function APIKeysPage() {
 
         {/* Info Box */}
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-blue-900 mb-2">
-            🔐 API Key Security
-          </h3>
+          <h3 className="text-lg font-semibold text-blue-900 mb-2">🔐 API Key Security</h3>
           <ul className="text-blue-800 space-y-1 text-sm">
             <li>• API keys are shown only once upon creation</li>
             <li>• Store your keys securely and never commit them to version control</li>
@@ -281,7 +276,7 @@ export default function APIKeysPage() {
                       ⚠️ Save this key now! You won't be able to see it again.
                     </p>
                   </div>
-                  
+
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Your API Key
@@ -315,7 +310,7 @@ export default function APIKeysPage() {
                     <input
                       type="text"
                       value={newKeyData.name}
-                      onChange={(e) => setNewKeyData({ ...newKeyData, name: e.target.value })}
+                      onChange={e => setNewKeyData({ ...newKeyData, name: e.target.value })}
                       placeholder="e.g., Production API Key"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
@@ -328,7 +323,7 @@ export default function APIKeysPage() {
                     </label>
                     <textarea
                       value={newKeyData.description}
-                      onChange={(e) => setNewKeyData({ ...newKeyData, description: e.target.value })}
+                      onChange={e => setNewKeyData({ ...newKeyData, description: e.target.value })}
                       placeholder="What is this key used for?"
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"

@@ -68,7 +68,7 @@ export default function EngagementHeatmapPage() {
     atRisk: 8,
     activeAlerts: 12,
     avgEngagement: 72,
-    criticalCases: 3
+    criticalCases: 3,
   });
 
   const handleGenerateHeatmap = async () => {
@@ -84,8 +84,8 @@ export default function EngagementHeatmapPage() {
             student_name: studentName,
             start_date: startDate,
             end_date: endDate,
-            time_period: timePeriod
-          })
+            time_period: timePeriod,
+          }),
         }
       );
       const data = await response.json();
@@ -104,7 +104,7 @@ export default function EngagementHeatmapPage() {
       low: 'bg-blue-100 text-blue-800 border-blue-300',
       medium: 'bg-yellow-100 text-yellow-800 border-yellow-300',
       high: 'bg-orange-100 text-orange-800 border-orange-300',
-      critical: 'bg-red-100 text-red-800 border-red-300'
+      critical: 'bg-red-100 text-red-800 border-red-300',
     };
     return colors[level] || 'bg-gray-100 text-gray-800 border-gray-300';
   };
@@ -114,7 +114,7 @@ export default function EngagementHeatmapPage() {
       low: 'bg-blue-500',
       medium: 'bg-yellow-500',
       high: 'bg-orange-500',
-      critical: 'bg-red-500'
+      critical: 'bg-red-500',
     };
     return colors[severity] || 'bg-gray-500';
   };
@@ -124,7 +124,7 @@ export default function EngagementHeatmapPage() {
       high: 'bg-green-500',
       medium: 'bg-yellow-500',
       low: 'bg-orange-500',
-      none: 'bg-gray-300'
+      none: 'bg-gray-300',
     };
     return colors[level] || 'bg-gray-300';
   };
@@ -148,21 +148,23 @@ export default function EngagementHeatmapPage() {
     if (!heatmap || !heatmap.heatmap_data) return null;
 
     const dates = Object.keys(heatmap.heatmap_data).sort();
-    
+
     return (
       <div className="overflow-x-auto">
         <div className="inline-grid grid-cols-7 gap-2 min-w-full">
-          {dates.map((date) => {
+          {dates.map(date => {
             const data = heatmap.heatmap_data[date];
             const engagementColor = getEngagementColor(data.engagement_level);
-            
+
             return (
               <div
                 key={date}
                 className={`${engagementColor} rounded-lg p-3 text-white text-center hover:shadow-lg transition-shadow cursor-pointer`}
                 title={`${date}: ${data.engagement_level}`}
               >
-                <div className="text-xs font-semibold">{new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                <div className="text-xs font-semibold">
+                  {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </div>
                 <div className="text-xs mt-1">
                   {data.attendance === 'present' ? '✓' : data.attendance === 'absent' ? '✗' : '-'}
                 </div>
@@ -221,8 +223,8 @@ export default function EngagementHeatmapPage() {
                 { id: 'attendance', label: '✓ Attendance', icon: '📋' },
                 { id: 'lms', label: '💻 LMS Activity', icon: '🖥️' },
                 { id: 'sentiment', label: '💬 Discussion Sentiment', icon: '😊' },
-                { id: 'alerts', label: '🚨 Risk Alerts', icon: '⚠️' }
-              ].map((tab) => (
+                { id: 'alerts', label: '🚨 Risk Alerts', icon: '⚠️' },
+              ].map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
@@ -243,41 +245,50 @@ export default function EngagementHeatmapPage() {
             {activeTab === 'heatmap' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-orange-100 to-amber-100 rounded-lg p-6 border border-orange-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">🔥 Generate Engagement Heatmap</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    🔥 Generate Engagement Heatmap
+                  </h3>
                   <p className="text-sm text-gray-700">
-                    Comprehensive analysis of attendance, LMS activity, and discussion sentiment with visual risk indicators.
+                    Comprehensive analysis of attendance, LMS activity, and discussion sentiment
+                    with visual risk indicators.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Student ID</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Student ID
+                    </label>
                     <input
                       type="text"
                       value={studentId}
-                      onChange={(e) => setStudentId(e.target.value)}
+                      onChange={e => setStudentId(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       placeholder="e.g., STU-2024-001"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Student Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Student Name
+                    </label>
                     <input
                       type="text"
                       value={studentName}
-                      onChange={(e) => setStudentName(e.target.value)}
+                      onChange={e => setStudentName(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       placeholder="Full name"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Start Date
+                    </label>
                     <input
                       type="date"
                       value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
+                      onChange={e => setStartDate(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
                   </div>
@@ -287,16 +298,18 @@ export default function EngagementHeatmapPage() {
                     <input
                       type="date"
                       value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
+                      onChange={e => setEndDate(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Time Period
+                    </label>
                     <select
                       value={timePeriod}
-                      onChange={(e) => setTimePeriod(e.target.value)}
+                      onChange={e => setTimePeriod(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     >
                       <option value="daily">Daily</option>
@@ -321,16 +334,21 @@ export default function EngagementHeatmapPage() {
             {activeTab === 'visual' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-amber-100 to-yellow-100 rounded-lg p-6 border border-amber-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">📊 Visual Risk Dashboard</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    📊 Visual Risk Dashboard
+                  </h3>
                   <p className="text-sm text-gray-700">
-                    Interactive heatmap showing daily engagement patterns across attendance, LMS, and sentiment.
+                    Interactive heatmap showing daily engagement patterns across attendance, LMS,
+                    and sentiment.
                   </p>
                 </div>
 
                 {!heatmap ? (
                   <div className="text-center py-12">
                     <span className="text-6xl">📊</span>
-                    <h3 className="text-xl font-semibold text-gray-900 mt-4">No Heatmap Generated</h3>
+                    <h3 className="text-xl font-semibold text-gray-900 mt-4">
+                      No Heatmap Generated
+                    </h3>
                     <p className="text-gray-600 mt-2">
                       Generate an engagement heatmap from the &quot;Generate Heatmap&quot; tab
                     </p>
@@ -341,7 +359,9 @@ export default function EngagementHeatmapPage() {
                     <div className="bg-white rounded-lg border-2 border-orange-200 p-6">
                       <div className="flex items-center justify-between mb-4">
                         <div>
-                          <h4 className="text-xl font-bold text-gray-900">{heatmap.student_name}</h4>
+                          <h4 className="text-xl font-bold text-gray-900">
+                            {heatmap.student_name}
+                          </h4>
                           <p className="text-sm text-gray-600">
                             {heatmap.start_date} to {heatmap.end_date} ({heatmap.time_period})
                           </p>
@@ -350,7 +370,9 @@ export default function EngagementHeatmapPage() {
                           <div className="text-4xl font-bold text-orange-600">
                             {heatmap.overall_engagement_score.toFixed(0)}%
                           </div>
-                          <div className={`mt-2 px-4 py-1 rounded-full text-sm font-semibold border-2 ${getRiskLevelColor(heatmap.risk_level)}`}>
+                          <div
+                            className={`mt-2 px-4 py-1 rounded-full text-sm font-semibold border-2 ${getRiskLevelColor(heatmap.risk_level)}`}
+                          >
                             {heatmap.risk_level.toUpperCase()}
                           </div>
                         </div>
@@ -359,15 +381,21 @@ export default function EngagementHeatmapPage() {
                       <div className="grid grid-cols-3 gap-4 mb-4">
                         <div className="bg-blue-50 rounded-lg p-4 text-center">
                           <p className="text-sm text-gray-600">Attendance</p>
-                          <p className="text-2xl font-bold text-blue-600">{heatmap.attendance_score.toFixed(0)}%</p>
+                          <p className="text-2xl font-bold text-blue-600">
+                            {heatmap.attendance_score.toFixed(0)}%
+                          </p>
                         </div>
                         <div className="bg-purple-50 rounded-lg p-4 text-center">
                           <p className="text-sm text-gray-600">LMS Activity</p>
-                          <p className="text-2xl font-bold text-purple-600">{heatmap.lms_activity_score.toFixed(0)}%</p>
+                          <p className="text-2xl font-bold text-purple-600">
+                            {heatmap.lms_activity_score.toFixed(0)}%
+                          </p>
                         </div>
                         <div className="bg-green-50 rounded-lg p-4 text-center">
                           <p className="text-sm text-gray-600">Sentiment</p>
-                          <p className="text-2xl font-bold text-green-600">{heatmap.sentiment_score.toFixed(0)}%</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            {heatmap.sentiment_score.toFixed(0)}%
+                          </p>
                         </div>
                       </div>
 
@@ -378,7 +406,8 @@ export default function EngagementHeatmapPage() {
                             {heatmap.engagement_trend.replace('_', ' ').toUpperCase()}
                           </span>
                           <span className="text-sm text-gray-600">
-                            ({heatmap.change_percentage >= 0 ? '+' : ''}{heatmap.change_percentage.toFixed(1)}%)
+                            ({heatmap.change_percentage >= 0 ? '+' : ''}
+                            {heatmap.change_percentage.toFixed(1)}%)
                           </span>
                         </div>
                         <div className="text-sm text-gray-600">
@@ -417,7 +446,10 @@ export default function EngagementHeatmapPage() {
                         <h4 className="font-semibold text-gray-900 mb-3">⚠️ Risk Indicators</h4>
                         <div className="space-y-2">
                           {heatmap.risk_flags.map((flag, index) => (
-                            <div key={index} className="flex items-center gap-2 text-sm text-red-700">
+                            <div
+                              key={index}
+                              className="flex items-center gap-2 text-sm text-red-700"
+                            >
                               <span className="text-red-600">•</span>
                               <span>{flag.replace('_', ' ').toUpperCase()}</span>
                             </div>
@@ -434,7 +466,9 @@ export default function EngagementHeatmapPage() {
             {activeTab === 'attendance' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg p-6 border border-blue-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">✓ Attendance Tracking</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    ✓ Attendance Tracking
+                  </h3>
                   <p className="text-sm text-gray-700">
                     Monitor daily attendance, participation levels, and punctuality metrics.
                   </p>
@@ -444,23 +478,54 @@ export default function EngagementHeatmapPage() {
                   <h4 className="font-semibold text-gray-900 mb-4">Recent Attendance Records</h4>
                   <div className="space-y-3">
                     {[
-                      { date: '2024-10-24', status: 'present', session: 'Data Analysis 101', participation: 'high', late: 0 },
-                      { date: '2024-10-23', status: 'present', session: 'Python Programming', participation: 'medium', late: 5 },
-                      { date: '2024-10-22', status: 'absent', session: 'Machine Learning', participation: 'none', late: 0 },
-                      { date: '2024-10-21', status: 'late', session: 'Statistics', participation: 'low', late: 15 }
+                      {
+                        date: '2024-10-24',
+                        status: 'present',
+                        session: 'Data Analysis 101',
+                        participation: 'high',
+                        late: 0,
+                      },
+                      {
+                        date: '2024-10-23',
+                        status: 'present',
+                        session: 'Python Programming',
+                        participation: 'medium',
+                        late: 5,
+                      },
+                      {
+                        date: '2024-10-22',
+                        status: 'absent',
+                        session: 'Machine Learning',
+                        participation: 'none',
+                        late: 0,
+                      },
+                      {
+                        date: '2024-10-21',
+                        status: 'late',
+                        session: 'Statistics',
+                        participation: 'low',
+                        late: 15,
+                      },
                     ].map((record, index) => (
-                      <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                      <div
+                        key={index}
+                        className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
+                      >
                         <div className="flex-shrink-0">
                           <div className="text-sm font-medium text-gray-600">{record.date}</div>
                         </div>
                         <div className="flex-1">
                           <div className="font-medium text-gray-900">{record.session}</div>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                              record.status === 'present' ? 'bg-green-200 text-green-800' :
-                              record.status === 'late' ? 'bg-yellow-200 text-yellow-800' :
-                              'bg-red-200 text-red-800'
-                            }`}>
+                            <span
+                              className={`px-2 py-1 rounded text-xs font-semibold ${
+                                record.status === 'present'
+                                  ? 'bg-green-200 text-green-800'
+                                  : record.status === 'late'
+                                    ? 'bg-yellow-200 text-yellow-800'
+                                    : 'bg-red-200 text-red-800'
+                              }`}
+                            >
                               {record.status.toUpperCase()}
                             </span>
                             <span className="text-xs text-gray-600">
@@ -484,7 +549,9 @@ export default function EngagementHeatmapPage() {
             {activeTab === 'lms' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-purple-100 to-indigo-100 rounded-lg p-6 border border-purple-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">💻 LMS Activity Analysis</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    💻 LMS Activity Analysis
+                  </h3>
                   <p className="text-sm text-gray-700">
                     Track logins, content views, assignments, and platform engagement metrics.
                   </p>
@@ -513,18 +580,28 @@ export default function EngagementHeatmapPage() {
                       { type: 'Assignment Submit', count: 12, time: 240 },
                       { type: 'Forum Post', count: 28, time: 140 },
                       { type: 'Quiz Attempt', count: 15, time: 180 },
-                      { type: 'Content View', count: 87, time: 320 }
+                      { type: 'Content View', count: 87, time: 320 },
                     ].map((activity, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      >
                         <div>
                           <p className="font-medium text-gray-900">{activity.type}</p>
-                          <p className="text-sm text-gray-600">{activity.count} activities • {activity.time} minutes</p>
+                          <p className="text-sm text-gray-600">
+                            {activity.count} activities • {activity.time} minutes
+                          </p>
                         </div>
                         <div className="text-2xl">
-                          {activity.type.includes('Video') ? '🎥' :
-                           activity.type.includes('Assignment') ? '✍️' :
-                           activity.type.includes('Forum') ? '💬' :
-                           activity.type.includes('Quiz') ? '📝' : '📖'}
+                          {activity.type.includes('Video')
+                            ? '🎥'
+                            : activity.type.includes('Assignment')
+                              ? '✍️'
+                              : activity.type.includes('Forum')
+                                ? '💬'
+                                : activity.type.includes('Quiz')
+                                  ? '📝'
+                                  : '📖'}
                         </div>
                       </div>
                     ))}
@@ -537,7 +614,9 @@ export default function EngagementHeatmapPage() {
             {activeTab === 'sentiment' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg p-6 border border-green-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">💬 Discussion Sentiment Analysis</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    💬 Discussion Sentiment Analysis
+                  </h3>
                   <p className="text-sm text-gray-700">
                     NLP-powered analysis of discussion tone, emotions, and engagement quality.
                   </p>
@@ -563,27 +642,49 @@ export default function EngagementHeatmapPage() {
                   <h4 className="font-semibold text-gray-900 mb-4">Recent Discussion Analysis</h4>
                   <div className="space-y-3">
                     {[
-                      { message: 'Great explanation! This really helped me understand...', sentiment: 0.8, emotion: 'joy', label: 'very_positive' },
-                      { message: 'I\'m still confused about the implementation...', sentiment: -0.2, emotion: 'confusion', label: 'negative' },
-                      { message: 'Thanks for sharing this resource!', sentiment: 0.6, emotion: 'interest', label: 'positive' },
-                      { message: 'This is challenging but I\'m making progress', sentiment: 0.1, emotion: 'interest', label: 'neutral' }
+                      {
+                        message: 'Great explanation! This really helped me understand...',
+                        sentiment: 0.8,
+                        emotion: 'joy',
+                        label: 'very_positive',
+                      },
+                      {
+                        message: "I'm still confused about the implementation...",
+                        sentiment: -0.2,
+                        emotion: 'confusion',
+                        label: 'negative',
+                      },
+                      {
+                        message: 'Thanks for sharing this resource!',
+                        sentiment: 0.6,
+                        emotion: 'interest',
+                        label: 'positive',
+                      },
+                      {
+                        message: "This is challenging but I'm making progress",
+                        sentiment: 0.1,
+                        emotion: 'interest',
+                        label: 'neutral',
+                      },
                     ].map((msg, index) => (
                       <div key={index} className="p-4 bg-gray-50 rounded-lg">
                         <p className="text-sm text-gray-700 mb-2">&quot;{msg.message}&quot;</p>
                         <div className="flex items-center gap-3">
-                          <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                            msg.label === 'very_positive' || msg.label === 'positive' ? 'bg-green-200 text-green-800' :
-                            msg.label === 'negative' ? 'bg-red-200 text-red-800' :
-                            'bg-gray-200 text-gray-800'
-                          }`}>
+                          <span
+                            className={`px-2 py-1 rounded text-xs font-semibold ${
+                              msg.label === 'very_positive' || msg.label === 'positive'
+                                ? 'bg-green-200 text-green-800'
+                                : msg.label === 'negative'
+                                  ? 'bg-red-200 text-red-800'
+                                  : 'bg-gray-200 text-gray-800'
+                            }`}
+                          >
                             {msg.label.replace('_', ' ').toUpperCase()}
                           </span>
                           <span className="text-xs text-gray-600">
                             Score: {msg.sentiment.toFixed(2)}
                           </span>
-                          <span className="text-xs text-gray-600">
-                            Emotion: {msg.emotion}
-                          </span>
+                          <span className="text-xs text-gray-600">Emotion: {msg.emotion}</span>
                         </div>
                       </div>
                     ))}
@@ -596,9 +697,12 @@ export default function EngagementHeatmapPage() {
             {activeTab === 'alerts' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-red-100 to-orange-100 rounded-lg p-6 border border-red-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">🚨 Engagement Risk Alerts</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    🚨 Engagement Risk Alerts
+                  </h3>
                   <p className="text-sm text-gray-700">
-                    Automated alerts for attendance issues, LMS inactivity, and negative sentiment patterns.
+                    Automated alerts for attendance issues, LMS inactivity, and negative sentiment
+                    patterns.
                   </p>
                 </div>
 
@@ -609,28 +713,34 @@ export default function EngagementHeatmapPage() {
                       severity: 'high',
                       title: 'Low Attendance Warning',
                       description: 'Student has attended only 45% of sessions in the past week',
-                      actions: ['Contact student', 'Review absence reasons', 'Provide attendance plan']
+                      actions: [
+                        'Contact student',
+                        'Review absence reasons',
+                        'Provide attendance plan',
+                      ],
                     },
                     {
                       type: 'lms_inactivity',
                       severity: 'medium',
                       title: 'LMS Inactivity Alert',
                       description: 'No LMS activity recorded in the past 3 days',
-                      actions: ['Check technical access', 'Send reminder', 'Monitor submissions']
+                      actions: ['Check technical access', 'Send reminder', 'Monitor submissions'],
                     },
                     {
                       type: 'negative_sentiment',
                       severity: 'medium',
                       title: 'Negative Sentiment Detected',
                       description: 'Recent discussion posts show frustration and confusion',
-                      actions: ['Schedule check-in', 'Assess wellbeing', 'Connect with support']
-                    }
+                      actions: ['Schedule check-in', 'Assess wellbeing', 'Connect with support'],
+                    },
                   ].map((alert, index) => (
                     <div key={index} className="bg-white rounded-lg border-2 border-orange-200 p-6">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <span className={`w-3 h-3 rounded-full ${getSeverityColor(alert.severity)}`}></span>
+                            <span
+                              className={`w-3 h-3 rounded-full ${getSeverityColor(alert.severity)}`}
+                            ></span>
                             <h4 className="font-bold text-gray-900">{alert.title}</h4>
                             <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-semibold rounded">
                               {alert.severity.toUpperCase()}
@@ -641,7 +751,9 @@ export default function EngagementHeatmapPage() {
                       </div>
 
                       <div className="bg-orange-50 rounded-lg p-3">
-                        <p className="text-xs font-semibold text-gray-700 mb-2">Recommended Actions:</p>
+                        <p className="text-xs font-semibold text-gray-700 mb-2">
+                          Recommended Actions:
+                        </p>
                         <ul className="space-y-1">
                           {alert.actions.map((action, idx) => (
                             <li key={idx} className="text-xs text-gray-600 flex items-start gap-2">

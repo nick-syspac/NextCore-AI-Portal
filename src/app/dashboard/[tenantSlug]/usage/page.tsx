@@ -45,7 +45,7 @@ export default function UsageStatsPage() {
   const params = useParams();
   const router = useRouter();
   const tenantSlug = params.tenantSlug as string;
-  
+
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<UsageStats | null>(null);
   const [period, setPeriod] = useState<'today' | 'week' | 'month' | 'year'>('month');
@@ -61,10 +61,10 @@ export default function UsageStatsPage() {
 
   const loadUsageStats = async () => {
     setLoading(true);
-    
+
     // Mock data - replace with actual API call
     // const data = await api.getUsageStats(tenantSlug, authToken, period);
-    
+
     setTimeout(() => {
       setStats({
         period: period,
@@ -72,38 +72,38 @@ export default function UsageStatsPage() {
           total: 15847,
           successful: 15203,
           failed: 644,
-          change: 12.5
+          change: 12.5,
         },
         tokens: {
           total: 2845692,
           prompt: 1523847,
           completion: 1321845,
-          change: 8.3
+          change: 8.3,
         },
         costs: {
           total: 127.45,
           breakdown: [
-            { model: 'gpt-4', cost: 78.30, calls: 2450 },
+            { model: 'gpt-4', cost: 78.3, calls: 2450 },
             { model: 'gpt-3.5-turbo', cost: 32.15, calls: 8920 },
-            { model: 'claude-3', cost: 17.00, calls: 4477 }
+            { model: 'claude-3', cost: 17.0, calls: 4477 },
           ],
-          change: -3.2
+          change: -3.2,
         },
         topModels: [
           { model: 'gpt-3.5-turbo', calls: 8920, tokens: 1245000, cost: 32.15 },
-          { model: 'gpt-4', calls: 2450, tokens: 980000, cost: 78.30 },
-          { model: 'claude-3-opus', calls: 2200, tokens: 420000, cost: 12.50 },
-          { model: 'claude-3-sonnet', calls: 2277, tokens: 200692, cost: 4.50 }
+          { model: 'gpt-4', calls: 2450, tokens: 980000, cost: 78.3 },
+          { model: 'claude-3-opus', calls: 2200, tokens: 420000, cost: 12.5 },
+          { model: 'claude-3-sonnet', calls: 2277, tokens: 200692, cost: 4.5 },
         ],
         dailyUsage: [
-          { date: '2025-10-17', calls: 1920, tokens: 345000, cost: 15.30 },
-          { date: '2025-10-18', calls: 2100, tokens: 378000, cost: 16.80 },
-          { date: '2025-10-19', calls: 1850, tokens: 332000, cost: 14.70 },
-          { date: '2025-10-20', calls: 2300, tokens: 412000, cost: 18.30 },
-          { date: '2025-10-21', calls: 2450, tokens: 440000, cost: 19.50 },
-          { date: '2025-10-22', calls: 2150, tokens: 386000, cost: 17.10 },
-          { date: '2025-10-23', calls: 3077, tokens: 552692, cost: 24.75 }
-        ]
+          { date: '2025-10-17', calls: 1920, tokens: 345000, cost: 15.3 },
+          { date: '2025-10-18', calls: 2100, tokens: 378000, cost: 16.8 },
+          { date: '2025-10-19', calls: 1850, tokens: 332000, cost: 14.7 },
+          { date: '2025-10-20', calls: 2300, tokens: 412000, cost: 18.3 },
+          { date: '2025-10-21', calls: 2450, tokens: 440000, cost: 19.5 },
+          { date: '2025-10-22', calls: 2150, tokens: 386000, cost: 17.1 },
+          { date: '2025-10-23', calls: 3077, tokens: 552692, cost: 24.75 },
+        ],
       });
       setLoading(false);
     }, 500);
@@ -120,7 +120,12 @@ export default function UsageStatsPage() {
   const formatChange = (change: number) => {
     const sign = change > 0 ? '+' : '';
     const color = change > 0 ? 'text-green-600' : change < 0 ? 'text-red-600' : 'text-gray-600';
-    return <span className={color}>{sign}{change.toFixed(1)}%</span>;
+    return (
+      <span className={color}>
+        {sign}
+        {change.toFixed(1)}%
+      </span>
+    );
   };
 
   if (loading) {
@@ -151,7 +156,7 @@ export default function UsageStatsPage() {
         <div className="mb-6 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-gray-900">Usage Analytics</h2>
           <div className="flex gap-2">
-            {(['today', 'week', 'month', 'year'] as const).map((p) => (
+            {(['today', 'week', 'month', 'year'] as const).map(p => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
@@ -182,14 +187,17 @@ export default function UsageStatsPage() {
                 </p>
                 <div className="flex gap-4 text-sm">
                   <div>
-                    <span className="text-green-600">✓ {formatNumber(stats.apiCalls.successful)}</span>
+                    <span className="text-green-600">
+                      ✓ {formatNumber(stats.apiCalls.successful)}
+                    </span>
                   </div>
                   <div>
                     <span className="text-red-600">✗ {formatNumber(stats.apiCalls.failed)}</span>
                   </div>
                 </div>
                 <div className="mt-2 text-xs text-gray-500">
-                  Success rate: {((stats.apiCalls.successful / stats.apiCalls.total) * 100).toFixed(1)}%
+                  Success rate:{' '}
+                  {((stats.apiCalls.successful / stats.apiCalls.total) * 100).toFixed(1)}%
                 </div>
               </div>
 
@@ -204,10 +212,14 @@ export default function UsageStatsPage() {
                 </p>
                 <div className="flex gap-4 text-sm">
                   <div>
-                    <span className="text-blue-600">↑ {formatNumber(stats.tokens.prompt)} prompt</span>
+                    <span className="text-blue-600">
+                      ↑ {formatNumber(stats.tokens.prompt)} prompt
+                    </span>
                   </div>
                   <div>
-                    <span className="text-purple-600">↓ {formatNumber(stats.tokens.completion)} completion</span>
+                    <span className="text-purple-600">
+                      ↓ {formatNumber(stats.tokens.completion)} completion
+                    </span>
                   </div>
                 </div>
               </div>
@@ -234,12 +246,15 @@ export default function UsageStatsPage() {
                 {stats.dailyUsage.map((day, idx) => {
                   const maxCalls = Math.max(...stats.dailyUsage.map(d => d.calls));
                   const width = (day.calls / maxCalls) * 100;
-                  
+
                   return (
                     <div key={idx}>
                       <div className="flex justify-between text-sm mb-1">
                         <span className="text-gray-600">
-                          {new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          {new Date(day.date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                          })}
                         </span>
                         <span className="text-gray-900 font-medium">
                           {formatNumber(day.calls)} calls • {formatCurrency(day.cost)}
@@ -264,7 +279,10 @@ export default function UsageStatsPage() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Models</h3>
                 <div className="space-y-4">
                   {stats.topModels.map((model, idx) => (
-                    <div key={idx} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
+                    <div
+                      key={idx}
+                      className="border-b border-gray-100 last:border-0 pb-4 last:pb-0"
+                    >
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <h4 className="font-medium text-gray-900">{model.model}</h4>
@@ -295,12 +313,14 @@ export default function UsageStatsPage() {
                 <div className="space-y-4">
                   {stats.costs.breakdown.map((item, idx) => {
                     const percentage = (item.cost / stats.costs.total) * 100;
-                    
+
                     return (
                       <div key={idx}>
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-gray-900 font-medium">{item.model}</span>
-                          <span className="text-gray-900 font-semibold">{formatCurrency(item.cost)}</span>
+                          <span className="text-gray-900 font-semibold">
+                            {formatCurrency(item.cost)}
+                          </span>
                         </div>
                         <div className="flex gap-2 items-center">
                           <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -337,22 +357,47 @@ export default function UsageStatsPage() {
             <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-blue-900 mb-3">💡 Usage Insights</h3>
               <ul className="space-y-2 text-blue-800">
-                <li>• Your most cost-effective model is <strong>{stats.costs.breakdown.reduce((min, curr) => 
-                  (curr.cost / curr.calls) < (min.cost / min.calls) ? curr : min
-                ).model}</strong> at {formatCurrency(
-                  stats.costs.breakdown.reduce((min, curr) => 
-                    (curr.cost / curr.calls) < (min.cost / min.calls) ? curr : min
-                  ).cost / stats.costs.breakdown.reduce((min, curr) => 
-                    (curr.cost / curr.calls) < (min.cost / min.calls) ? curr : min
-                  ).calls
-                )} per call</li>
-                <li>• Your API success rate is {((stats.apiCalls.successful / stats.apiCalls.total) * 100).toFixed(1)}%
-                  {stats.apiCalls.failed > 100 && ' - consider investigating failed requests'}</li>
-                <li>• Peak usage day: <strong>{new Date(stats.dailyUsage.reduce((max, curr) => 
-                  curr.calls > max.calls ? curr : max
-                ).date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</strong> with {formatNumber(
-                  stats.dailyUsage.reduce((max, curr) => curr.calls > max.calls ? curr : max).calls
-                )} calls</li>
+                <li>
+                  • Your most cost-effective model is{' '}
+                  <strong>
+                    {
+                      stats.costs.breakdown.reduce((min, curr) =>
+                        curr.cost / curr.calls < min.cost / min.calls ? curr : min
+                      ).model
+                    }
+                  </strong>{' '}
+                  at{' '}
+                  {formatCurrency(
+                    stats.costs.breakdown.reduce((min, curr) =>
+                      curr.cost / curr.calls < min.cost / min.calls ? curr : min
+                    ).cost /
+                      stats.costs.breakdown.reduce((min, curr) =>
+                        curr.cost / curr.calls < min.cost / min.calls ? curr : min
+                      ).calls
+                  )}{' '}
+                  per call
+                </li>
+                <li>
+                  • Your API success rate is{' '}
+                  {((stats.apiCalls.successful / stats.apiCalls.total) * 100).toFixed(1)}%
+                  {stats.apiCalls.failed > 100 && ' - consider investigating failed requests'}
+                </li>
+                <li>
+                  • Peak usage day:{' '}
+                  <strong>
+                    {new Date(
+                      stats.dailyUsage.reduce((max, curr) =>
+                        curr.calls > max.calls ? curr : max
+                      ).date
+                    ).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </strong>{' '}
+                  with{' '}
+                  {formatNumber(
+                    stats.dailyUsage.reduce((max, curr) => (curr.calls > max.calls ? curr : max))
+                      .calls
+                  )}{' '}
+                  calls
+                </li>
               </ul>
             </div>
           </>

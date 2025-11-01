@@ -65,9 +65,10 @@ export default function LLNPredictorPage() {
 
   // Statistics
   const totalAssessments = assessments.length;
-  const avgConfidence = assessments.length > 0 
-    ? (assessments.reduce((sum, a) => sum + a.confidence, 0) / assessments.length).toFixed(1)
-    : '0';
+  const avgConfidence =
+    assessments.length > 0
+      ? (assessments.reduce((sum, a) => sum + a.confidence, 0) / assessments.length).toFixed(1)
+      : '0';
   const level1Count = assessments.filter(a => a.overall_level === 'Level 1').length;
   const level2Count = assessments.filter(a => a.overall_level === 'Level 2').length;
   const level3Count = assessments.filter(a => a.overall_level === 'Level 3').length;
@@ -109,7 +110,7 @@ export default function LLNPredictorPage() {
       setAssessments([newAssessment, ...assessments]);
       setSelectedAssessment(newAssessment);
       setLoading(false);
-      
+
       // Generate skill analyses
       const analyses: SkillAnalysis[] = [
         {
@@ -143,9 +144,18 @@ export default function LLNPredictorPage() {
         {
           skill: 'Oral Communication',
           level: newAssessment.oral_communication_score,
-          description: getACSFDescription('Oral Communication', newAssessment.oral_communication_score),
-          indicators: getACSFIndicators('Oral Communication', newAssessment.oral_communication_score),
-          recommendations: getRecommendations('Oral Communication', newAssessment.oral_communication_score),
+          description: getACSFDescription(
+            'Oral Communication',
+            newAssessment.oral_communication_score
+          ),
+          indicators: getACSFIndicators(
+            'Oral Communication',
+            newAssessment.oral_communication_score
+          ),
+          recommendations: getRecommendations(
+            'Oral Communication',
+            newAssessment.oral_communication_score
+          ),
         },
       ];
       setSkillAnalyses(analyses);
@@ -155,22 +165,22 @@ export default function LLNPredictorPage() {
 
   const getACSFDescription = (skill: string, level: number): string => {
     const descriptions: { [key: string]: { [key: number]: string } } = {
-      'Learning': {
+      Learning: {
         1: 'Can identify and recall simple information, follow routine procedures',
         2: 'Can understand relationships between ideas, adapt procedures to suit circumstances',
         3: 'Can evaluate information, adapt and develop new procedures',
       },
-      'Reading': {
+      Reading: {
         1: 'Can read and understand short simple texts on familiar topics',
         2: 'Can read and understand moderately complex texts on familiar topics',
         3: 'Can read and understand complex texts, including unfamiliar topics',
       },
-      'Writing': {
+      Writing: {
         1: 'Can write short simple texts for familiar contexts',
         2: 'Can write routine formal and informal texts of moderate complexity',
         3: 'Can write complex formal and informal texts',
       },
-      'Numeracy': {
+      Numeracy: {
         1: 'Can use simple mathematical information and perform simple calculations',
         2: 'Can use routine mathematical information and perform multiple step calculations',
         3: 'Can use and interpret complex mathematical information',
@@ -186,30 +196,86 @@ export default function LLNPredictorPage() {
 
   const getACSFIndicators = (skill: string, level: number): string[] => {
     const indicators: { [key: string]: { [key: number]: string[] } } = {
-      'Learning': {
-        1: ['Follows simple instructions', 'Recalls basic facts', 'Uses familiar problem-solving strategies'],
-        2: ['Understands cause and effect', 'Applies knowledge to new situations', 'Plans and sequences tasks'],
-        3: ['Evaluates multiple sources', 'Develops innovative solutions', 'Reflects on learning processes'],
+      Learning: {
+        1: [
+          'Follows simple instructions',
+          'Recalls basic facts',
+          'Uses familiar problem-solving strategies',
+        ],
+        2: [
+          'Understands cause and effect',
+          'Applies knowledge to new situations',
+          'Plans and sequences tasks',
+        ],
+        3: [
+          'Evaluates multiple sources',
+          'Develops innovative solutions',
+          'Reflects on learning processes',
+        ],
       },
-      'Reading': {
-        1: ['Reads simple sentences', 'Identifies main ideas in short texts', 'Uses basic vocabulary'],
-        2: ['Reads multi-paragraph texts', 'Infers meaning from context', 'Understands text structure'],
-        3: ['Analyzes complex arguments', 'Synthesizes information from multiple sources', 'Evaluates author perspective'],
+      Reading: {
+        1: [
+          'Reads simple sentences',
+          'Identifies main ideas in short texts',
+          'Uses basic vocabulary',
+        ],
+        2: [
+          'Reads multi-paragraph texts',
+          'Infers meaning from context',
+          'Understands text structure',
+        ],
+        3: [
+          'Analyzes complex arguments',
+          'Synthesizes information from multiple sources',
+          'Evaluates author perspective',
+        ],
       },
-      'Writing': {
+      Writing: {
         1: ['Writes simple sentences', 'Uses basic punctuation', 'Conveys simple messages'],
-        2: ['Writes paragraphs with topic sentences', 'Uses varied sentence structures', 'Organizes ideas logically'],
-        3: ['Writes essays with complex arguments', 'Uses advanced vocabulary', 'Adapts style to audience'],
+        2: [
+          'Writes paragraphs with topic sentences',
+          'Uses varied sentence structures',
+          'Organizes ideas logically',
+        ],
+        3: [
+          'Writes essays with complex arguments',
+          'Uses advanced vocabulary',
+          'Adapts style to audience',
+        ],
       },
-      'Numeracy': {
-        1: ['Performs basic arithmetic', 'Reads simple tables and graphs', 'Uses everyday measurements'],
-        2: ['Calculates percentages and ratios', 'Interprets statistical information', 'Uses formulas'],
-        3: ['Analyzes complex data sets', 'Uses advanced mathematical concepts', 'Evaluates mathematical arguments'],
+      Numeracy: {
+        1: [
+          'Performs basic arithmetic',
+          'Reads simple tables and graphs',
+          'Uses everyday measurements',
+        ],
+        2: [
+          'Calculates percentages and ratios',
+          'Interprets statistical information',
+          'Uses formulas',
+        ],
+        3: [
+          'Analyzes complex data sets',
+          'Uses advanced mathematical concepts',
+          'Evaluates mathematical arguments',
+        ],
       },
       'Oral Communication': {
-        1: ['Speaks clearly in simple sentences', 'Listens to simple instructions', 'Asks basic questions'],
-        2: ['Presents information to small groups', 'Engages in discussions', 'Uses appropriate language register'],
-        3: ['Delivers formal presentations', 'Negotiates and persuades', 'Adapts communication to diverse audiences'],
+        1: [
+          'Speaks clearly in simple sentences',
+          'Listens to simple instructions',
+          'Asks basic questions',
+        ],
+        2: [
+          'Presents information to small groups',
+          'Engages in discussions',
+          'Uses appropriate language register',
+        ],
+        3: [
+          'Delivers formal presentations',
+          'Negotiates and persuades',
+          'Adapts communication to diverse audiences',
+        ],
       },
     };
     return indicators[skill]?.[level] || ['No indicators available'];
@@ -259,13 +325,14 @@ export default function LLNPredictorPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-4">
-              <Link href={`/dashboard/${tenantSlug}`} className="text-emerald-600 hover:text-emerald-800 font-medium">
+              <Link
+                href={`/dashboard/${tenantSlug}`}
+                className="text-emerald-600 hover:text-emerald-800 font-medium"
+              >
                 ← Back to Dashboard
               </Link>
               <div className="h-6 w-px bg-gray-300"></div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                LLN Predictor
-              </h1>
+              <h1 className="text-xl font-semibold text-gray-900">LLN Predictor</h1>
             </div>
             <div className="flex items-center gap-3">
               <span className="px-3 py-1 bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800 text-sm font-medium rounded-full">
@@ -369,7 +436,8 @@ export default function LLNPredictorPage() {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">New LLN Assessment</h3>
                   <p className="text-sm text-gray-600 mb-6">
-                    Enter student information and provide samples for automated ACSF level prediction
+                    Enter student information and provide samples for automated ACSF level
+                    prediction
                   </p>
                 </div>
 
@@ -381,7 +449,7 @@ export default function LLNPredictorPage() {
                     <input
                       type="text"
                       value={studentName}
-                      onChange={(e) => setStudentName(e.target.value)}
+                      onChange={e => setStudentName(e.target.value)}
                       placeholder="Enter student full name"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     />
@@ -393,7 +461,7 @@ export default function LLNPredictorPage() {
                     <input
                       type="text"
                       value={studentId}
-                      onChange={(e) => setStudentId(e.target.value)}
+                      onChange={e => setStudentId(e.target.value)}
                       placeholder="Enter student ID"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     />
@@ -406,7 +474,7 @@ export default function LLNPredictorPage() {
                   </label>
                   <textarea
                     value={writingSample}
-                    onChange={(e) => setWritingSample(e.target.value)}
+                    onChange={e => setWritingSample(e.target.value)}
                     placeholder="Paste or type student's writing sample (essay, report, email, etc.)"
                     rows={6}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
@@ -422,7 +490,7 @@ export default function LLNPredictorPage() {
                   </label>
                   <textarea
                     value={readingResponse}
-                    onChange={(e) => setReadingResponse(e.target.value)}
+                    onChange={e => setReadingResponse(e.target.value)}
                     placeholder="Paste student's response to reading comprehension task"
                     rows={4}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
@@ -435,7 +503,7 @@ export default function LLNPredictorPage() {
                   </label>
                   <textarea
                     value={numeracyResponse}
-                    onChange={(e) => setNumeracyResponse(e.target.value)}
+                    onChange={e => setNumeracyResponse(e.target.value)}
                     placeholder="Paste student's response to numeracy problem or calculation"
                     rows={4}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
@@ -448,7 +516,7 @@ export default function LLNPredictorPage() {
                   </label>
                   <textarea
                     value={oralResponse}
-                    onChange={(e) => setOralResponse(e.target.value)}
+                    onChange={e => setOralResponse(e.target.value)}
                     placeholder="Enter notes from oral communication assessment (presentation, discussion, interview)"
                     rows={4}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
@@ -464,8 +532,20 @@ export default function LLNPredictorPage() {
                     {loading ? (
                       <span className="flex items-center gap-2">
                         <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            fill="none"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
                         </svg>
                         Analyzing with NLP + ACSF Model...
                       </span>
@@ -498,16 +578,28 @@ export default function LLNPredictorPage() {
                     <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-6 border border-emerald-200">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h3 className="text-xl font-bold text-gray-900">{selectedAssessment.student_name}</h3>
-                          <p className="text-sm text-gray-600">Student ID: {selectedAssessment.student_id}</p>
-                          <p className="text-sm text-gray-600">Assessment: {selectedAssessment.assessment_number}</p>
-                          <p className="text-sm text-gray-600">Date: {selectedAssessment.assessment_date}</p>
+                          <h3 className="text-xl font-bold text-gray-900">
+                            {selectedAssessment.student_name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Student ID: {selectedAssessment.student_id}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Assessment: {selectedAssessment.assessment_number}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Date: {selectedAssessment.assessment_date}
+                          </p>
                         </div>
                         <div className="text-right">
-                          <div className={`inline-block px-4 py-2 rounded-lg font-semibold ${getLevelColor(selectedAssessment.overall_level)}`}>
+                          <div
+                            className={`inline-block px-4 py-2 rounded-lg font-semibold ${getLevelColor(selectedAssessment.overall_level)}`}
+                          >
                             Overall: {selectedAssessment.overall_level}
                           </div>
-                          <div className={`text-sm mt-2 font-medium ${getConfidenceColor(selectedAssessment.confidence)}`}>
+                          <div
+                            className={`text-sm mt-2 font-medium ${getConfidenceColor(selectedAssessment.confidence)}`}
+                          >
                             Confidence: {selectedAssessment.confidence}%
                           </div>
                         </div>
@@ -516,31 +608,41 @@ export default function LLNPredictorPage() {
                       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
                         <div className="bg-white rounded-lg p-3 text-center">
                           <div className="text-xs text-gray-600 mb-1">Learning</div>
-                          <div className={`text-lg font-bold px-2 py-1 rounded ${getLevelColor(selectedAssessment.learning_score)}`}>
+                          <div
+                            className={`text-lg font-bold px-2 py-1 rounded ${getLevelColor(selectedAssessment.learning_score)}`}
+                          >
                             Level {selectedAssessment.learning_score}
                           </div>
                         </div>
                         <div className="bg-white rounded-lg p-3 text-center">
                           <div className="text-xs text-gray-600 mb-1">Reading</div>
-                          <div className={`text-lg font-bold px-2 py-1 rounded ${getLevelColor(selectedAssessment.reading_score)}`}>
+                          <div
+                            className={`text-lg font-bold px-2 py-1 rounded ${getLevelColor(selectedAssessment.reading_score)}`}
+                          >
                             Level {selectedAssessment.reading_score}
                           </div>
                         </div>
                         <div className="bg-white rounded-lg p-3 text-center">
                           <div className="text-xs text-gray-600 mb-1">Writing</div>
-                          <div className={`text-lg font-bold px-2 py-1 rounded ${getLevelColor(selectedAssessment.writing_score)}`}>
+                          <div
+                            className={`text-lg font-bold px-2 py-1 rounded ${getLevelColor(selectedAssessment.writing_score)}`}
+                          >
                             Level {selectedAssessment.writing_score}
                           </div>
                         </div>
                         <div className="bg-white rounded-lg p-3 text-center">
                           <div className="text-xs text-gray-600 mb-1">Numeracy</div>
-                          <div className={`text-lg font-bold px-2 py-1 rounded ${getLevelColor(selectedAssessment.numeracy_score)}`}>
+                          <div
+                            className={`text-lg font-bold px-2 py-1 rounded ${getLevelColor(selectedAssessment.numeracy_score)}`}
+                          >
                             Level {selectedAssessment.numeracy_score}
                           </div>
                         </div>
                         <div className="bg-white rounded-lg p-3 text-center">
                           <div className="text-xs text-gray-600 mb-1">Oral Comm</div>
-                          <div className={`text-lg font-bold px-2 py-1 rounded ${getLevelColor(selectedAssessment.oral_communication_score)}`}>
+                          <div
+                            className={`text-lg font-bold px-2 py-1 rounded ${getLevelColor(selectedAssessment.oral_communication_score)}`}
+                          >
                             Level {selectedAssessment.oral_communication_score}
                           </div>
                         </div>
@@ -549,35 +651,52 @@ export default function LLNPredictorPage() {
 
                     {/* Detailed Skill Analysis */}
                     <div>
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4">Detailed ACSF Skill Analysis</h4>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                        Detailed ACSF Skill Analysis
+                      </h4>
                       <div className="space-y-4">
                         {skillAnalyses.map((analysis, index) => (
-                          <div key={index} className="bg-white rounded-lg border border-gray-200 p-5">
+                          <div
+                            key={index}
+                            className="bg-white rounded-lg border border-gray-200 p-5"
+                          >
                             <div className="flex items-center justify-between mb-3">
-                              <h5 className="text-md font-semibold text-gray-900">{analysis.skill}</h5>
-                              <span className={`px-3 py-1 rounded-lg font-semibold text-sm ${getLevelColor(analysis.level)}`}>
+                              <h5 className="text-md font-semibold text-gray-900">
+                                {analysis.skill}
+                              </h5>
+                              <span
+                                className={`px-3 py-1 rounded-lg font-semibold text-sm ${getLevelColor(analysis.level)}`}
+                              >
                                 ACSF Level {analysis.level}
                               </span>
                             </div>
-                            
+
                             <div className="mb-3">
                               <p className="text-sm text-gray-700">{analysis.description}</p>
                             </div>
 
                             <div className="mb-3">
-                              <h6 className="text-sm font-semibold text-gray-900 mb-2">Performance Indicators:</h6>
+                              <h6 className="text-sm font-semibold text-gray-900 mb-2">
+                                Performance Indicators:
+                              </h6>
                               <ul className="list-disc list-inside space-y-1">
                                 {analysis.indicators.map((indicator, i) => (
-                                  <li key={i} className="text-sm text-gray-600">{indicator}</li>
+                                  <li key={i} className="text-sm text-gray-600">
+                                    {indicator}
+                                  </li>
                                 ))}
                               </ul>
                             </div>
 
                             <div>
-                              <h6 className="text-sm font-semibold text-gray-900 mb-2">Teaching Recommendations:</h6>
+                              <h6 className="text-sm font-semibold text-gray-900 mb-2">
+                                Teaching Recommendations:
+                              </h6>
                               <ul className="list-disc list-inside space-y-1">
                                 {analysis.recommendations.map((rec, i) => (
-                                  <li key={i} className="text-sm text-emerald-700">{rec}</li>
+                                  <li key={i} className="text-sm text-emerald-700">
+                                    {rec}
+                                  </li>
                                 ))}
                               </ul>
                             </div>
@@ -589,7 +708,9 @@ export default function LLNPredictorPage() {
                 ) : (
                   <div className="text-center py-12">
                     <div className="text-6xl mb-4">📊</div>
-                    <p className="text-gray-600">No assessment selected. Complete a new assessment to view results.</p>
+                    <p className="text-gray-600">
+                      No assessment selected. Complete a new assessment to view results.
+                    </p>
                     <button
                       onClick={() => setActiveTab('assess')}
                       className="mt-4 px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
@@ -619,30 +740,52 @@ export default function LLNPredictorPage() {
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Assessment #</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Overall Level</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Confidence</th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                            Assessment #
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                            Student
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                            Date
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                            Overall Level
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                            Confidence
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                            Actions
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {assessments.map((assessment) => (
+                        {assessments.map(assessment => (
                           <tr key={assessment.id} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 text-sm text-gray-900 font-mono">{assessment.assessment_number}</td>
+                            <td className="px-4 py-3 text-sm text-gray-900 font-mono">
+                              {assessment.assessment_number}
+                            </td>
                             <td className="px-4 py-3 text-sm">
-                              <div className="font-medium text-gray-900">{assessment.student_name}</div>
+                              <div className="font-medium text-gray-900">
+                                {assessment.student_name}
+                              </div>
                               <div className="text-gray-500 text-xs">{assessment.student_id}</div>
                             </td>
-                            <td className="px-4 py-3 text-sm text-gray-600">{assessment.assessment_date}</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">
+                              {assessment.assessment_date}
+                            </td>
                             <td className="px-4 py-3 text-sm">
-                              <span className={`px-2 py-1 rounded font-semibold ${getLevelColor(assessment.overall_level)}`}>
+                              <span
+                                className={`px-2 py-1 rounded font-semibold ${getLevelColor(assessment.overall_level)}`}
+                              >
                                 {assessment.overall_level}
                               </span>
                             </td>
                             <td className="px-4 py-3 text-sm">
-                              <span className={`font-semibold ${getConfidenceColor(assessment.confidence)}`}>
+                              <span
+                                className={`font-semibold ${getConfidenceColor(assessment.confidence)}`}
+                              >
                                 {assessment.confidence}%
                               </span>
                             </td>
@@ -683,50 +826,75 @@ export default function LLNPredictorPage() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Student LLN Profiles</h3>
                 {assessments.length > 0 ? (
                   <div className="grid gap-4">
-                    {Array.from(new Set(assessments.map(a => a.student_id))).map((studentId) => {
-                      const studentAssessments = assessments.filter(a => a.student_id === studentId);
+                    {Array.from(new Set(assessments.map(a => a.student_id))).map(studentId => {
+                      const studentAssessments = assessments.filter(
+                        a => a.student_id === studentId
+                      );
                       const latest = studentAssessments[0];
                       return (
-                        <div key={studentId} className="bg-white rounded-lg border border-gray-200 p-5">
+                        <div
+                          key={studentId}
+                          className="bg-white rounded-lg border border-gray-200 p-5"
+                        >
                           <div className="flex items-start justify-between mb-4">
                             <div>
-                              <h4 className="text-lg font-semibold text-gray-900">{latest.student_name}</h4>
-                              <p className="text-sm text-gray-600">Student ID: {latest.student_id}</p>
-                              <p className="text-sm text-gray-600">{studentAssessments.length} assessment(s) completed</p>
-                              <p className="text-sm text-gray-600">Last assessed: {latest.assessment_date}</p>
+                              <h4 className="text-lg font-semibold text-gray-900">
+                                {latest.student_name}
+                              </h4>
+                              <p className="text-sm text-gray-600">
+                                Student ID: {latest.student_id}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {studentAssessments.length} assessment(s) completed
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                Last assessed: {latest.assessment_date}
+                              </p>
                             </div>
-                            <span className={`px-4 py-2 rounded-lg font-semibold ${getLevelColor(latest.overall_level)}`}>
+                            <span
+                              className={`px-4 py-2 rounded-lg font-semibold ${getLevelColor(latest.overall_level)}`}
+                            >
                               {latest.overall_level}
                             </span>
                           </div>
                           <div className="grid grid-cols-5 gap-3">
                             <div className="text-center">
                               <div className="text-xs text-gray-600 mb-1">Learning</div>
-                              <div className={`text-sm font-bold px-2 py-1 rounded ${getLevelColor(latest.learning_score)}`}>
+                              <div
+                                className={`text-sm font-bold px-2 py-1 rounded ${getLevelColor(latest.learning_score)}`}
+                              >
                                 L{latest.learning_score}
                               </div>
                             </div>
                             <div className="text-center">
                               <div className="text-xs text-gray-600 mb-1">Reading</div>
-                              <div className={`text-sm font-bold px-2 py-1 rounded ${getLevelColor(latest.reading_score)}`}>
+                              <div
+                                className={`text-sm font-bold px-2 py-1 rounded ${getLevelColor(latest.reading_score)}`}
+                              >
                                 L{latest.reading_score}
                               </div>
                             </div>
                             <div className="text-center">
                               <div className="text-xs text-gray-600 mb-1">Writing</div>
-                              <div className={`text-sm font-bold px-2 py-1 rounded ${getLevelColor(latest.writing_score)}`}>
+                              <div
+                                className={`text-sm font-bold px-2 py-1 rounded ${getLevelColor(latest.writing_score)}`}
+                              >
                                 L{latest.writing_score}
                               </div>
                             </div>
                             <div className="text-center">
                               <div className="text-xs text-gray-600 mb-1">Numeracy</div>
-                              <div className={`text-sm font-bold px-2 py-1 rounded ${getLevelColor(latest.numeracy_score)}`}>
+                              <div
+                                className={`text-sm font-bold px-2 py-1 rounded ${getLevelColor(latest.numeracy_score)}`}
+                              >
                                 L{latest.numeracy_score}
                               </div>
                             </div>
                             <div className="text-center">
                               <div className="text-xs text-gray-600 mb-1">Oral</div>
-                              <div className={`text-sm font-bold px-2 py-1 rounded ${getLevelColor(latest.oral_communication_score)}`}>
+                              <div
+                                className={`text-sm font-bold px-2 py-1 rounded ${getLevelColor(latest.oral_communication_score)}`}
+                              >
                                 L{latest.oral_communication_score}
                               </div>
                             </div>
@@ -738,7 +906,9 @@ export default function LLNPredictorPage() {
                 ) : (
                   <div className="text-center py-12 bg-gray-50 rounded-lg">
                     <div className="text-6xl mb-4">👥</div>
-                    <p className="text-gray-600">No student profiles yet. Complete assessments to build profiles.</p>
+                    <p className="text-gray-600">
+                      No student profiles yet. Complete assessments to build profiles.
+                    </p>
                   </div>
                 )}
               </div>
@@ -748,10 +918,13 @@ export default function LLNPredictorPage() {
             {activeTab === 'acsf' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Australian Core Skills Framework (ACSF)</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Australian Core Skills Framework (ACSF)
+                  </h3>
                   <p className="text-sm text-gray-600">
-                    The ACSF describes five core skills (Learning, Reading, Writing, Numeracy, Oral Communication) 
-                    across five performance levels. This tool uses NLP to automatically predict ACSF levels.
+                    The ACSF describes five core skills (Learning, Reading, Writing, Numeracy, Oral
+                    Communication) across five performance levels. This tool uses NLP to
+                    automatically predict ACSF levels.
                   </p>
                 </div>
 
@@ -759,40 +932,41 @@ export default function LLNPredictorPage() {
                   <div className="bg-gradient-to-r from-red-50 to-red-100 rounded-lg p-5 border border-red-200">
                     <h4 className="font-semibold text-gray-900 mb-2">Level 1 - Foundation</h4>
                     <p className="text-sm text-gray-700">
-                      Can perform simple, routine tasks with concrete information in familiar contexts. 
-                      Requires high level of support. Suitable for pre-vocational or basic workplace tasks.
+                      Can perform simple, routine tasks with concrete information in familiar
+                      contexts. Requires high level of support. Suitable for pre-vocational or basic
+                      workplace tasks.
                     </p>
                   </div>
 
                   <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg p-5 border border-yellow-200">
                     <h4 className="font-semibold text-gray-900 mb-2">Level 2 - Basic</h4>
                     <p className="text-sm text-gray-700">
-                      Can perform routine tasks with some complexity in familiar contexts. 
-                      Requires some support. Suitable for entry-level employment and further training.
+                      Can perform routine tasks with some complexity in familiar contexts. Requires
+                      some support. Suitable for entry-level employment and further training.
                     </p>
                   </div>
 
                   <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-5 border border-green-200">
                     <h4 className="font-semibold text-gray-900 mb-2">Level 3 - Intermediate</h4>
                     <p className="text-sm text-gray-700">
-                      Can perform moderately complex tasks in a range of contexts. 
-                      Requires limited support. Suitable for independent workplace performance and 
-                      vocational education entry.
+                      Can perform moderately complex tasks in a range of contexts. Requires limited
+                      support. Suitable for independent workplace performance and vocational
+                      education entry.
                     </p>
                   </div>
 
                   <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-5 border border-blue-200">
                     <h4 className="font-semibold text-gray-900 mb-2">Level 4 - Advanced</h4>
                     <p className="text-sm text-gray-700">
-                      Can perform complex tasks independently across varied contexts. 
-                      Minimal support needed. Suitable for diploma-level study and specialized roles.
+                      Can perform complex tasks independently across varied contexts. Minimal
+                      support needed. Suitable for diploma-level study and specialized roles.
                     </p>
                   </div>
 
                   <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-5 border border-purple-200">
                     <h4 className="font-semibold text-gray-900 mb-2">Level 5 - Expert</h4>
                     <p className="text-sm text-gray-700">
-                      Can perform highly complex and non-routine tasks. Works independently with 
+                      Can perform highly complex and non-routine tasks. Works independently with
                       initiative. Suitable for degree-level study and professional roles.
                     </p>
                   </div>
@@ -801,8 +975,8 @@ export default function LLNPredictorPage() {
                 <div className="bg-emerald-50 rounded-lg p-5 border border-emerald-200">
                   <h4 className="font-semibold text-gray-900 mb-2">🤖 NLP-Powered Prediction</h4>
                   <p className="text-sm text-gray-700 mb-3">
-                    This tool uses Natural Language Processing to analyze student responses and automatically 
-                    predict ACSF levels across all five core skills:
+                    This tool uses Natural Language Processing to analyze student responses and
+                    automatically predict ACSF levels across all five core skills:
                   </p>
                   <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
                     <li>Vocabulary complexity and range analysis</li>

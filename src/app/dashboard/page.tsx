@@ -23,7 +23,7 @@ export default function DashboardPage() {
     console.log('Dashboard: checking auth...');
     const authToken = localStorage.getItem('authToken');
     console.log('Dashboard: authToken exists?', !!authToken);
-    
+
     if (!authToken) {
       console.log('Dashboard: No token, redirecting to login');
       router.push('/login');
@@ -31,17 +31,14 @@ export default function DashboardPage() {
     }
 
     console.log('Dashboard: Fetching user data...');
-    Promise.all([
-      api.getMyTenants(authToken),
-      api.getProfile(authToken)
-    ])
+    Promise.all([api.getMyTenants(authToken), api.getProfile(authToken)])
       .then(([tenantsData, profileData]) => {
         console.log('Dashboard: Tenants data:', tenantsData);
         console.log('Dashboard: Profile data:', profileData);
         setTenants(tenantsData);
         setProfile(profileData);
       })
-      .catch((error) => {
+      .catch(error => {
         console.error('Dashboard: API error:', error);
         localStorage.removeItem('authToken');
         router.push('/login');
@@ -93,33 +90,32 @@ export default function DashboardPage() {
           <h3 className="text-xl font-semibold text-gray-900 mb-4">Your Tenants</h3>
           {tenants.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-600 mb-4">
-                You don't belong to any tenants yet.
-              </p>
+              <p className="text-gray-600 mb-4">You don't belong to any tenants yet.</p>
               <p className="text-sm text-gray-500">
                 Ask your administrator to send you an invitation.
               </p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {tenants.map((tenant) => (
+              {tenants.map(tenant => (
                 <Link
                   key={tenant.tenant_id}
                   href={`/dashboard/${tenant.tenant_slug}`}
                   className="block p-6 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all"
                 >
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                    {tenant.tenant_name}
-                  </h4>
-                  <p className="text-sm text-gray-600 mb-4">
-                    /{tenant.tenant_slug}
-                  </p>
-                  <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${
-                    tenant.role === 'owner' ? 'bg-purple-100 text-purple-800' :
-                    tenant.role === 'admin' ? 'bg-blue-100 text-blue-800' :
-                    tenant.role === 'member' ? 'bg-green-100 text-green-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">{tenant.tenant_name}</h4>
+                  <p className="text-sm text-gray-600 mb-4">/{tenant.tenant_slug}</p>
+                  <span
+                    className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${
+                      tenant.role === 'owner'
+                        ? 'bg-purple-100 text-purple-800'
+                        : tenant.role === 'admin'
+                          ? 'bg-blue-100 text-blue-800'
+                          : tenant.role === 'member'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
                     {tenant.role.toUpperCase()}
                   </span>
                 </Link>
@@ -128,14 +124,11 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {(profile?.is_superuser || tenants.some((t: Tenant) => t.role === 'admin' || t.role === 'owner')) && (
+        {(profile?.is_superuser ||
+          tenants.some((t: Tenant) => t.role === 'admin' || t.role === 'owner')) && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-blue-900 mb-2">
-              Admin Functions
-            </h3>
-            <p className="text-blue-800 text-sm mb-4">
-              Invite new users to your tenants
-            </p>
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">Admin Functions</h3>
+            <p className="text-blue-800 text-sm mb-4">Invite new users to your tenants</p>
             <Link
               href="/invitations/create"
               className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"

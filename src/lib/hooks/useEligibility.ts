@@ -119,7 +119,15 @@ export interface EvidenceAttachment {
   filename: string;
   file_size: number;
   mime_type: string;
-  type: 'id' | 'concession' | 'residency' | 'visa' | 'qualification' | 'employment' | 'income' | 'other';
+  type:
+    | 'id'
+    | 'concession'
+    | 'residency'
+    | 'visa'
+    | 'qualification'
+    | 'employment'
+    | 'income'
+    | 'other';
   verified: boolean;
   verifier: number | null;
   verifier_details: UserMinimal | null;
@@ -162,31 +170,30 @@ interface PaginatedResponse<T> {
 
 export const eligibilityKeys = {
   all: ['eligibility'] as const,
-  
+
   jurisdictions: () => [...eligibilityKeys.all, 'jurisdictions'] as const,
-  
+
   rulesets: () => [...eligibilityKeys.all, 'rulesets'] as const,
   ruleset: (id: number) => [...eligibilityKeys.rulesets(), id] as const,
-  rulesetsByJurisdiction: (jurisdiction: string) => 
+  rulesetsByJurisdiction: (jurisdiction: string) =>
     [...eligibilityKeys.rulesets(), 'jurisdiction', jurisdiction] as const,
-  
+
   requests: () => [...eligibilityKeys.all, 'requests'] as const,
   request: (id: number) => [...eligibilityKeys.requests(), id] as const,
-  requestsByPerson: (personId: string) => 
+  requestsByPerson: (personId: string) =>
     [...eligibilityKeys.requests(), 'person', personId] as const,
-  requestsByStatus: (status: string) => 
-    [...eligibilityKeys.requests(), 'status', status] as const,
-  
+  requestsByStatus: (status: string) => [...eligibilityKeys.requests(), 'status', status] as const,
+
   decisions: () => [...eligibilityKeys.all, 'decisions'] as const,
   decision: (requestId: number) => [...eligibilityKeys.decisions(), requestId] as const,
-  
+
   overrides: () => [...eligibilityKeys.all, 'overrides'] as const,
   override: (id: number) => [...eligibilityKeys.overrides(), id] as const,
-  
+
   attachments: () => [...eligibilityKeys.all, 'attachments'] as const,
-  attachmentsByRequest: (requestId: number) => 
+  attachmentsByRequest: (requestId: number) =>
     [...eligibilityKeys.attachments(), 'request', requestId] as const,
-  
+
   webhooks: () => [...eligibilityKeys.all, 'webhooks'] as const,
   webhook: (id: number) => [...eligibilityKeys.webhooks(), id] as const,
 };
@@ -199,7 +206,9 @@ export function useJurisdictions(tenantSlug: string, options?: UseQueryOptions<J
   return useQuery({
     queryKey: [...eligibilityKeys.jurisdictions(), tenantSlug],
     queryFn: async () => {
-      const response = await apiClient.get(`/tenants/${tenantSlug}/funding-eligibility/jurisdictions/`);
+      const response = await apiClient.get(
+        `/tenants/${tenantSlug}/funding-eligibility/jurisdictions/`
+      );
       // Extract results array from paginated response
       return response.data.results || response.data;
     },
@@ -212,9 +221,14 @@ export function useJurisdictions(tenantSlug: string, options?: UseQueryOptions<J
 // Rulesets
 // ============================================================================
 
-export function useRulesets(jurisdiction?: string, options?: UseQueryOptions<PaginatedResponse<Ruleset>>) {
+export function useRulesets(
+  jurisdiction?: string,
+  options?: UseQueryOptions<PaginatedResponse<Ruleset>>
+) {
   return useQuery({
-    queryKey: jurisdiction ? eligibilityKeys.rulesetsByJurisdiction(jurisdiction) : eligibilityKeys.rulesets(),
+    queryKey: jurisdiction
+      ? eligibilityKeys.rulesetsByJurisdiction(jurisdiction)
+      : eligibilityKeys.rulesets(),
     queryFn: async () => {
       const params = jurisdiction ? { jurisdiction } : {};
       const response = await apiClient.get('/funding-eligibility/rulesets/', { params });
@@ -240,13 +254,13 @@ export function useRuleset(id: number, options?: UseQueryOptions<Ruleset>) {
 
 export function useActivateRuleset() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (rulesetId: number) => {
       const response = await apiClient.post(`/funding-eligibility/rulesets/${rulesetId}/activate/`);
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: eligibilityKeys.rulesets() });
       queryClient.invalidateQueries({ queryKey: eligibilityKeys.ruleset(data.ruleset.id) });
     },
@@ -255,7 +269,7 @@ export function useActivateRuleset() {
 
 export function useCreateRuleset() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (data: Partial<Ruleset>) => {
       const response = await apiClient.post('/funding-eligibility/rulesets/', data);
@@ -280,11 +294,11 @@ export function useEligibilityRequests(
   options?: UseQueryOptions<PaginatedResponse<EligibilityRequest>>
 ) {
   return useQuery({
-    queryKey: filters?.status 
+    queryKey: filters?.status
       ? eligibilityKeys.requestsByStatus(filters.status)
       : filters?.person_id
-      ? eligibilityKeys.requestsByPerson(filters.person_id)
-      : eligibilityKeys.requests(),
+        ? eligibilityKeys.requestsByPerson(filters.person_id)
+        : eligibilityKeys.requests(),
     queryFn: async () => {
       const response = await apiClient.get('/funding-eligibility/requests/', { params: filters });
       return response.data;
@@ -303,7 +317,7 @@ export function useEligibilityRequest(id: number, options?: UseQueryOptions<Elig
     },
     enabled: !!id,
     staleTime: 1000 * 30, // 30 seconds
-    refetchInterval: (query) => {
+    refetchInterval: query => {
       // Auto-refresh if pending/evaluating
       const data = query.state.data;
       if (data && ['pending', 'evaluating'].includes(data.status)) {
@@ -317,7 +331,7 @@ export function useEligibilityRequest(id: number, options?: UseQueryOptions<Elig
 
 export function useCreateEligibilityRequest() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (data: {
       person_id: string;
@@ -337,17 +351,24 @@ export function useCreateEligibilityRequest() {
 
 export function useEvaluateRequest() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async ({ requestId, force, rulesetId }: {
+    mutationFn: async ({
+      requestId,
+      force,
+      rulesetId,
+    }: {
       requestId: number;
       force?: boolean;
       rulesetId?: number;
     }) => {
-      const response = await apiClient.post(`/funding-eligibility/requests/${requestId}/evaluate/`, {
-        force,
-        ruleset_id: rulesetId,
-      });
+      const response = await apiClient.post(
+        `/funding-eligibility/requests/${requestId}/evaluate/`,
+        {
+          force,
+          ruleset_id: rulesetId,
+        }
+      );
       return response.data;
     },
     onSuccess: (_, variables) => {
@@ -357,16 +378,21 @@ export function useEvaluateRequest() {
   });
 }
 
-export function useCheckEligibility(requestId: number, options?: UseQueryOptions<{
-  can_enrol: boolean;
-  reason: string;
-  decision?: any;
-}>) {
+export function useCheckEligibility(
+  requestId: number,
+  options?: UseQueryOptions<{
+    can_enrol: boolean;
+    reason: string;
+    decision?: any;
+  }>
+) {
   return useQuery({
     queryKey: [...eligibilityKeys.request(requestId), 'check'],
     queryFn: async () => {
       try {
-        const response = await apiClient.get(`/funding-eligibility/requests/${requestId}/check_eligibility/`);
+        const response = await apiClient.get(
+          `/funding-eligibility/requests/${requestId}/check_eligibility/`
+        );
         return response.data;
       } catch (error: any) {
         // Handle 403 as valid response
@@ -386,7 +412,10 @@ export function useCheckEligibility(requestId: number, options?: UseQueryOptions
 // Overrides
 // ============================================================================
 
-export function useDecisionOverrides(decisionId?: number, options?: UseQueryOptions<PaginatedResponse<DecisionOverride>>) {
+export function useDecisionOverrides(
+  decisionId?: number,
+  options?: UseQueryOptions<PaginatedResponse<DecisionOverride>>
+) {
   return useQuery({
     queryKey: eligibilityKeys.overrides(),
     queryFn: async () => {
@@ -401,7 +430,7 @@ export function useDecisionOverrides(decisionId?: number, options?: UseQueryOpti
 
 export function useCreateOverride() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (data: {
       decision_id: number;
@@ -414,7 +443,7 @@ export function useCreateOverride() {
       const response = await apiClient.post('/funding-eligibility/overrides/', data);
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: eligibilityKeys.overrides() });
       // Invalidate the related request
       queryClient.invalidateQueries({ queryKey: eligibilityKeys.decisions() });
@@ -426,9 +455,14 @@ export function useCreateOverride() {
 // Evidence Attachments
 // ============================================================================
 
-export function useAttachments(requestId?: number, options?: UseQueryOptions<PaginatedResponse<EvidenceAttachment>>) {
+export function useAttachments(
+  requestId?: number,
+  options?: UseQueryOptions<PaginatedResponse<EvidenceAttachment>>
+) {
   return useQuery({
-    queryKey: requestId ? eligibilityKeys.attachmentsByRequest(requestId) : eligibilityKeys.attachments(),
+    queryKey: requestId
+      ? eligibilityKeys.attachmentsByRequest(requestId)
+      : eligibilityKeys.attachments(),
     queryFn: async () => {
       const params = requestId ? { request: requestId } : {};
       const response = await apiClient.get('/funding-eligibility/attachments/', { params });
@@ -441,9 +475,13 @@ export function useAttachments(requestId?: number, options?: UseQueryOptions<Pag
 
 export function useUploadEvidence() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async ({ requestId, type, file }: {
+    mutationFn: async ({
+      requestId,
+      type,
+      file,
+    }: {
       requestId: number;
       type: string;
       file: File;
@@ -452,14 +490,16 @@ export function useUploadEvidence() {
       formData.append('request_id', requestId.toString());
       formData.append('type', type);
       formData.append('file', file);
-      
+
       const response = await apiClient.post('/funding-eligibility/attachments/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       return response.data;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: eligibilityKeys.attachmentsByRequest(variables.requestId) });
+      queryClient.invalidateQueries({
+        queryKey: eligibilityKeys.attachmentsByRequest(variables.requestId),
+      });
       queryClient.invalidateQueries({ queryKey: eligibilityKeys.request(variables.requestId) });
     },
   });
@@ -467,18 +507,20 @@ export function useUploadEvidence() {
 
 export function useVerifyEvidence() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async ({ attachmentId, notes }: {
-      attachmentId: number;
-      notes?: string;
-    }) => {
-      const response = await apiClient.post(`/funding-eligibility/attachments/${attachmentId}/verify/`, { notes });
+    mutationFn: async ({ attachmentId, notes }: { attachmentId: number; notes?: string }) => {
+      const response = await apiClient.post(
+        `/funding-eligibility/attachments/${attachmentId}/verify/`,
+        { notes }
+      );
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: eligibilityKeys.attachments() });
-      queryClient.invalidateQueries({ queryKey: eligibilityKeys.attachmentsByRequest(data.request) });
+      queryClient.invalidateQueries({
+        queryKey: eligibilityKeys.attachmentsByRequest(data.request),
+      });
     },
   });
 }
@@ -501,7 +543,7 @@ export function useWebhooks(options?: UseQueryOptions<PaginatedResponse<WebhookE
 
 export function useCreateWebhook() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (data: Partial<WebhookEndpoint>) => {
       const response = await apiClient.post('/funding-eligibility/webhooks/', data);

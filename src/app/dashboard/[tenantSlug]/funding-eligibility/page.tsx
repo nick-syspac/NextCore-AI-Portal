@@ -42,15 +42,21 @@ export default function FundingEligibilityPage() {
   const [activeTab, setActiveTab] = useState<'check' | 'history' | 'requirements'>('check');
   const [checkResult, setCheckResult] = useState<EligibilityResult | null>(null);
   const [checking, setChecking] = useState(false);
-  
+
   // Modal state for editing jurisdiction requirements
-  const [editingJurisdiction, setEditingJurisdiction] = useState<JurisdictionRequirement | null>(null);
+  const [editingJurisdiction, setEditingJurisdiction] = useState<JurisdictionRequirement | null>(
+    null
+  );
   const [editedConfig, setEditedConfig] = useState<JurisdictionRequirement['config']>({});
-  
+
   // Fetch jurisdictions from API
-  const { data: jurisdictionsData, isLoading: jurisdictionsLoading, refetch: refetchJurisdictions } = useJurisdictions(tenantSlug);
+  const {
+    data: jurisdictionsData,
+    isLoading: jurisdictionsLoading,
+    refetch: refetchJurisdictions,
+  } = useJurisdictions(tenantSlug);
   const jurisdictions = jurisdictionsData || [];
-  
+
   // Form state
   const [formData, setFormData] = useState({
     // Student info
@@ -59,16 +65,16 @@ export default function FundingEligibilityPage() {
     student_dob: '',
     student_email: '',
     student_phone: '',
-    
+
     // Course info
     course_code: '',
     course_name: '',
     aqf_level: 5,
     intended_start_date: '',
-    
+
     // Jurisdiction
     jurisdiction: 'nsw',
-    
+
     // Eligibility data
     citizenship_status: 'citizen',
     is_jurisdiction_resident: true,
@@ -96,31 +102,55 @@ export default function FundingEligibilityPage() {
 
   const handleCheckEligibility = () => {
     setChecking(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       // Mock eligibility check result
       const mockResult: EligibilityResult = {
         check_number: `EC-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-        status: formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident ? 'eligible' : 'ineligible',
-        status_display: formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident ? 'Eligible' : 'Not Eligible',
+        status:
+          formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident
+            ? 'eligible'
+            : 'ineligible',
+        status_display:
+          formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident
+            ? 'Eligible'
+            : 'Not Eligible',
         is_eligible: formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident,
-        eligibility_percentage: formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident ? 100 : 60,
+        eligibility_percentage:
+          formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident ? 100 : 60,
         rules_checked: 8,
-        rules_passed: formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident ? 8 : 5,
-        rules_failed: formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident ? 0 : 3,
-        failed_rules: formData.citizenship_status !== 'citizen' || !formData.is_jurisdiction_resident ? [
-          { rule_name: 'Australian Citizenship', message: 'Must be Australian citizen', override_allowed: false },
-          { rule_name: 'Jurisdiction Residency', message: 'Must be resident of jurisdiction for at least 6 months', override_allowed: true },
-        ] : [],
+        rules_passed:
+          formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident ? 8 : 5,
+        rules_failed:
+          formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident ? 0 : 3,
+        failed_rules:
+          formData.citizenship_status !== 'citizen' || !formData.is_jurisdiction_resident
+            ? [
+                {
+                  rule_name: 'Australian Citizenship',
+                  message: 'Must be Australian citizen',
+                  override_allowed: false,
+                },
+                {
+                  rule_name: 'Jurisdiction Residency',
+                  message: 'Must be resident of jurisdiction for at least 6 months',
+                  override_allowed: true,
+                },
+              ]
+            : [],
         warnings: formData.annual_income > 50000 ? ['Income above recommended threshold'] : [],
-        override_required: !formData.is_jurisdiction_resident && formData.citizenship_status === 'citizen',
-        prevents_enrollment: !(formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident),
-        eligibility_summary: formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident 
-          ? `Eligible for ${formData.jurisdiction.toUpperCase()} funding`
-          : 'Not eligible - citizenship or residency requirements not met'
+        override_required:
+          !formData.is_jurisdiction_resident && formData.citizenship_status === 'citizen',
+        prevents_enrollment: !(
+          formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident
+        ),
+        eligibility_summary:
+          formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident
+            ? `Eligible for ${formData.jurisdiction.toUpperCase()} funding`
+            : 'Not eligible - citizenship or residency requirements not met',
       };
-      
+
       setCheckResult(mockResult);
       setChecking(false);
     }, 2000);
@@ -141,13 +171,15 @@ export default function FundingEligibilityPage() {
   // Handle saving edited requirements
   const handleSaveRequirements = () => {
     if (!editingJurisdiction) return;
-    
+
     // TODO: Call API to save the updated requirements
     console.log('Saving requirements for', editingJurisdiction.code, editedConfig);
-    
+
     // For now, just close the modal
     // In production, this would make an API call to update the jurisdiction
-    alert(`Requirements confirmed for ${editingJurisdiction.name}\n\nThis would save to the backend in production.`);
+    alert(
+      `Requirements confirmed for ${editingJurisdiction.name}\n\nThis would save to the backend in production.`
+    );
     handleCloseModal();
   };
 
@@ -172,11 +204,16 @@ export default function FundingEligibilityPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'eligible': return 'bg-green-100 text-green-800 border-green-200';
-      case 'ineligible': return 'bg-red-100 text-red-800 border-red-200';
-      case 'conditional': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'override': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'eligible':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'ineligible':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'conditional':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'override':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -191,7 +228,9 @@ export default function FundingEligibilityPage() {
               ⚖️ Rules Engine
             </span>
           </div>
-          <p className="text-gray-600">Validate student eligibility and prevent non-compliant enrolments</p>
+          <p className="text-gray-600">
+            Validate student eligibility and prevent non-compliant enrolments
+          </p>
         </div>
 
         {/* Tabs */}
@@ -234,48 +273,64 @@ export default function FundingEligibilityPage() {
             {/* Form */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Student & Course Details</h2>
-                
+                <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                  Student & Course Details
+                </h2>
+
                 <div className="space-y-6">
                   {/* Student Information */}
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-4">Student Information</h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          First Name
+                        </label>
                         <input
                           type="text"
                           value={formData.student_first_name}
-                          onChange={(e) => setFormData({ ...formData, student_first_name: e.target.value })}
+                          onChange={e =>
+                            setFormData({ ...formData, student_first_name: e.target.value })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                           placeholder="John"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Last Name
+                        </label>
                         <input
                           type="text"
                           value={formData.student_last_name}
-                          onChange={(e) => setFormData({ ...formData, student_last_name: e.target.value })}
+                          onChange={e =>
+                            setFormData({ ...formData, student_last_name: e.target.value })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                           placeholder="Smith"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Date of Birth
+                        </label>
                         <input
                           type="date"
                           value={formData.student_dob}
-                          onChange={(e) => setFormData({ ...formData, student_dob: e.target.value })}
+                          onChange={e => setFormData({ ...formData, student_dob: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Email
+                        </label>
                         <input
                           type="email"
                           value={formData.student_email}
-                          onChange={(e) => setFormData({ ...formData, student_email: e.target.value })}
+                          onChange={e =>
+                            setFormData({ ...formData, student_email: e.target.value })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                           placeholder="john.smith@example.com"
                         />
@@ -288,43 +343,57 @@ export default function FundingEligibilityPage() {
                     <h3 className="text-lg font-medium text-gray-900 mb-4">Course Information</h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Course Code</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Course Code
+                        </label>
                         <input
                           type="text"
                           value={formData.course_code}
-                          onChange={(e) => setFormData({ ...formData, course_code: e.target.value })}
+                          onChange={e => setFormData({ ...formData, course_code: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                           placeholder="ICT50120"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Course Name</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Course Name
+                        </label>
                         <input
                           type="text"
                           value={formData.course_name}
-                          onChange={(e) => setFormData({ ...formData, course_name: e.target.value })}
+                          onChange={e => setFormData({ ...formData, course_name: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                           placeholder="Diploma of Information Technology"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">AQF Level</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          AQF Level
+                        </label>
                         <select
                           value={formData.aqf_level}
-                          onChange={(e) => setFormData({ ...formData, aqf_level: parseInt(e.target.value) })}
+                          onChange={e =>
+                            setFormData({ ...formData, aqf_level: parseInt(e.target.value) })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                         >
                           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(level => (
-                            <option key={level} value={level}>AQF {level}</option>
+                            <option key={level} value={level}>
+                              AQF {level}
+                            </option>
                           ))}
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Intended Start Date</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Intended Start Date
+                        </label>
                         <input
                           type="date"
                           value={formData.intended_start_date}
-                          onChange={(e) => setFormData({ ...formData, intended_start_date: e.target.value })}
+                          onChange={e =>
+                            setFormData({ ...formData, intended_start_date: e.target.value })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                         />
                       </div>
@@ -333,13 +402,17 @@ export default function FundingEligibilityPage() {
 
                   {/* Jurisdiction & Eligibility */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Eligibility Information</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                      Eligibility Information
+                    </h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Jurisdiction</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Jurisdiction
+                        </label>
                         <select
                           value={formData.jurisdiction}
-                          onChange={(e) => setFormData({ ...formData, jurisdiction: e.target.value })}
+                          onChange={e => setFormData({ ...formData, jurisdiction: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                         >
                           <option value="nsw">New South Wales</option>
@@ -353,10 +426,14 @@ export default function FundingEligibilityPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Citizenship Status</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Citizenship Status
+                        </label>
                         <select
                           value={formData.citizenship_status}
-                          onChange={(e) => setFormData({ ...formData, citizenship_status: e.target.value })}
+                          onChange={e =>
+                            setFormData({ ...formData, citizenship_status: e.target.value })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                         >
                           <option value="citizen">Australian Citizen</option>
@@ -366,10 +443,14 @@ export default function FundingEligibilityPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Employment Status</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Employment Status
+                        </label>
                         <select
                           value={formData.employment_status}
-                          onChange={(e) => setFormData({ ...formData, employment_status: e.target.value })}
+                          onChange={e =>
+                            setFormData({ ...formData, employment_status: e.target.value })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                         >
                           <option value="employed">Employed</option>
@@ -380,11 +461,18 @@ export default function FundingEligibilityPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Residency (months)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Residency (months)
+                        </label>
                         <input
                           type="number"
                           value={formData.jurisdiction_residency_months}
-                          onChange={(e) => setFormData({ ...formData, jurisdiction_residency_months: parseInt(e.target.value) })}
+                          onChange={e =>
+                            setFormData({
+                              ...formData,
+                              jurisdiction_residency_months: parseInt(e.target.value),
+                            })
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                           min="0"
                         />
@@ -396,16 +484,22 @@ export default function FundingEligibilityPage() {
                         <input
                           type="checkbox"
                           checked={formData.is_jurisdiction_resident}
-                          onChange={(e) => setFormData({ ...formData, is_jurisdiction_resident: e.target.checked })}
+                          onChange={e =>
+                            setFormData({ ...formData, is_jurisdiction_resident: e.target.checked })
+                          }
                           className="w-4 h-4"
                         />
-                        <span className="text-sm text-gray-700">Resident of selected jurisdiction</span>
+                        <span className="text-sm text-gray-700">
+                          Resident of selected jurisdiction
+                        </span>
                       </label>
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
                           checked={formData.has_concession_card}
-                          onChange={(e) => setFormData({ ...formData, has_concession_card: e.target.checked })}
+                          onChange={e =>
+                            setFormData({ ...formData, has_concession_card: e.target.checked })
+                          }
                           className="w-4 h-4"
                         />
                         <span className="text-sm text-gray-700">Concession card holder</span>
@@ -414,7 +508,9 @@ export default function FundingEligibilityPage() {
                         <input
                           type="checkbox"
                           checked={formData.has_disability}
-                          onChange={(e) => setFormData({ ...formData, has_disability: e.target.checked })}
+                          onChange={e =>
+                            setFormData({ ...formData, has_disability: e.target.checked })
+                          }
                           className="w-4 h-4"
                         />
                         <span className="text-sm text-gray-700">Person with disability</span>
@@ -423,7 +519,9 @@ export default function FundingEligibilityPage() {
                         <input
                           type="checkbox"
                           checked={formData.is_indigenous}
-                          onChange={(e) => setFormData({ ...formData, is_indigenous: e.target.checked })}
+                          onChange={e =>
+                            setFormData({ ...formData, is_indigenous: e.target.checked })
+                          }
                           className="w-4 h-4"
                         />
                         <span className="text-sm text-gray-700">Indigenous Australian</span>
@@ -446,15 +544,19 @@ export default function FundingEligibilityPage() {
             <div>
               <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Eligibility Result</h2>
-                
+
                 {checkResult ? (
                   <div className="space-y-4">
-                    <div className={`border-2 rounded-lg p-4 ${getStatusColor(checkResult.status)}`}>
+                    <div
+                      className={`border-2 rounded-lg p-4 ${getStatusColor(checkResult.status)}`}
+                    >
                       <div className="text-center">
                         <div className="text-4xl font-bold mb-2">
                           {checkResult.is_eligible ? '✓' : '✗'}
                         </div>
-                        <div className="text-lg font-semibold mb-1">{checkResult.status_display}</div>
+                        <div className="text-lg font-semibold mb-1">
+                          {checkResult.status_display}
+                        </div>
                         <div className="text-sm">{checkResult.check_number}</div>
                       </div>
                     </div>
@@ -465,14 +567,18 @@ export default function FundingEligibilityPage() {
                         <div className="flex-1 bg-gray-200 rounded-full h-3">
                           <div
                             className={`h-3 rounded-full ${
-                              checkResult.eligibility_percentage >= 80 ? 'bg-green-500' :
-                              checkResult.eligibility_percentage >= 60 ? 'bg-yellow-500' :
-                              'bg-red-500'
+                              checkResult.eligibility_percentage >= 80
+                                ? 'bg-green-500'
+                                : checkResult.eligibility_percentage >= 60
+                                  ? 'bg-yellow-500'
+                                  : 'bg-red-500'
                             }`}
                             style={{ width: `${checkResult.eligibility_percentage}%` }}
                           />
                         </div>
-                        <div className="text-lg font-bold">{checkResult.eligibility_percentage}%</div>
+                        <div className="text-lg font-bold">
+                          {checkResult.eligibility_percentage}%
+                        </div>
                       </div>
                       <div className="text-xs text-gray-500 mt-2">
                         {checkResult.rules_passed} of {checkResult.rules_checked} rules passed
@@ -506,7 +612,9 @@ export default function FundingEligibilityPage() {
                         <h3 className="font-semibold text-yellow-900 mb-2">Warnings</h3>
                         <ul className="space-y-1">
                           {checkResult.warnings.map((warning, idx) => (
-                            <li key={idx} className="text-sm text-yellow-800">⚠️ {warning}</li>
+                            <li key={idx} className="text-sm text-yellow-800">
+                              ⚠️ {warning}
+                            </li>
                           ))}
                         </ul>
                       </div>
@@ -535,7 +643,10 @@ export default function FundingEligibilityPage() {
                 ) : (
                   <div className="text-center text-gray-500 py-12">
                     <div className="text-4xl mb-4">⚖️</div>
-                    <p>Complete the form and click "Check Eligibility" to validate student funding eligibility</p>
+                    <p>
+                      Complete the form and click "Check Eligibility" to validate student funding
+                      eligibility
+                    </p>
                   </div>
                 )}
               </div>
@@ -549,16 +660,30 @@ export default function FundingEligibilityPage() {
             {/* Header with Refresh Button */}
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Australian VET Funding Requirements</h2>
-                <p className="text-gray-600 mt-1">Active jurisdiction requirements for vocational education and training funding</p>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Australian VET Funding Requirements
+                </h2>
+                <p className="text-gray-600 mt-1">
+                  Active jurisdiction requirements for vocational education and training funding
+                </p>
               </div>
               <button
                 onClick={() => refetchJurisdictions()}
                 disabled={jurisdictionsLoading}
                 className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
               >
-                <svg className={`w-5 h-5 ${jurisdictionsLoading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <svg
+                  className={`w-5 h-5 ${jurisdictionsLoading ? 'animate-spin' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
                 </svg>
                 {jurisdictionsLoading ? 'Refreshing...' : 'Refresh Requirements'}
               </button>
@@ -586,18 +711,20 @@ export default function FundingEligibilityPage() {
                     'Australian citizen or PR',
                     `Jurisdiction resident (${residencyMonths}+ months)`,
                     `Age ${ageMin}-${ageMax}`,
-                    'No higher qualifications'
+                    'No higher qualifications',
                   ];
 
                   return (
-                    <div 
-                      key={req.code} 
+                    <div
+                      key={req.code}
                       className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500 hover:shadow-lg transition-all cursor-pointer hover:scale-[1.02]"
                       onClick={() => handleEditJurisdiction(req)}
                     >
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{req.code.toUpperCase()}</h3>
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {req.code.toUpperCase()}
+                          </h3>
                           <p className="text-sm text-gray-600">{req.name}</p>
                         </div>
                         <div className="flex flex-col items-end gap-2">
@@ -607,7 +734,7 @@ export default function FundingEligibilityPage() {
                             </span>
                           )}
                           <button
-                            onClick={(e) => {
+                            onClick={e => {
                               e.stopPropagation();
                               handleEditJurisdiction(req);
                             }}
@@ -617,20 +744,26 @@ export default function FundingEligibilityPage() {
                           </button>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-3">
                         <div>
                           <div className="text-sm text-gray-600">Funding Coverage</div>
-                          <div className="text-2xl font-bold text-indigo-600">{fundingPercentage}%</div>
+                          <div className="text-2xl font-bold text-indigo-600">
+                            {fundingPercentage}%
+                          </div>
                         </div>
-                        
+
                         <div>
                           <div className="text-sm text-gray-600">Student Contribution</div>
-                          <div className="text-lg font-semibold text-gray-900">${studentContribution}</div>
+                          <div className="text-lg font-semibold text-gray-900">
+                            ${studentContribution}
+                          </div>
                         </div>
-                        
+
                         <div className="pt-3 border-t border-gray-200">
-                          <div className="text-xs text-gray-500 uppercase font-medium mb-2">Requirements</div>
+                          <div className="text-xs text-gray-500 uppercase font-medium mb-2">
+                            Requirements
+                          </div>
                           <ul className="space-y-1 text-sm text-gray-700">
                             {requirements.map((req, idx) => (
                               <li key={idx}>✓ {req}</li>
@@ -648,14 +781,24 @@ export default function FundingEligibilityPage() {
             {!jurisdictionsLoading && jurisdictions.length === 0 && (
               <div className="bg-white rounded-lg shadow-md p-12 text-center">
                 <div className="text-6xl mb-4">📋</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No Requirements Available</h3>
-                <p className="text-gray-600 mb-6">Click the refresh button to load VET funding requirements from all Australian jurisdictions.</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  No Requirements Available
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Click the refresh button to load VET funding requirements from all Australian
+                  jurisdictions.
+                </p>
                 <button
                   onClick={() => refetchJurisdictions()}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
                   </svg>
                   Load Requirements
                 </button>
@@ -678,20 +821,33 @@ export default function FundingEligibilityPage() {
 
       {/* Edit Requirements Modal */}
       {editingJurisdiction && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={handleCloseModal}>
-          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={handleCloseModal}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
             {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">{editingJurisdiction.name}</h2>
-                <p className="text-sm text-gray-600 mt-1">Review and confirm VET funding requirements</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Review and confirm VET funding requirements
+                </p>
               </div>
               <button
                 onClick={handleCloseModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -710,7 +866,12 @@ export default function FundingEligibilityPage() {
                       min="0"
                       max="100"
                       value={editedConfig.funding_percentage || 0}
-                      onChange={(e) => setEditedConfig({ ...editedConfig, funding_percentage: parseInt(e.target.value) || 0 })}
+                      onChange={e =>
+                        setEditedConfig({
+                          ...editedConfig,
+                          funding_percentage: parseInt(e.target.value) || 0,
+                        })
+                      }
                       className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                     <span className="text-gray-600">%</span>
@@ -726,7 +887,12 @@ export default function FundingEligibilityPage() {
                       type="number"
                       min="0"
                       value={editedConfig.student_contribution || 0}
-                      onChange={(e) => setEditedConfig({ ...editedConfig, student_contribution: parseInt(e.target.value) || 0 })}
+                      onChange={e =>
+                        setEditedConfig({
+                          ...editedConfig,
+                          student_contribution: parseInt(e.target.value) || 0,
+                        })
+                      }
                       className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                     <span className="text-gray-600">%</span>
@@ -741,7 +907,9 @@ export default function FundingEligibilityPage() {
                     type="number"
                     min="0"
                     value={editedConfig.age_min || 15}
-                    onChange={(e) => setEditedConfig({ ...editedConfig, age_min: parseInt(e.target.value) || 15 })}
+                    onChange={e =>
+                      setEditedConfig({ ...editedConfig, age_min: parseInt(e.target.value) || 15 })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
@@ -754,7 +922,12 @@ export default function FundingEligibilityPage() {
                     type="number"
                     min="0"
                     value={editedConfig.age_max || ''}
-                    onChange={(e) => setEditedConfig({ ...editedConfig, age_max: e.target.value ? parseInt(e.target.value) : undefined })}
+                    onChange={e =>
+                      setEditedConfig({
+                        ...editedConfig,
+                        age_max: e.target.value ? parseInt(e.target.value) : undefined,
+                      })
+                    }
                     placeholder="No limit"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
@@ -768,7 +941,12 @@ export default function FundingEligibilityPage() {
                     type="number"
                     min="0"
                     value={editedConfig.residency_months || 6}
-                    onChange={(e) => setEditedConfig({ ...editedConfig, residency_months: parseInt(e.target.value) || 6 })}
+                    onChange={e =>
+                      setEditedConfig({
+                        ...editedConfig,
+                        residency_months: parseInt(e.target.value) || 6,
+                      })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
@@ -785,7 +963,12 @@ export default function FundingEligibilityPage() {
                     className="text-sm text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
                     </svg>
                     Add Requirement
                   </button>
@@ -797,7 +980,7 @@ export default function FundingEligibilityPage() {
                       <input
                         type="text"
                         value={req}
-                        onChange={(e) => handleUpdateRequirement(index, e.target.value)}
+                        onChange={e => handleUpdateRequirement(index, e.target.value)}
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         placeholder="Enter requirement"
                       />
@@ -806,8 +989,18 @@ export default function FundingEligibilityPage() {
                         className="px-3 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
                         title="Remove requirement"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
                         </svg>
                       </button>
                     </div>

@@ -69,15 +69,12 @@ export default function MicroCredentialPage() {
   const fetchMicroCredentials = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${API_URL}/api/tenants/${tenantSlug}/micro-credentials`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        }
-      );
+      const response = await fetch(`${API_URL}/api/tenants/${tenantSlug}/micro-credentials`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
       if (!response.ok) {
         console.error('Failed to fetch micro-credentials:', response.status, response.statusText);
@@ -134,7 +131,7 @@ export default function MicroCredentialPage() {
       const newCredential = await response.json();
       setMicroCredentials([newCredential, ...microCredentials]);
       setShowGenerateModal(false);
-      
+
       // Reset form
       setGenerateForm({
         unit_codes: [''],
@@ -198,7 +195,8 @@ export default function MicroCredentialPage() {
               <div>
                 <h1 className="text-3xl font-bold text-white mb-2">Micro-Credential Builder</h1>
                 <p className="text-teal-100 text-lg">
-                  Generate short courses from units • Curriculum compression + metadata tagging • New course creation in minutes
+                  Generate short courses from units • Curriculum compression + metadata tagging •
+                  New course creation in minutes
                 </p>
               </div>
             </div>
@@ -284,7 +282,7 @@ export default function MicroCredentialPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {microCredentials.map((credential) => (
+            {microCredentials.map(credential => (
               <div
                 key={credential.id}
                 className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer"
@@ -292,19 +290,17 @@ export default function MicroCredentialPage() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 text-lg mb-1">
-                      {credential.title}
-                    </h3>
+                    <h3 className="font-semibold text-gray-900 text-lg mb-1">{credential.title}</h3>
                     <p className="text-sm text-gray-600 font-mono">{credential.code}</p>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(credential.status)}`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(credential.status)}`}
+                  >
                     {credential.status_display}
                   </span>
                 </div>
 
-                <p className="text-gray-700 text-sm mb-4 line-clamp-2">
-                  {credential.description}
-                </p>
+                <p className="text-gray-700 text-sm mb-4 line-clamp-2">{credential.description}</p>
 
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -348,7 +344,7 @@ export default function MicroCredentialPage() {
                     {credential.enrollment_count} enrolled
                   </span>
                   <button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       handleViewDetails(credential);
                     }}
@@ -382,16 +378,14 @@ export default function MicroCredentialPage() {
             <div className="p-6 space-y-6">
               {/* Unit Codes */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Unit Codes *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Unit Codes *</label>
                 <div className="space-y-2">
                   {generateForm.unit_codes.map((code, index) => (
                     <div key={index} className="flex gap-2">
                       <input
                         type="text"
                         value={code}
-                        onChange={(e) => updateUnitCode(index, e.target.value)}
+                        onChange={e => updateUnitCode(index, e.target.value)}
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent font-mono"
                         placeholder="e.g., ICTICT418, BSBXCS404"
                       />
@@ -422,7 +416,7 @@ export default function MicroCredentialPage() {
                 <input
                   type="text"
                   value={generateForm.title}
-                  onChange={(e) => setGenerateForm({ ...generateForm, title: e.target.value })}
+                  onChange={e => setGenerateForm({ ...generateForm, title: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   placeholder="e.g., Cybersecurity Fundamentals"
                 />
@@ -436,7 +430,9 @@ export default function MicroCredentialPage() {
                 <input
                   type="number"
                   value={generateForm.target_duration}
-                  onChange={(e) => setGenerateForm({ ...generateForm, target_duration: parseInt(e.target.value) })}
+                  onChange={e =>
+                    setGenerateForm({ ...generateForm, target_duration: parseInt(e.target.value) })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   min="10"
                   max="200"
@@ -450,7 +446,9 @@ export default function MicroCredentialPage() {
                 </label>
                 <select
                   value={generateForm.delivery_mode}
-                  onChange={(e) => setGenerateForm({ ...generateForm, delivery_mode: e.target.value })}
+                  onChange={e =>
+                    setGenerateForm({ ...generateForm, delivery_mode: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 >
                   <option value="online">Online</option>
@@ -467,7 +465,9 @@ export default function MicroCredentialPage() {
                 </label>
                 <textarea
                   value={generateForm.target_audience}
-                  onChange={(e) => setGenerateForm({ ...generateForm, target_audience: e.target.value })}
+                  onChange={e =>
+                    setGenerateForm({ ...generateForm, target_audience: e.target.value })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   rows={3}
                   placeholder="e.g., IT professionals seeking cybersecurity upskilling"
@@ -520,7 +520,9 @@ export default function MicroCredentialPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Status</p>
-                  <span className={`inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedCredential.status)}`}>
+                  <span
+                    className={`inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedCredential.status)}`}
+                  >
                     {selectedCredential.status_display}
                   </span>
                 </div>
@@ -543,7 +545,10 @@ export default function MicroCredentialPage() {
                 <h3 className="font-semibold text-gray-900 mb-2">Source Units</h3>
                 <div className="space-y-2">
                   {selectedCredential.source_units.map((unit, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
                       <div>
                         <p className="font-mono text-sm text-teal-600">{unit.code}</p>
                         <p className="text-sm text-gray-700">{unit.title}</p>
@@ -560,7 +565,9 @@ export default function MicroCredentialPage() {
                   <h3 className="font-semibold text-gray-900 mb-2">Learning Outcomes</h3>
                   <ul className="list-disc list-inside space-y-1 text-gray-700">
                     {selectedCredential.learning_outcomes.map((outcome, idx) => (
-                      <li key={idx} className="text-sm">{outcome}</li>
+                      <li key={idx} className="text-sm">
+                        {outcome}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -603,7 +610,8 @@ export default function MicroCredentialPage() {
               {/* Metadata */}
               <div className="pt-4 border-t">
                 <p className="text-sm text-gray-600">
-                  Created by {selectedCredential.created_by_details?.first_name} {selectedCredential.created_by_details?.last_name}
+                  Created by {selectedCredential.created_by_details?.first_name}{' '}
+                  {selectedCredential.created_by_details?.last_name}
                   {' • '}
                   {new Date(selectedCredential.created_at).toLocaleDateString()}
                   {selectedCredential.gpt_generated && ' • AI Generated ✨'}

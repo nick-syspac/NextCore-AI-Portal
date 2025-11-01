@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Providers } from "@/components/providers";
+import type { Metadata } from 'next';
+import './globals.css';
+import { Providers } from '@/components/providers';
 
 export const metadata: Metadata = {
-  title: "NextCore AI Cloud",
-  description: "Multi-tenant AI management platform",
+  title: 'NextCore AI Cloud',
+  description: 'Multi-tenant AI management platform',
 };
 
 export default function RootLayout({

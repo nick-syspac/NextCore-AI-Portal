@@ -97,7 +97,7 @@ export default function TrainerDiaryPage() {
     manual_notes: '',
     learning_outcomes_addressed: [] as string[],
     assessment_activities: '',
-    resources_used: [] as string[]
+    resources_used: [] as string[],
   });
 
   const [selectedAudioFile, setSelectedAudioFile] = useState<File | null>(null);
@@ -116,7 +116,9 @@ export default function TrainerDiaryPage() {
   const loadDashboard = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/trainer-diary/diary-entries/dashboard/?tenant=${tenantSlug}&trainer_id=trainer-001`);
+      const response = await fetch(
+        `/api/trainer-diary/diary-entries/dashboard/?tenant=${tenantSlug}&trainer_id=trainer-001`
+      );
       const data = await response.json();
       setDashboardStats(data);
     } catch (error) {
@@ -128,7 +130,9 @@ export default function TrainerDiaryPage() {
 
   const loadDiaryEntries = async () => {
     try {
-      const response = await fetch(`/api/trainer-diary/diary-entries/?tenant=${tenantSlug}&trainer_id=trainer-001`);
+      const response = await fetch(
+        `/api/trainer-diary/diary-entries/?tenant=${tenantSlug}&trainer_id=trainer-001`
+      );
       const data = await response.json();
       setDiaryEntries(data);
     } catch (error) {
@@ -148,7 +152,9 @@ export default function TrainerDiaryPage() {
 
   const loadDailySummaries = async () => {
     try {
-      const response = await fetch(`/api/trainer-diary/daily-summaries/?tenant=${tenantSlug}&trainer_id=trainer-001`);
+      const response = await fetch(
+        `/api/trainer-diary/daily-summaries/?tenant=${tenantSlug}&trainer_id=trainer-001`
+      );
       const data = await response.json();
       setDailySummaries(data);
     } catch (error) {
@@ -173,8 +179,8 @@ export default function TrainerDiaryPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tenant: tenantSlug,
-          ...diaryForm
-        })
+          ...diaryForm,
+        }),
       });
 
       if (response.ok) {
@@ -189,7 +195,7 @@ export default function TrainerDiaryPage() {
           unit_of_competency: '',
           student_count: 0,
           manual_notes: '',
-          assessment_activities: ''
+          assessment_activities: '',
         });
       }
     } catch (error) {
@@ -213,7 +219,7 @@ export default function TrainerDiaryPage() {
 
       const response = await fetch('/api/trainer-diary/diary-entries/upload-audio/', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
 
       if (response.ok) {
@@ -237,8 +243,8 @@ export default function TrainerDiaryPage() {
         body: JSON.stringify({
           recording_id: recordingId,
           transcription_engine: 'whisper',
-          language: 'en'
-        })
+          language: 'en',
+        }),
       });
 
       if (response.ok) {
@@ -266,8 +272,8 @@ export default function TrainerDiaryPage() {
           diary_entry_id: selectedEntryForSummary,
           include_transcript: true,
           include_manual_notes: true,
-          summary_style: 'detailed'
-        })
+          summary_style: 'detailed',
+        }),
       });
 
       if (response.ok) {
@@ -290,8 +296,8 @@ export default function TrainerDiaryPage() {
         body: JSON.stringify({
           trainer_id: 'trainer-001',
           summary_date: date,
-          include_draft_entries: false
-        })
+          include_draft_entries: false,
+        }),
       });
 
       if (response.ok) {
@@ -315,8 +321,8 @@ export default function TrainerDiaryPage() {
           diary_entry_id: entryId,
           document_type: docType,
           document_format: 'markdown',
-          include_attachments: true
-        })
+          include_attachments: true,
+        }),
       });
 
       if (response.ok) {
@@ -337,7 +343,7 @@ export default function TrainerDiaryPage() {
       transcribing: 'bg-blue-100 text-blue-800',
       summarizing: 'bg-purple-100 text-purple-800',
       complete: 'bg-teal-100 text-teal-800',
-      archived: 'bg-gray-100 text-gray-600'
+      archived: 'bg-gray-100 text-gray-600',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
@@ -348,7 +354,7 @@ export default function TrainerDiaryPage() {
       queued: 'bg-yellow-100 text-yellow-800',
       processing: 'bg-purple-100 text-purple-800',
       completed: 'bg-teal-100 text-teal-800',
-      failed: 'bg-red-100 text-red-800'
+      failed: 'bg-red-100 text-red-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
@@ -372,7 +378,9 @@ export default function TrainerDiaryPage() {
             Speech-to-Text + AI
           </span>
         </div>
-        <p className="text-gray-600">Auto-summarise teaching sessions with speech-to-text and AI. Daily evidence creation.</p>
+        <p className="text-gray-600">
+          Auto-summarise teaching sessions with speech-to-text and AI. Daily evidence creation.
+        </p>
       </div>
 
       {/* Dashboard Stats */}
@@ -381,25 +389,39 @@ export default function TrainerDiaryPage() {
           <div className="bg-white border-2 border-teal-200 rounded-lg p-4 shadow-sm">
             <div className="text-sm text-gray-600 mb-1">Total Entries</div>
             <div className="text-2xl font-bold text-teal-600">{dashboardStats.total_entries}</div>
-            <div className="text-xs text-gray-500 mt-1">{dashboardStats.entries_this_week} this week</div>
+            <div className="text-xs text-gray-500 mt-1">
+              {dashboardStats.entries_this_week} this week
+            </div>
           </div>
-          
+
           <div className="bg-white border-2 border-cyan-200 rounded-lg p-4 shadow-sm">
             <div className="text-sm text-gray-600 mb-1">Teaching Hours</div>
-            <div className="text-2xl font-bold text-cyan-600">{dashboardStats.total_teaching_hours}</div>
-            <div className="text-xs text-gray-500 mt-1">{dashboardStats.total_students_taught} students taught</div>
+            <div className="text-2xl font-bold text-cyan-600">
+              {dashboardStats.total_teaching_hours}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              {dashboardStats.total_students_taught} students taught
+            </div>
           </div>
-          
+
           <div className="bg-white border-2 border-blue-200 rounded-lg p-4 shadow-sm">
             <div className="text-sm text-gray-600 mb-1">Audio Recordings</div>
-            <div className="text-2xl font-bold text-blue-600">{dashboardStats.total_recordings}</div>
-            <div className="text-xs text-gray-500 mt-1">{dashboardStats.pending_transcriptions} pending</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {dashboardStats.total_recordings}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              {dashboardStats.pending_transcriptions} pending
+            </div>
           </div>
-          
+
           <div className="bg-white border-2 border-purple-200 rounded-lg p-4 shadow-sm">
             <div className="text-sm text-gray-600 mb-1">Daily Summaries</div>
-            <div className="text-2xl font-bold text-purple-600">{dashboardStats.daily_summaries_count}</div>
-            <div className="text-xs text-gray-500 mt-1">{dashboardStats.evidence_documents_count} evidence docs</div>
+            <div className="text-2xl font-bold text-purple-600">
+              {dashboardStats.daily_summaries_count}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              {dashboardStats.evidence_documents_count} evidence docs
+            </div>
           </div>
         </div>
       )}
@@ -413,8 +435,8 @@ export default function TrainerDiaryPage() {
             { id: 'sessions', label: '📚 Sessions' },
             { id: 'transcripts', label: '💬 Transcripts' },
             { id: 'daily', label: '📅 Daily Summaries' },
-            { id: 'evidence', label: '📋 Evidence' }
-          ].map((tab) => (
+            { id: 'evidence', label: '📋 Evidence' },
+          ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -436,76 +458,91 @@ export default function TrainerDiaryPage() {
         {activeTab === 'record' && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Record Teaching Session</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Session Date</label>
                 <input
                   type="date"
                   value={diaryForm.session_date}
-                  onChange={(e) => setDiaryForm({ ...diaryForm, session_date: e.target.value })}
+                  onChange={e => setDiaryForm({ ...diaryForm, session_date: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Duration (minutes)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Duration (minutes)
+                </label>
                 <input
                   type="number"
                   value={diaryForm.session_duration_minutes}
-                  onChange={(e) => setDiaryForm({ ...diaryForm, session_duration_minutes: parseInt(e.target.value) })}
+                  onChange={e =>
+                    setDiaryForm({
+                      ...diaryForm,
+                      session_duration_minutes: parseInt(e.target.value),
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Course Name</label>
                 <input
                   type="text"
                   value={diaryForm.course_name}
-                  onChange={(e) => setDiaryForm({ ...diaryForm, course_name: e.target.value })}
+                  onChange={e => setDiaryForm({ ...diaryForm, course_name: e.target.value })}
                   placeholder="e.g., Certificate IV in Training and Assessment"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Course Code</label>
                 <input
                   type="text"
                   value={diaryForm.course_code}
-                  onChange={(e) => setDiaryForm({ ...diaryForm, course_code: e.target.value })}
+                  onChange={e => setDiaryForm({ ...diaryForm, course_code: e.target.value })}
                   placeholder="e.g., TAE40116"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Unit of Competency</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Unit of Competency
+                </label>
                 <input
                   type="text"
                   value={diaryForm.unit_of_competency}
-                  onChange={(e) => setDiaryForm({ ...diaryForm, unit_of_competency: e.target.value })}
+                  onChange={e => setDiaryForm({ ...diaryForm, unit_of_competency: e.target.value })}
                   placeholder="e.g., TAEDES401"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Number of Students</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Number of Students
+                </label>
                 <input
                   type="number"
                   value={diaryForm.student_count}
-                  onChange={(e) => setDiaryForm({ ...diaryForm, student_count: parseInt(e.target.value) })}
+                  onChange={e =>
+                    setDiaryForm({ ...diaryForm, student_count: parseInt(e.target.value) })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
-              
+
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Delivery Mode</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Delivery Mode
+                </label>
                 <select
                   value={diaryForm.delivery_mode}
-                  onChange={(e) => setDiaryForm({ ...diaryForm, delivery_mode: e.target.value })}
+                  onChange={e => setDiaryForm({ ...diaryForm, delivery_mode: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="face_to_face">Face to Face</option>
@@ -515,30 +552,34 @@ export default function TrainerDiaryPage() {
                   <option value="workplace">Workplace</option>
                 </select>
               </div>
-              
+
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Manual Notes</label>
                 <textarea
                   value={diaryForm.manual_notes}
-                  onChange={(e) => setDiaryForm({ ...diaryForm, manual_notes: e.target.value })}
+                  onChange={e => setDiaryForm({ ...diaryForm, manual_notes: e.target.value })}
                   placeholder="Enter your notes about the session..."
                   rows={6}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
-              
+
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Assessment Activities</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Assessment Activities
+                </label>
                 <textarea
                   value={diaryForm.assessment_activities}
-                  onChange={(e) => setDiaryForm({ ...diaryForm, assessment_activities: e.target.value })}
+                  onChange={e =>
+                    setDiaryForm({ ...diaryForm, assessment_activities: e.target.value })
+                  }
                   placeholder="Describe assessment activities conducted..."
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
             </div>
-            
+
             <button
               onClick={handleRecordSession}
               className="px-6 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-medium"
@@ -552,46 +593,51 @@ export default function TrainerDiaryPage() {
         {activeTab === 'upload' && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Upload Audio Recording</h2>
-            
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Select Diary Entry</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Diary Entry
+                </label>
                 <select
                   value={selectedEntryForAudio || ''}
-                  onChange={(e) => setSelectedEntryForAudio(parseInt(e.target.value))}
+                  onChange={e => setSelectedEntryForAudio(parseInt(e.target.value))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="">-- Select a session --</option>
-                  {diaryEntries.map((entry) => (
+                  {diaryEntries.map(entry => (
                     <option key={entry.id} value={entry.id}>
                       {entry.session_date} - {entry.course_name}
                     </option>
                   ))}
                 </select>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Audio File (MP3, WAV, M4A)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Audio File (MP3, WAV, M4A)
+                </label>
                 <input
                   type="file"
                   accept="audio/*"
-                  onChange={(e) => setSelectedAudioFile(e.target.files?.[0] || null)}
+                  onChange={e => setSelectedAudioFile(e.target.files?.[0] || null)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
                 {selectedAudioFile && (
                   <div className="mt-2 text-sm text-gray-600">
-                    Selected: {selectedAudioFile.name} ({(selectedAudioFile.size / (1024 * 1024)).toFixed(2)} MB)
+                    Selected: {selectedAudioFile.name} (
+                    {(selectedAudioFile.size / (1024 * 1024)).toFixed(2)} MB)
                   </div>
                 )}
               </div>
-              
+
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-800">
-                  💡 <strong>Tip:</strong> Upload your teaching session audio for automatic speech-to-text transcription.
-                  Supports MP3, WAV, and M4A formats up to 100MB.
+                  💡 <strong>Tip:</strong> Upload your teaching session audio for automatic
+                  speech-to-text transcription. Supports MP3, WAV, and M4A formats up to 100MB.
                 </p>
               </div>
-              
+
               <button
                 onClick={handleUploadAudio}
                 disabled={!selectedAudioFile || !selectedEntryForAudio}
@@ -609,14 +655,16 @@ export default function TrainerDiaryPage() {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-900">Teaching Sessions</h2>
               <div>
-                <label className="text-sm font-medium text-gray-700 mr-2">Generate Summary For:</label>
+                <label className="text-sm font-medium text-gray-700 mr-2">
+                  Generate Summary For:
+                </label>
                 <select
                   value={selectedEntryForSummary || ''}
-                  onChange={(e) => setSelectedEntryForSummary(parseInt(e.target.value))}
+                  onChange={e => setSelectedEntryForSummary(parseInt(e.target.value))}
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 mr-2"
                 >
                   <option value="">-- Select session --</option>
-                  {diaryEntries.map((entry) => (
+                  {diaryEntries.map(entry => (
                     <option key={entry.id} value={entry.id}>
                       {entry.session_date} - {entry.course_name}
                     </option>
@@ -631,29 +679,39 @@ export default function TrainerDiaryPage() {
                 </button>
               </div>
             </div>
-            
+
             {diaryEntries.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
-                No teaching sessions recorded yet. Record your first session in the "Record Session" tab.
+                No teaching sessions recorded yet. Record your first session in the "Record Session"
+                tab.
               </div>
             ) : (
               <div className="space-y-4">
-                {diaryEntries.map((entry) => (
-                  <div key={entry.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                {diaryEntries.map(entry => (
+                  <div
+                    key={entry.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
                     <div className="flex justify-between items-start mb-3">
                       <div>
                         <h3 className="font-bold text-lg text-gray-900">{entry.course_name}</h3>
-                        <p className="text-sm text-gray-600">{entry.entry_number} • {entry.session_date}</p>
+                        <p className="text-sm text-gray-600">
+                          {entry.entry_number} • {entry.session_date}
+                        </p>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(entry.entry_status)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(entry.entry_status)}`}
+                      >
                         {entry.entry_status}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-3 gap-4 mb-3 text-sm">
                       <div>
                         <span className="text-gray-600">Duration:</span>
-                        <span className="ml-2 font-medium">{entry.session_duration_minutes} min</span>
+                        <span className="ml-2 font-medium">
+                          {entry.session_duration_minutes} min
+                        </span>
                       </div>
                       <div>
                         <span className="text-gray-600">Students:</span>
@@ -664,30 +722,35 @@ export default function TrainerDiaryPage() {
                         <span className="ml-2 font-medium">{entry.course_code || 'N/A'}</span>
                       </div>
                     </div>
-                    
+
                     {entry.session_summary && (
                       <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 mb-3">
                         <div className="font-medium text-teal-900 mb-1">AI Summary:</div>
                         <p className="text-sm text-teal-800">{entry.session_summary}</p>
                       </div>
                     )}
-                    
+
                     {entry.key_topics_covered && entry.key_topics_covered.length > 0 && (
                       <div className="mb-3">
                         <div className="text-sm font-medium text-gray-700 mb-1">Key Topics:</div>
                         <div className="flex flex-wrap gap-2">
                           {entry.key_topics_covered.map((topic, idx) => (
-                            <span key={idx} className="px-2 py-1 bg-cyan-100 text-cyan-800 rounded text-xs">
+                            <span
+                              key={idx}
+                              className="px-2 py-1 bg-cyan-100 text-cyan-800 rounded text-xs"
+                            >
                               {topic}
                             </span>
                           ))}
                         </div>
                       </div>
                     )}
-                    
+
                     {entry.follow_up_actions && entry.follow_up_actions.length > 0 && (
                       <div>
-                        <div className="text-sm font-medium text-gray-700 mb-1">Follow-up Actions:</div>
+                        <div className="text-sm font-medium text-gray-700 mb-1">
+                          Follow-up Actions:
+                        </div>
                         <ul className="text-sm text-gray-600 list-disc list-inside">
                           {entry.follow_up_actions.map((action, idx) => (
                             <li key={idx}>{action}</li>
@@ -695,7 +758,7 @@ export default function TrainerDiaryPage() {
                         </ul>
                       </div>
                     )}
-                    
+
                     <div className="mt-3 pt-3 border-t border-gray-200 flex gap-2">
                       <button
                         onClick={() => handleGenerateEvidence(entry.id, 'teaching_evidence')}
@@ -727,43 +790,53 @@ export default function TrainerDiaryPage() {
         {activeTab === 'transcripts' && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Audio Transcripts</h2>
-            
+
             {recordings.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
                 No audio recordings uploaded yet. Upload audio in the "Upload Audio" tab.
               </div>
             ) : (
               <div className="space-y-4">
-                {recordings.map((recording) => (
+                {recordings.map(recording => (
                   <div key={recording.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div>
                         <h3 className="font-bold text-gray-900">{recording.recording_filename}</h3>
                         <p className="text-sm text-gray-600">{recording.recording_number}</p>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getProcessingColor(recording.processing_status)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getProcessingColor(recording.processing_status)}`}
+                      >
                         {recording.processing_status}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 mb-3 text-sm">
                       <div>
                         <span className="text-gray-600">Duration:</span>
-                        <span className="ml-2 font-medium">{Math.floor(recording.recording_duration_seconds / 60)} min</span>
+                        <span className="ml-2 font-medium">
+                          {Math.floor(recording.recording_duration_seconds / 60)} min
+                        </span>
                       </div>
                       <div>
                         <span className="text-gray-600">Confidence:</span>
-                        <span className="ml-2 font-medium">{recording.transcript_confidence ? `${(recording.transcript_confidence * 100).toFixed(1)}%` : 'N/A'}</span>
+                        <span className="ml-2 font-medium">
+                          {recording.transcript_confidence
+                            ? `${(recording.transcript_confidence * 100).toFixed(1)}%`
+                            : 'N/A'}
+                        </span>
                       </div>
                     </div>
-                    
+
                     {recording.transcript_text && (
                       <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-3">
                         <div className="font-medium text-gray-900 mb-1">Transcript:</div>
-                        <p className="text-sm text-gray-700 whitespace-pre-wrap">{recording.transcript_text}</p>
+                        <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                          {recording.transcript_text}
+                        </p>
                       </div>
                     )}
-                    
+
                     {recording.processing_status === 'uploaded' && (
                       <button
                         onClick={() => handleTranscribe(recording.id)}
@@ -791,47 +864,58 @@ export default function TrainerDiaryPage() {
                 📅 Create Today's Summary
               </button>
             </div>
-            
+
             {dailySummaries.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
                 No daily summaries created yet. Create your first daily summary above.
               </div>
             ) : (
               <div className="space-y-4">
-                {dailySummaries.map((summary) => (
-                  <div key={summary.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                {dailySummaries.map(summary => (
+                  <div
+                    key={summary.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
                     <div className="flex justify-between items-start mb-3">
                       <div>
                         <h3 className="font-bold text-lg text-gray-900">{summary.summary_date}</h3>
                         <p className="text-sm text-gray-600">{summary.summary_number}</p>
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-3 gap-4 mb-3">
                       <div className="bg-teal-50 rounded-lg p-3">
                         <div className="text-sm text-gray-600">Sessions</div>
-                        <div className="text-xl font-bold text-teal-600">{summary.total_sessions}</div>
+                        <div className="text-xl font-bold text-teal-600">
+                          {summary.total_sessions}
+                        </div>
                       </div>
                       <div className="bg-cyan-50 rounded-lg p-3">
                         <div className="text-sm text-gray-600">Teaching Hours</div>
-                        <div className="text-xl font-bold text-cyan-600">{summary.total_teaching_hours}</div>
+                        <div className="text-xl font-bold text-cyan-600">
+                          {summary.total_teaching_hours}
+                        </div>
                       </div>
                       <div className="bg-blue-50 rounded-lg p-3">
                         <div className="text-sm text-gray-600">Students</div>
-                        <div className="text-xl font-bold text-blue-600">{summary.total_students}</div>
+                        <div className="text-xl font-bold text-blue-600">
+                          {summary.total_students}
+                        </div>
                       </div>
                     </div>
-                    
+
                     {summary.daily_highlights && (
                       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
                         <div className="font-medium text-yellow-900 mb-1">Daily Highlights:</div>
                         <p className="text-sm text-yellow-800">{summary.daily_highlights}</p>
                       </div>
                     )}
-                    
+
                     {summary.key_achievements && summary.key_achievements.length > 0 && (
                       <div>
-                        <div className="text-sm font-medium text-gray-700 mb-1">Key Achievements:</div>
+                        <div className="text-sm font-medium text-gray-700 mb-1">
+                          Key Achievements:
+                        </div>
                         <ul className="text-sm text-gray-600 list-disc list-inside">
                           {summary.key_achievements.map((achievement, idx) => (
                             <li key={idx}>{achievement}</li>
@@ -850,15 +934,18 @@ export default function TrainerDiaryPage() {
         {activeTab === 'evidence' && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Evidence Documents</h2>
-            
+
             {evidenceDocuments.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
                 No evidence documents generated yet. Generate evidence from the "Sessions" tab.
               </div>
             ) : (
               <div className="space-y-4">
-                {evidenceDocuments.map((doc) => (
-                  <div key={doc.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                {evidenceDocuments.map(doc => (
+                  <div
+                    key={doc.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
                     <div className="flex justify-between items-start mb-3">
                       <div>
                         <h3 className="font-bold text-gray-900">{doc.document_title}</h3>
@@ -868,16 +955,14 @@ export default function TrainerDiaryPage() {
                         {doc.document_type.replace('_', ' ')}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
                       <span>Format: {doc.document_format.toUpperCase()}</span>
                       <span>•</span>
                       <span>Created: {new Date(doc.created_at).toLocaleDateString()}</span>
                     </div>
-                    
-                    <button
-                      className="px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-medium"
-                    >
+
+                    <button className="px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all shadow-md font-medium">
                       📥 Download
                     </button>
                   </div>

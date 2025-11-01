@@ -1,7 +1,5 @@
 # NextCore AI Portal# Next.js Web Portal - Installation & Setup
 
-
-
 Modern Next.js web portal for the NextCore AI RTO SaaS platform.## Prerequisites
 
 - Node.js 18+ and npm
@@ -12,7 +10,7 @@ Modern Next.js web portal for the NextCore AI RTO SaaS platform.## Prerequisites
 
 ### Prerequisites
 
-```bash
+````bash
 
 - Node.js 18+ cd /home/nick/work/NextCore-AI-Cloud/apps/web-portal
 
@@ -168,25 +166,23 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 # Optional: Analytics, Auth, etc.npm run build
 
-```
+````
 
 # Start production server
 
 ### API Integrationnpm start
 
-
-
 The portal connects to the NextCore AI Backend API. Configure the base URL in your environment:# Run linter
 
 npm run lint
 
-```typescript```
+`typescript`
 
 // The API client automatically uses NEXT_PUBLIC_API_URL
 
 // See lib/api-client.ts for implementation details## Troubleshooting
 
-```
+````
 
 ### Port Already in Use
 
@@ -218,7 +214,7 @@ cd /home/nick/work/NextCore-AI-Cloud
 
 ### In Progressdocker-compose ps  # All services should be "Up"
 
-```
+````
 
 - 🚧 Eligibility wizard (multi-step form)
 
@@ -246,47 +242,46 @@ rm -rf node_modules package-lock.json
 
 ├── src/
 
-- **Providers**: React Query setup and auth context│   ├── app/
+- **Providers**: React Query setup and auth context│ ├── app/
 
-- **API Client**: Axios instance with token auth and tenant routing│   │   ├── layout.tsx          # Root layout
+- **API Client**: Axios instance with token auth and tenant routing│ │ ├── layout.tsx # Root layout
 
-- **Hooks**: Custom React Query hooks for data fetching│   │   ├── page.tsx            # Landing page
+- **Hooks**: Custom React Query hooks for data fetching│ │ ├── page.tsx # Landing page
 
-│   │   ├── globals.css         # Global styles (Tailwind)
+│ │ ├── globals.css # Global styles (Tailwind)
 
-### Backend API Endpoints│   │   ├── login/
+### Backend API Endpoints│ │ ├── login/
 
-│   │   │   └── page.tsx        # Login page
+│ │ │ └── page.tsx # Login page
 
-The portal consumes these backend endpoints:│   │   ├── register/
+The portal consumes these backend endpoints:│ │ ├── register/
 
-│   │   │   └── page.tsx        # Registration page
+│ │ │ └── page.tsx # Registration page
 
-- `/api/auth/token/` - Authentication│   │   ├── dashboard/
+- `/api/auth/token/` - Authentication│ │ ├── dashboard/
 
-- `/api/tenants/{slug}/funding-eligibility/` - Eligibility data│   │   │   └── page.tsx        # User dashboard
+- `/api/tenants/{slug}/funding-eligibility/` - Eligibility data│ │ │ └── page.tsx # User dashboard
 
-- `/api/tenants/{slug}/cir/` - Continuous Improvement Register│   │   └── verify-email/
+- `/api/tenants/{slug}/cir/` - Continuous Improvement Register│ │ └── verify-email/
 
-- `/api/users/` - User management│   │       └── [token]/
+- `/api/users/` - User management│ │ └── [token]/
 
-│   │           └── page.tsx    # Email verification
+│ │ └── page.tsx # Email verification
 
-For full API documentation, see the [Backend Repository](https://github.com/nick-syspac/NextCore-AI-Backend).│   └── lib/
+For full API documentation, see the [Backend Repository](https://github.com/nick-syspac/NextCore-AI-Backend).│ └── lib/
 
-│       └── api.ts              # API client functions
+│ └── api.ts # API client functions
 
-## 🤝 Contributing├── .env.example                # Environment template
+## 🤝 Contributing├── .env.example # Environment template
 
-├── .env.local                  # Your local config (gitignored)
+├── .env.local # Your local config (gitignored)
 
-1. Fork the repository├── next.config.mjs             # Next.js configuration
+1. Fork the repository├── next.config.mjs # Next.js configuration
 
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)├── tailwind.config.ts          # Tailwind CSS config
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)├── tailwind.config.ts # Tailwind CSS config
 
-3. Commit your changes using conventional commits:├── tsconfig.json               # TypeScript config
-
-   - `feat:` for new features└── package.json                # Dependencies
+3. Commit your changes using conventional commits:├── tsconfig.json # TypeScript config
+   - `feat:` for new features└── package.json # Dependencies
 
    - `fix:` for bug fixes```
 
@@ -298,35 +293,31 @@ For full API documentation, see the [Backend Repository](https://github.com/nick
 
    - `test:` for tests1. **Test Registration Flow**
 
-   - `chore:` for maintenance   - Visit http://localhost:3000/register
+   - `chore:` for maintenance - Visit http://localhost:3000/register
 
-4. Push to the branch (`git push origin feature/amazing-feature`)   - Create an account
+4. Push to the branch (`git push origin feature/amazing-feature`) - Create an account
 
-5. Open a Pull Request   - Check console for verification email
-
+5. Open a Pull Request - Check console for verification email
    - Copy token and visit /verify-email/{token}
 
-## 📄 License   - Login at /login
-
-
+## 📄 License - Login at /login
 
 MIT License - see [LICENSE](LICENSE) file for details.2. **Add Invitation Pages**
 
-   - Create invitation form for admins
+- Create invitation form for admins
 
-## 🆘 Support   - Build invitation acceptance page
+## 🆘 Support - Build invitation acceptance page
 
-   - Test full invitation flow
+- Test full invitation flow
 
 - 📧 Email: support@nextcollege.edu.au
 
 - 🔒 Security: security@nextcollege.edu.au3. **Configure Email**
+  - Set up SMTP in Django settings
 
-   - Set up SMTP in Django settings
+--- - Test email delivery
 
----   - Test email delivery
-
-   - Update email templates
+- Update email templates
 
 **Built with ❤️ for RTO organizations**
 

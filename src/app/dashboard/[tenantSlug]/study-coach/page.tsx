@@ -52,7 +52,7 @@ export default function StudyCoachPage() {
     totalSessions: 15,
     activeSessions: 3,
     totalMessages: 342,
-    avgSatisfaction: 4.7
+    avgSatisfaction: 4.7,
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -82,12 +82,12 @@ export default function StudyCoachPage() {
             message: inputMessage,
             subject: subject,
             topic: topic,
-            session_type: sessionType
-          })
+            session_type: sessionType,
+          }),
         }
       );
       const data = await response.json();
-      
+
       setCurrentSession(data.session);
       setMessages([...messages, data.student_message, data.coach_message]);
       setInputMessage('');
@@ -114,7 +114,7 @@ export default function StudyCoachPage() {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ rating })
+          body: JSON.stringify({ rating }),
         }
       );
     } catch (error) {
@@ -123,7 +123,9 @@ export default function StudyCoachPage() {
   };
 
   const getRoleColor = (role: string) => {
-    return role === 'student' ? 'bg-blue-100 text-blue-800' : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800';
+    return role === 'student'
+      ? 'bg-blue-100 text-blue-800'
+      : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800';
   };
 
   const getSentimentEmoji = (sentiment?: string) => {
@@ -132,7 +134,7 @@ export default function StudyCoachPage() {
       neutral: '😐',
       confused: '😕',
       frustrated: '😤',
-      negative: '😟'
+      negative: '😟',
     };
     return sentiment ? emojis[sentiment] || '💬' : '💬';
   };
@@ -175,7 +177,7 @@ export default function StudyCoachPage() {
 
         {/* Tab Navigation */}
         <div className="bg-white rounded-lg shadow-sm p-2 flex gap-2 mb-6">
-          {['chat', 'sessions', 'documents', 'insights', 'config'].map((tab) => (
+          {['chat', 'sessions', 'documents', 'insights', 'config'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -201,9 +203,12 @@ export default function StudyCoachPage() {
             {activeTab === 'chat' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg p-6 border border-green-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">💬 24/7 AI Study Coach</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    💬 24/7 AI Study Coach
+                  </h3>
                   <p className="text-sm text-gray-700">
-                    Get instant help with homework, exam prep, concept review, and more. Your AI coach is always available!
+                    Get instant help with homework, exam prep, concept review, and more. Your AI
+                    coach is always available!
                   </p>
                 </div>
 
@@ -213,30 +218,36 @@ export default function StudyCoachPage() {
                     <h4 className="font-semibold text-gray-900">Start a New Session</h4>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Subject (Optional)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Subject (Optional)
+                        </label>
                         <input
                           type="text"
                           value={subject}
-                          onChange={(e) => setSubject(e.target.value)}
+                          onChange={e => setSubject(e.target.value)}
                           placeholder="e.g., Mathematics, Physics"
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Topic (Optional)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Topic (Optional)
+                        </label>
                         <input
                           type="text"
                           value={topic}
-                          onChange={(e) => setTopic(e.target.value)}
+                          onChange={e => setTopic(e.target.value)}
                           placeholder="e.g., Calculus, Quantum Mechanics"
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         />
                       </div>
                       <div className="col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Session Type</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Session Type
+                        </label>
                         <select
                           value={sessionType}
-                          onChange={(e) => setSessionType(e.target.value)}
+                          onChange={e => setSessionType(e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         >
                           <option value="general_chat">General Chat</option>
@@ -258,18 +269,22 @@ export default function StudyCoachPage() {
                     <div className="flex items-center justify-center h-full text-gray-500">
                       <div className="text-center">
                         <span className="text-6xl">🤖</span>
-                        <p className="mt-4 text-lg font-semibold">Start a conversation with your AI Study Coach!</p>
+                        <p className="mt-4 text-lg font-semibold">
+                          Start a conversation with your AI Study Coach!
+                        </p>
                         <p className="mt-2 text-sm">Type a message below to begin.</p>
                       </div>
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {messages.map((msg) => (
+                      {messages.map(msg => (
                         <div
                           key={msg.id}
                           className={`flex ${msg.role === 'student' ? 'justify-end' : 'justify-start'}`}
                         >
-                          <div className={`max-w-[70%] ${msg.role === 'student' ? 'order-2' : 'order-1'}`}>
+                          <div
+                            className={`max-w-[70%] ${msg.role === 'student' ? 'order-2' : 'order-1'}`}
+                          >
                             <div className="flex items-center gap-2 mb-1">
                               <span className="text-xs font-semibold text-gray-600">
                                 {msg.role === 'student' ? '👤 You' : '🤖 AI Coach'}
@@ -302,8 +317,8 @@ export default function StudyCoachPage() {
                   <input
                     type="text"
                     value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && !loading && handleSendMessage()}
+                    onChange={e => setInputMessage(e.target.value)}
+                    onKeyPress={e => e.key === 'Enter' && !loading && handleSendMessage()}
                     placeholder="Type your message here..."
                     disabled={loading}
                     className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100"
@@ -330,7 +345,7 @@ export default function StudyCoachPage() {
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <p className="text-sm font-medium text-gray-700 mb-2">Rate this session:</p>
                     <div className="flex gap-2">
-                      {[1, 2, 3, 4, 5].map((rating) => (
+                      {[1, 2, 3, 4, 5].map(rating => (
                         <button
                           key={rating}
                           onClick={() => handleRateSession(rating)}
@@ -351,18 +366,54 @@ export default function StudyCoachPage() {
                 <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg p-6 border border-purple-300">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">📜 Session History</h3>
                   <p className="text-sm text-gray-700">
-                    Review past conversations, analyze engagement patterns, and track learning progress.
+                    Review past conversations, analyze engagement patterns, and track learning
+                    progress.
                   </p>
                 </div>
 
                 <div className="space-y-3">
                   {[
-                    { number: 'CHAT-20241024-A1B2C3D4', student: 'Alex Johnson', type: 'Homework Help', subject: 'Calculus', messages: 24, rating: 5, status: 'completed' },
-                    { number: 'CHAT-20241023-E5F6G7H8', student: 'Alex Johnson', type: 'Exam Prep', subject: 'Physics', messages: 18, rating: 4, status: 'completed' },
-                    { number: 'CHAT-20241023-I9J0K1L2', student: 'Alex Johnson', type: 'Concept Review', subject: 'Chemistry', messages: 12, rating: null, status: 'active' },
-                    { number: 'CHAT-20241022-M3N4O5P6', student: 'Alex Johnson', type: 'Study Tips', subject: 'General', messages: 8, rating: 5, status: 'completed' }
+                    {
+                      number: 'CHAT-20241024-A1B2C3D4',
+                      student: 'Alex Johnson',
+                      type: 'Homework Help',
+                      subject: 'Calculus',
+                      messages: 24,
+                      rating: 5,
+                      status: 'completed',
+                    },
+                    {
+                      number: 'CHAT-20241023-E5F6G7H8',
+                      student: 'Alex Johnson',
+                      type: 'Exam Prep',
+                      subject: 'Physics',
+                      messages: 18,
+                      rating: 4,
+                      status: 'completed',
+                    },
+                    {
+                      number: 'CHAT-20241023-I9J0K1L2',
+                      student: 'Alex Johnson',
+                      type: 'Concept Review',
+                      subject: 'Chemistry',
+                      messages: 12,
+                      rating: null,
+                      status: 'active',
+                    },
+                    {
+                      number: 'CHAT-20241022-M3N4O5P6',
+                      student: 'Alex Johnson',
+                      type: 'Study Tips',
+                      subject: 'General',
+                      messages: 8,
+                      rating: 5,
+                      status: 'completed',
+                    },
                   ].map((session, index) => (
-                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div
+                      key={index}
+                      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
                           <span className="text-2xl">
@@ -373,7 +424,9 @@ export default function StudyCoachPage() {
                           </span>
                           <div>
                             <p className="font-semibold text-gray-900">{session.number}</p>
-                            <p className="text-sm text-gray-600">{session.type} • {session.subject}</p>
+                            <p className="text-sm text-gray-600">
+                              {session.type} • {session.subject}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-4">
@@ -384,7 +437,9 @@ export default function StudyCoachPage() {
                           {session.rating ? (
                             <div className="flex items-center gap-1">
                               {Array.from({ length: session.rating }).map((_, i) => (
-                                <span key={i} className="text-yellow-400">⭐</span>
+                                <span key={i} className="text-yellow-400">
+                                  ⭐
+                                </span>
                               ))}
                             </div>
                           ) : (
@@ -404,22 +459,64 @@ export default function StudyCoachPage() {
             {activeTab === 'documents' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-blue-100 to-cyan-100 rounded-lg p-6 border border-blue-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">📚 Vector DB Knowledge Base</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    📚 Vector DB Knowledge Base
+                  </h3>
                   <p className="text-sm text-gray-700">
-                    Contextual document retrieval powered by embeddings. The AI coach searches these materials to provide accurate, relevant answers.
+                    Contextual document retrieval powered by embeddings. The AI coach searches these
+                    materials to provide accurate, relevant answers.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
-                    { title: 'Calculus I - Syllabus', type: 'syllabus', subject: 'Mathematics', retrieval: 145, score: 0.92 },
-                    { title: 'Physics 101 - Lecture Notes Week 5', type: 'lecture_notes', subject: 'Physics', retrieval: 89, score: 0.88 },
-                    { title: 'Chemistry Lab Safety Guidelines', type: 'policy', subject: 'Chemistry', retrieval: 67, score: 0.85 },
-                    { title: 'Introduction to Algorithms - Chapter 3', type: 'textbook', subject: 'Computer Science', retrieval: 234, score: 0.95 },
-                    { title: 'Statistics FAQ - Common Questions', type: 'faq', subject: 'Statistics', retrieval: 178, score: 0.90 },
-                    { title: 'Writing Center - APA Style Guide', type: 'resource', subject: 'English', retrieval: 56, score: 0.82 }
+                    {
+                      title: 'Calculus I - Syllabus',
+                      type: 'syllabus',
+                      subject: 'Mathematics',
+                      retrieval: 145,
+                      score: 0.92,
+                    },
+                    {
+                      title: 'Physics 101 - Lecture Notes Week 5',
+                      type: 'lecture_notes',
+                      subject: 'Physics',
+                      retrieval: 89,
+                      score: 0.88,
+                    },
+                    {
+                      title: 'Chemistry Lab Safety Guidelines',
+                      type: 'policy',
+                      subject: 'Chemistry',
+                      retrieval: 67,
+                      score: 0.85,
+                    },
+                    {
+                      title: 'Introduction to Algorithms - Chapter 3',
+                      type: 'textbook',
+                      subject: 'Computer Science',
+                      retrieval: 234,
+                      score: 0.95,
+                    },
+                    {
+                      title: 'Statistics FAQ - Common Questions',
+                      type: 'faq',
+                      subject: 'Statistics',
+                      retrieval: 178,
+                      score: 0.9,
+                    },
+                    {
+                      title: 'Writing Center - APA Style Guide',
+                      type: 'resource',
+                      subject: 'English',
+                      retrieval: 56,
+                      score: 0.82,
+                    },
                   ].map((doc, index) => (
-                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div
+                      key={index}
+                      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
                           <p className="font-semibold text-gray-900">{doc.title}</p>
@@ -437,8 +534,8 @@ export default function StudyCoachPage() {
                         </div>
                         <div className="flex items-center gap-1">
                           <div className="w-16 bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="bg-green-500 h-2 rounded-full" 
+                            <div
+                              className="bg-green-500 h-2 rounded-full"
                               style={{ width: `${doc.score * 100}%` }}
                             />
                           </div>
@@ -452,10 +549,20 @@ export default function StudyCoachPage() {
                 <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
                   <h4 className="font-semibold text-gray-900 mb-3">💡 How Vector Search Works</h4>
                   <div className="space-y-2 text-sm text-gray-700">
-                    <p>• Documents are converted to 384-dimensional embeddings using all-MiniLM-L6-v2</p>
-                    <p>• When you ask a question, your query is also embedded in the same vector space</p>
-                    <p>• The system finds the top 5 most similar documents using cosine similarity</p>
-                    <p>• Relevant context is injected into the AI coach's prompt for accurate responses</p>
+                    <p>
+                      • Documents are converted to 384-dimensional embeddings using all-MiniLM-L6-v2
+                    </p>
+                    <p>
+                      • When you ask a question, your query is also embedded in the same vector
+                      space
+                    </p>
+                    <p>
+                      • The system finds the top 5 most similar documents using cosine similarity
+                    </p>
+                    <p>
+                      • Relevant context is injected into the AI coach's prompt for accurate
+                      responses
+                    </p>
                     <p>• Similarity threshold: 0.7 (only highly relevant documents are used)</p>
                   </div>
                 </div>
@@ -480,15 +587,17 @@ export default function StudyCoachPage() {
                         { subject: 'Calculus', sessions: 12, color: 'bg-blue-500' },
                         { subject: 'Physics', sessions: 8, color: 'bg-purple-500' },
                         { subject: 'Chemistry', sessions: 6, color: 'bg-green-500' },
-                        { subject: 'Statistics', sessions: 4, color: 'bg-yellow-500' }
+                        { subject: 'Statistics', sessions: 4, color: 'bg-yellow-500' },
                       ].map((item, index) => (
                         <div key={index}>
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-sm font-medium text-gray-700">{item.subject}</span>
+                            <span className="text-sm font-medium text-gray-700">
+                              {item.subject}
+                            </span>
                             <span className="text-xs text-gray-500">{item.sessions} sessions</span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
+                            <div
                               className={`${item.color} h-2 rounded-full`}
                               style={{ width: `${(item.sessions / 12) * 100}%` }}
                             />
@@ -505,7 +614,7 @@ export default function StudyCoachPage() {
                         { type: 'Homework Help', count: 8, icon: '📝' },
                         { type: 'Concept Review', count: 5, icon: '🔍' },
                         { type: 'Exam Prep', count: 4, icon: '📚' },
-                        { type: 'Study Tips', count: 3, icon: '💡' }
+                        { type: 'Study Tips', count: 3, icon: '💡' },
                       ].map((item, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -542,8 +651,12 @@ export default function StudyCoachPage() {
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
                   <h4 className="font-semibold text-gray-900 mb-3">🎯 Recommended Actions</h4>
                   <ul className="space-y-2 text-sm text-gray-700">
-                    <li>• Schedule follow-up on Quantum Mechanics concepts (student showed confusion)</li>
-                    <li>• Provide additional practice problems for Calculus integration techniques</li>
+                    <li>
+                      • Schedule follow-up on Quantum Mechanics concepts (student showed confusion)
+                    </li>
+                    <li>
+                      • Provide additional practice problems for Calculus integration techniques
+                    </li>
                     <li>• Review study strategies for upcoming Physics midterm</li>
                   </ul>
                 </div>
@@ -554,7 +667,9 @@ export default function StudyCoachPage() {
             {activeTab === 'config' && (
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-gray-100 to-slate-100 rounded-lg p-6 border border-gray-300">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">⚙️ AI Coach Configuration</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    ⚙️ AI Coach Configuration
+                  </h3>
                   <p className="text-sm text-gray-700">
                     Customize the AI coach's behavior, personality, and technical settings.
                   </p>
@@ -566,7 +681,9 @@ export default function StudyCoachPage() {
                       <h4 className="font-semibold text-gray-900 mb-4">LLM Settings</h4>
                       <div className="space-y-3">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Primary Model</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Primary Model
+                          </label>
                           <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
                             <option>gpt-4</option>
                             <option>gpt-3.5-turbo</option>
@@ -575,13 +692,28 @@ export default function StudyCoachPage() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Temperature</label>
-                          <input type="range" min="0" max="1" step="0.1" defaultValue="0.7" className="w-full" />
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Temperature
+                          </label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.1"
+                            defaultValue="0.7"
+                            className="w-full"
+                          />
                           <p className="text-xs text-gray-500 mt-1">0.7 (Balanced creativity)</p>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Max Tokens</label>
-                          <input type="number" defaultValue="500" className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Max Tokens
+                          </label>
+                          <input
+                            type="number"
+                            defaultValue="500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                          />
                         </div>
                       </div>
                     </div>
@@ -590,16 +722,31 @@ export default function StudyCoachPage() {
                       <h4 className="font-semibold text-gray-900 mb-4">Vector DB Settings</h4>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-700">Vector Search Enabled</span>
+                          <span className="text-sm font-medium text-gray-700">
+                            Vector Search Enabled
+                          </span>
                           <input type="checkbox" defaultChecked className="w-5 h-5" />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Top K Results</label>
-                          <input type="number" defaultValue="5" className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Top K Results
+                          </label>
+                          <input
+                            type="number"
+                            defaultValue="5"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                          />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Similarity Threshold</label>
-                          <input type="number" step="0.1" defaultValue="0.7" className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Similarity Threshold
+                          </label>
+                          <input
+                            type="number"
+                            step="0.1"
+                            defaultValue="0.7"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                          />
                         </div>
                       </div>
                     </div>
@@ -610,7 +757,9 @@ export default function StudyCoachPage() {
                       <h4 className="font-semibold text-gray-900 mb-4">Coaching Style</h4>
                       <div className="space-y-3">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Personality</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Personality
+                          </label>
                           <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
                             <option>Encouraging & Supportive</option>
                             <option>Socratic Questioning</option>
@@ -619,10 +768,15 @@ export default function StudyCoachPage() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Personality Traits</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Personality Traits
+                          </label>
                           <div className="flex flex-wrap gap-2">
                             {['Patient', 'Empathetic', 'Motivating', 'Knowledgeable'].map(trait => (
-                              <span key={trait} className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                              <span
+                                key={trait}
+                                className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full"
+                              >
                                 {trait}
                               </span>
                             ))}
@@ -639,11 +793,15 @@ export default function StudyCoachPage() {
                           <input type="checkbox" defaultChecked className="w-5 h-5" />
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-700">Profanity Filter</span>
+                          <span className="text-sm font-medium text-gray-700">
+                            Profanity Filter
+                          </span>
                           <input type="checkbox" defaultChecked className="w-5 h-5" />
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-700">Crisis Detection</span>
+                          <span className="text-sm font-medium text-gray-700">
+                            Crisis Detection
+                          </span>
                           <input type="checkbox" defaultChecked className="w-5 h-5" />
                         </div>
                       </div>
@@ -657,7 +815,9 @@ export default function StudyCoachPage() {
                           <input type="checkbox" defaultChecked className="w-5 h-5" />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Timezone
+                          </label>
                           <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
                             <option>UTC</option>
                             <option>America/New_York</option>

@@ -92,15 +92,15 @@ export default function RiskEnginePage() {
     }
 
     setLoading(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       const dropoutProb = Math.random() * 0.9 + 0.05;
       const riskScore = Math.floor(dropoutProb * 100);
-      
+
       let riskLevel = 'low';
       if (dropoutProb >= 0.75) riskLevel = 'critical';
-      else if (dropoutProb >= 0.50) riskLevel = 'high';
+      else if (dropoutProb >= 0.5) riskLevel = 'high';
       else if (dropoutProb >= 0.25) riskLevel = 'medium';
 
       const newAssessment: RiskAssessment = {
@@ -124,7 +124,7 @@ export default function RiskEnginePage() {
 
       setAssessments([newAssessment, ...assessments]);
       setSelectedAssessment(newAssessment);
-      
+
       // Generate risk factors
       const factors: RiskFactor[] = [];
       if (newAssessment.engagement_score < 60) {
@@ -136,14 +136,19 @@ export default function RiskEnginePage() {
           description: `Student engagement score is ${newAssessment.engagement_score.toFixed(1)}%, indicating reduced platform activity.`,
           weight: 0.35,
           contribution: (100 - newAssessment.engagement_score) * 0.3,
-          severity: newAssessment.engagement_score < 30 ? 'critical' : newAssessment.engagement_score < 45 ? 'high' : 'medium',
+          severity:
+            newAssessment.engagement_score < 30
+              ? 'critical'
+              : newAssessment.engagement_score < 45
+                ? 'high'
+                : 'medium',
           current_value: newAssessment.engagement_score,
           threshold_value: 60,
           threshold_exceeded: true,
           trend: 'declining',
         });
       }
-      
+
       if (newAssessment.performance_score < 65) {
         factors.push({
           id: `${Date.now()}-2`,
@@ -153,14 +158,19 @@ export default function RiskEnginePage() {
           description: `Academic performance score is ${newAssessment.performance_score.toFixed(1)}%, below expected standards.`,
           weight: 0.28,
           contribution: (100 - newAssessment.performance_score) * 0.28,
-          severity: newAssessment.performance_score < 40 ? 'critical' : newAssessment.performance_score < 50 ? 'high' : 'medium',
+          severity:
+            newAssessment.performance_score < 40
+              ? 'critical'
+              : newAssessment.performance_score < 50
+                ? 'high'
+                : 'medium',
           current_value: newAssessment.performance_score,
           threshold_value: 65,
           threshold_exceeded: true,
           trend: 'declining',
         });
       }
-      
+
       if (newAssessment.attendance_score < 75) {
         factors.push({
           id: `${Date.now()}-3`,
@@ -170,7 +180,12 @@ export default function RiskEnginePage() {
           description: `Attendance rate is ${newAssessment.attendance_score.toFixed(1)}%, below minimum requirement.`,
           weight: 0.22,
           contribution: (100 - newAssessment.attendance_score) * 0.22,
-          severity: newAssessment.attendance_score < 50 ? 'critical' : newAssessment.attendance_score < 60 ? 'high' : 'medium',
+          severity:
+            newAssessment.attendance_score < 50
+              ? 'critical'
+              : newAssessment.attendance_score < 60
+                ? 'high'
+                : 'medium',
           current_value: newAssessment.attendance_score,
           threshold_value: 75,
           threshold_exceeded: true,
@@ -186,33 +201,41 @@ export default function RiskEnginePage() {
 
   const getRiskLevelColor = (level: string) => {
     switch (level) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-300';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-300';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      default: return 'bg-green-100 text-green-800 border-green-300';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-300';
+      case 'high':
+        return 'bg-orange-100 text-orange-800 border-orange-300';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      default:
+        return 'bg-green-100 text-green-800 border-green-300';
     }
   };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'bg-red-600 text-white';
-      case 'high': return 'bg-orange-600 text-white';
-      case 'medium': return 'bg-yellow-600 text-white';
-      default: return 'bg-blue-600 text-white';
+      case 'critical':
+        return 'bg-red-600 text-white';
+      case 'high':
+        return 'bg-orange-600 text-white';
+      case 'medium':
+        return 'bg-yellow-600 text-white';
+      default:
+        return 'bg-blue-600 text-white';
     }
   };
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'improving': 
+      case 'improving':
         return '📈';
-      case 'stable': 
+      case 'stable':
         return '➡️';
-      case 'declining': 
+      case 'declining':
         return '📉';
-      case 'critical_decline': 
+      case 'critical_decline':
         return '⚠️📉';
-      default: 
+      default:
         return '➡️';
     }
   };
@@ -223,13 +246,14 @@ export default function RiskEnginePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-4">
-              <Link href={`/dashboard/${tenantSlug}`} className="text-red-600 hover:text-red-800 font-medium">
+              <Link
+                href={`/dashboard/${tenantSlug}`}
+                className="text-red-600 hover:text-red-800 font-medium"
+              >
                 ← Back to Dashboard
               </Link>
               <div className="h-6 w-px bg-gray-300"></div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                Risk Engine
-              </h1>
+              <h1 className="text-xl font-semibold text-gray-900">Risk Engine</h1>
             </div>
             <div className="flex items-center gap-3">
               <span className="px-3 py-1 bg-gradient-to-r from-red-100 to-orange-100 text-red-800 text-sm font-medium rounded-full">
@@ -244,7 +268,8 @@ export default function RiskEnginePage() {
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900">Risk Engine</h2>
           <p className="text-gray-600 mt-2">
-            Predict dropout risk using logistic regression + sentiment fusion with early warning alerts
+            Predict dropout risk using logistic regression + sentiment fusion with early warning
+            alerts
           </p>
         </div>
 
@@ -332,7 +357,8 @@ export default function RiskEnginePage() {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Predict Dropout Risk</h3>
                   <p className="text-sm text-gray-600 mb-6">
-                    Enter student data to predict dropout risk using logistic regression + sentiment fusion model
+                    Enter student data to predict dropout risk using logistic regression + sentiment
+                    fusion model
                   </p>
                 </div>
 
@@ -344,7 +370,7 @@ export default function RiskEnginePage() {
                     <input
                       type="text"
                       value={studentName}
-                      onChange={(e) => setStudentName(e.target.value)}
+                      onChange={e => setStudentName(e.target.value)}
                       placeholder="Enter student name"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     />
@@ -356,7 +382,7 @@ export default function RiskEnginePage() {
                     <input
                       type="text"
                       value={studentId}
-                      onChange={(e) => setStudentId(e.target.value)}
+                      onChange={e => setStudentId(e.target.value)}
                       placeholder="Enter student ID"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     />
@@ -364,7 +390,9 @@ export default function RiskEnginePage() {
                 </div>
 
                 <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-6 border border-emerald-200">
-                  <h4 className="text-md font-semibold text-gray-900 mb-4">📊 Engagement Metrics</h4>
+                  <h4 className="text-md font-semibold text-gray-900 mb-4">
+                    📊 Engagement Metrics
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -373,7 +401,7 @@ export default function RiskEnginePage() {
                       <input
                         type="number"
                         value={loginFrequency}
-                        onChange={(e) => setLoginFrequency(e.target.value)}
+                        onChange={e => setLoginFrequency(e.target.value)}
                         placeholder="e.g., 5"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                       />
@@ -385,7 +413,7 @@ export default function RiskEnginePage() {
                       <input
                         type="number"
                         value={timeOnPlatform}
-                        onChange={(e) => setTimeOnPlatform(e.target.value)}
+                        onChange={e => setTimeOnPlatform(e.target.value)}
                         placeholder="e.g., 8"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                       />
@@ -397,7 +425,7 @@ export default function RiskEnginePage() {
                       <input
                         type="number"
                         value={submissionRate}
-                        onChange={(e) => setSubmissionRate(e.target.value)}
+                        onChange={e => setSubmissionRate(e.target.value)}
                         placeholder="e.g., 85"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                       />
@@ -406,7 +434,9 @@ export default function RiskEnginePage() {
                 </div>
 
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
-                  <h4 className="text-md font-semibold text-gray-900 mb-4">📚 Performance Metrics</h4>
+                  <h4 className="text-md font-semibold text-gray-900 mb-4">
+                    📚 Performance Metrics
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -415,7 +445,7 @@ export default function RiskEnginePage() {
                       <input
                         type="number"
                         value={avgGrade}
-                        onChange={(e) => setAvgGrade(e.target.value)}
+                        onChange={e => setAvgGrade(e.target.value)}
                         placeholder="e.g., 72"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
@@ -427,7 +457,7 @@ export default function RiskEnginePage() {
                       <input
                         type="number"
                         value={attendanceRate}
-                        onChange={(e) => setAttendanceRate(e.target.value)}
+                        onChange={e => setAttendanceRate(e.target.value)}
                         placeholder="e.g., 90"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
@@ -443,7 +473,7 @@ export default function RiskEnginePage() {
                     </label>
                     <textarea
                       value={sentimentText}
-                      onChange={(e) => setSentimentText(e.target.value)}
+                      onChange={e => setSentimentText(e.target.value)}
                       placeholder="Paste recent email, forum post, or feedback from student..."
                       rows={4}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
@@ -460,8 +490,20 @@ export default function RiskEnginePage() {
                     {loading ? (
                       <span className="flex items-center gap-2">
                         <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            fill="none"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
                         </svg>
                         Analyzing Risk...
                       </span>
@@ -493,23 +535,37 @@ export default function RiskEnginePage() {
               <div className="space-y-6">
                 {selectedAssessment ? (
                   <>
-                    <div className={`rounded-lg p-6 border-2 ${getRiskLevelColor(selectedAssessment.risk_level)}`}>
+                    <div
+                      className={`rounded-lg p-6 border-2 ${getRiskLevelColor(selectedAssessment.risk_level)}`}
+                    >
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h3 className="text-xl font-bold text-gray-900">{selectedAssessment.student_name}</h3>
-                          <p className="text-sm text-gray-600">Student ID: {selectedAssessment.student_id}</p>
-                          <p className="text-sm text-gray-600">Assessment: {selectedAssessment.assessment_number}</p>
-                          <p className="text-sm text-gray-600">Date: {selectedAssessment.assessment_date}</p>
+                          <h3 className="text-xl font-bold text-gray-900">
+                            {selectedAssessment.student_name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Student ID: {selectedAssessment.student_id}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Assessment: {selectedAssessment.assessment_number}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Date: {selectedAssessment.assessment_date}
+                          </p>
                         </div>
                         <div className="text-right">
-                          <div className={`inline-block px-4 py-2 rounded-lg font-bold text-lg border-2 ${getRiskLevelColor(selectedAssessment.risk_level)}`}>
+                          <div
+                            className={`inline-block px-4 py-2 rounded-lg font-bold text-lg border-2 ${getRiskLevelColor(selectedAssessment.risk_level)}`}
+                          >
                             {selectedAssessment.risk_level.toUpperCase()} RISK
                           </div>
                           <div className="mt-2 text-sm">
-                            <span className="font-semibold">Dropout Probability:</span> {(selectedAssessment.dropout_probability * 100).toFixed(1)}%
+                            <span className="font-semibold">Dropout Probability:</span>{' '}
+                            {(selectedAssessment.dropout_probability * 100).toFixed(1)}%
                           </div>
                           <div className="text-sm">
-                            <span className="font-semibold">Model Confidence:</span> {selectedAssessment.confidence.toFixed(1)}%
+                            <span className="font-semibold">Model Confidence:</span>{' '}
+                            {selectedAssessment.confidence.toFixed(1)}%
                           </div>
                         </div>
                       </div>
@@ -517,19 +573,27 @@ export default function RiskEnginePage() {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                         <div className="bg-white rounded-lg p-3 border border-gray-200">
                           <div className="text-xs text-gray-600 mb-1">Engagement</div>
-                          <div className="text-lg font-bold text-emerald-600">{selectedAssessment.engagement_score.toFixed(1)}%</div>
+                          <div className="text-lg font-bold text-emerald-600">
+                            {selectedAssessment.engagement_score.toFixed(1)}%
+                          </div>
                         </div>
                         <div className="bg-white rounded-lg p-3 border border-gray-200">
                           <div className="text-xs text-gray-600 mb-1">Performance</div>
-                          <div className="text-lg font-bold text-blue-600">{selectedAssessment.performance_score.toFixed(1)}%</div>
+                          <div className="text-lg font-bold text-blue-600">
+                            {selectedAssessment.performance_score.toFixed(1)}%
+                          </div>
                         </div>
                         <div className="bg-white rounded-lg p-3 border border-gray-200">
                           <div className="text-xs text-gray-600 mb-1">Attendance</div>
-                          <div className="text-lg font-bold text-indigo-600">{selectedAssessment.attendance_score.toFixed(1)}%</div>
+                          <div className="text-lg font-bold text-indigo-600">
+                            {selectedAssessment.attendance_score.toFixed(1)}%
+                          </div>
                         </div>
                         <div className="bg-white rounded-lg p-3 border border-gray-200">
                           <div className="text-xs text-gray-600 mb-1">Sentiment</div>
-                          <div className={`text-lg font-bold ${selectedAssessment.sentiment_score >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          <div
+                            className={`text-lg font-bold ${selectedAssessment.sentiment_score >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                          >
                             {selectedAssessment.sentiment_score.toFixed(2)}
                           </div>
                         </div>
@@ -539,20 +603,29 @@ export default function RiskEnginePage() {
                     {/* Risk Factors */}
                     {riskFactors.length > 0 && (
                       <div>
-                        <h4 className="text-lg font-semibold text-gray-900 mb-4">Contributing Risk Factors</h4>
+                        <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                          Contributing Risk Factors
+                        </h4>
                         <div className="space-y-4">
-                          {riskFactors.map((factor) => (
-                            <div key={factor.id} className="bg-white rounded-lg border border-gray-200 p-5">
+                          {riskFactors.map(factor => (
+                            <div
+                              key={factor.id}
+                              className="bg-white rounded-lg border border-gray-200 p-5"
+                            >
                               <div className="flex items-start justify-between mb-3">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <h5 className="text-md font-semibold text-gray-900">{factor.factor_name}</h5>
+                                    <h5 className="text-md font-semibold text-gray-900">
+                                      {factor.factor_name}
+                                    </h5>
                                     <span className="text-sm">{getTrendIcon(factor.trend)}</span>
                                   </div>
                                   <p className="text-sm text-gray-700">{factor.description}</p>
                                 </div>
                                 <div className="flex flex-col items-end gap-2 ml-4">
-                                  <span className={`px-3 py-1 rounded-lg font-semibold text-sm ${getSeverityColor(factor.severity)}`}>
+                                  <span
+                                    className={`px-3 py-1 rounded-lg font-semibold text-sm ${getSeverityColor(factor.severity)}`}
+                                  >
                                     {factor.severity.toUpperCase()}
                                   </span>
                                   <span className="text-xs text-gray-600">
@@ -563,15 +636,21 @@ export default function RiskEnginePage() {
                               <div className="grid grid-cols-3 gap-4 mt-3 pt-3 border-t border-gray-200">
                                 <div>
                                   <div className="text-xs text-gray-600">Current Value</div>
-                                  <div className="text-sm font-semibold text-gray-900">{factor.current_value.toFixed(1)}</div>
+                                  <div className="text-sm font-semibold text-gray-900">
+                                    {factor.current_value.toFixed(1)}
+                                  </div>
                                 </div>
                                 <div>
                                   <div className="text-xs text-gray-600">Threshold</div>
-                                  <div className="text-sm font-semibold text-gray-900">{factor.threshold_value.toFixed(1)}</div>
+                                  <div className="text-sm font-semibold text-gray-900">
+                                    {factor.threshold_value.toFixed(1)}
+                                  </div>
                                 </div>
                                 <div>
                                   <div className="text-xs text-gray-600">Contribution</div>
-                                  <div className="text-sm font-semibold text-red-600">{factor.contribution.toFixed(1)}%</div>
+                                  <div className="text-sm font-semibold text-red-600">
+                                    {factor.contribution.toFixed(1)}%
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -583,7 +662,9 @@ export default function RiskEnginePage() {
                 ) : (
                   <div className="text-center py-12">
                     <div className="text-6xl mb-4">🎯</div>
-                    <p className="text-gray-600">No assessment selected. Predict risk for a student to view results.</p>
+                    <p className="text-gray-600">
+                      No assessment selected. Predict risk for a student to view results.
+                    </p>
                     <button
                       onClick={() => setActiveTab('assess')}
                       className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
@@ -601,41 +682,56 @@ export default function RiskEnginePage() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Risk Alerts</h3>
                 {assessments.filter(a => a.alert_triggered && !a.alert_acknowledged).length > 0 ? (
                   <div className="space-y-4">
-                    {assessments.filter(a => a.alert_triggered && !a.alert_acknowledged).map((assessment) => (
-                      <div key={assessment.id} className="bg-red-50 rounded-lg border-2 border-red-300 p-5">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <span className="text-2xl">🚨</span>
-                              <h4 className="text-lg font-semibold text-gray-900">{assessment.student_name}</h4>
-                              <span className={`px-3 py-1 rounded-lg font-semibold text-sm ${getRiskLevelColor(assessment.risk_level)}`}>
-                                {assessment.risk_level.toUpperCase()}
-                              </span>
+                    {assessments
+                      .filter(a => a.alert_triggered && !a.alert_acknowledged)
+                      .map(assessment => (
+                        <div
+                          key={assessment.id}
+                          className="bg-red-50 rounded-lg border-2 border-red-300 p-5"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <span className="text-2xl">🚨</span>
+                                <h4 className="text-lg font-semibold text-gray-900">
+                                  {assessment.student_name}
+                                </h4>
+                                <span
+                                  className={`px-3 py-1 rounded-lg font-semibold text-sm ${getRiskLevelColor(assessment.risk_level)}`}
+                                >
+                                  {assessment.risk_level.toUpperCase()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-700 mb-2">
+                                Dropout probability:{' '}
+                                <span className="font-bold text-red-600">
+                                  {(assessment.dropout_probability * 100).toFixed(1)}%
+                                </span>
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                Assessment: {assessment.assessment_number} • Date:{' '}
+                                {assessment.assessment_date}
+                              </p>
                             </div>
-                            <p className="text-sm text-gray-700 mb-2">
-                              Dropout probability: <span className="font-bold text-red-600">{(assessment.dropout_probability * 100).toFixed(1)}%</span>
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Assessment: {assessment.assessment_number} • Date: {assessment.assessment_date}
-                            </p>
+                            <button
+                              onClick={() => {
+                                setSelectedAssessment(assessment);
+                                setActiveTab('results');
+                              }}
+                              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold"
+                            >
+                              View Details
+                            </button>
                           </div>
-                          <button
-                            onClick={() => {
-                              setSelectedAssessment(assessment);
-                              setActiveTab('results');
-                            }}
-                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold"
-                          >
-                            View Details
-                          </button>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 ) : (
                   <div className="text-center py-12 bg-green-50 rounded-lg border border-green-200">
                     <div className="text-6xl mb-4">✅</div>
-                    <p className="text-gray-600">No active alerts. All at-risk students have been addressed.</p>
+                    <p className="text-gray-600">
+                      No active alerts. All at-risk students have been addressed.
+                    </p>
                   </div>
                 )}
               </div>
@@ -648,7 +744,9 @@ export default function RiskEnginePage() {
                 <div className="text-center py-12 bg-gray-50 rounded-lg">
                   <div className="text-6xl mb-4">🤝</div>
                   <p className="text-gray-600">Intervention tracking will be displayed here.</p>
-                  <p className="text-sm text-gray-500 mt-2">Automatic interventions are created for high and critical risk students.</p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Automatic interventions are created for high and critical risk students.
+                  </p>
                 </div>
               </div>
             )}
@@ -657,20 +755,31 @@ export default function RiskEnginePage() {
             {activeTab === 'model' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Logistic Regression + Sentiment Fusion Model</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Logistic Regression + Sentiment Fusion Model
+                  </h3>
                   <p className="text-sm text-gray-600">
-                    Our dropout prediction model combines traditional logistic regression with advanced sentiment analysis
-                    to provide accurate early warning alerts.
+                    Our dropout prediction model combines traditional logistic regression with
+                    advanced sentiment analysis to provide accurate early warning alerts.
                   </p>
                 </div>
 
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
                   <h4 className="font-semibold text-gray-900 mb-3">🤖 Model Architecture</h4>
                   <div className="space-y-2 text-sm text-gray-700">
-                    <p><strong>Type:</strong> Logistic Regression with Sentiment Fusion</p>
-                    <p><strong>Version:</strong> logistic_v1.0</p>
-                    <p><strong>Input Features:</strong> Engagement Score, Performance Score, Attendance Score, Sentiment Score</p>
-                    <p><strong>Output:</strong> Dropout Probability (0.0 - 1.0)</p>
+                    <p>
+                      <strong>Type:</strong> Logistic Regression with Sentiment Fusion
+                    </p>
+                    <p>
+                      <strong>Version:</strong> logistic_v1.0
+                    </p>
+                    <p>
+                      <strong>Input Features:</strong> Engagement Score, Performance Score,
+                      Attendance Score, Sentiment Score
+                    </p>
+                    <p>
+                      <strong>Output:</strong> Dropout Probability (0.0 - 1.0)
+                    </p>
                   </div>
                 </div>
 
@@ -682,31 +791,40 @@ export default function RiskEnginePage() {
                       <span className="font-semibold text-emerald-700">35% weight</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-emerald-600 h-2 rounded-full" style={{width: '35%'}}></div>
+                      <div
+                        className="bg-emerald-600 h-2 rounded-full"
+                        style={{ width: '35%' }}
+                      ></div>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-700">Performance Score</span>
                       <span className="font-semibold text-blue-700">28% weight</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-blue-600 h-2 rounded-full" style={{width: '28%'}}></div>
+                      <div className="bg-blue-600 h-2 rounded-full" style={{ width: '28%' }}></div>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-700">Attendance Score</span>
                       <span className="font-semibold text-indigo-700">22% weight</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-indigo-600 h-2 rounded-full" style={{width: '22%'}}></div>
+                      <div
+                        className="bg-indigo-600 h-2 rounded-full"
+                        style={{ width: '22%' }}
+                      ></div>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-700">Sentiment Score</span>
                       <span className="font-semibold text-purple-700">15% weight</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-purple-600 h-2 rounded-full" style={{width: '15%'}}></div>
+                      <div
+                        className="bg-purple-600 h-2 rounded-full"
+                        style={{ width: '15%' }}
+                      ></div>
                     </div>
                   </div>
                 </div>
@@ -715,19 +833,27 @@ export default function RiskEnginePage() {
                   <h4 className="font-semibold text-gray-900 mb-3">🎯 Risk Level Thresholds</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-3">
-                      <span className="px-3 py-1 rounded bg-red-600 text-white font-semibold text-xs">CRITICAL</span>
+                      <span className="px-3 py-1 rounded bg-red-600 text-white font-semibold text-xs">
+                        CRITICAL
+                      </span>
                       <span className="text-gray-700">Dropout Probability ≥ 75%</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="px-3 py-1 rounded bg-orange-600 text-white font-semibold text-xs">HIGH</span>
+                      <span className="px-3 py-1 rounded bg-orange-600 text-white font-semibold text-xs">
+                        HIGH
+                      </span>
                       <span className="text-gray-700">Dropout Probability 50-74%</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="px-3 py-1 rounded bg-yellow-600 text-white font-semibold text-xs">MEDIUM</span>
+                      <span className="px-3 py-1 rounded bg-yellow-600 text-white font-semibold text-xs">
+                        MEDIUM
+                      </span>
                       <span className="text-gray-700">Dropout Probability 25-49%</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="px-3 py-1 rounded bg-green-600 text-white font-semibold text-xs">LOW</span>
+                      <span className="px-3 py-1 rounded bg-green-600 text-white font-semibold text-xs">
+                        LOW
+                      </span>
                       <span className="text-gray-700">Dropout Probability &lt; 25%</span>
                     </div>
                   </div>

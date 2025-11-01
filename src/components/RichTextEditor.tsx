@@ -7,9 +7,9 @@ import dynamic from 'next/dynamic';
 import 'quill/dist/quill.snow.css';
 
 // Dynamically import ReactQuill with no SSR
-const ReactQuill = dynamic(() => import('react-quill'), { 
+const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
-  loading: () => <div className="border rounded-lg p-4 bg-gray-50">Loading editor...</div>
+  loading: () => <div className="border rounded-lg p-4 bg-gray-50">Loading editor...</div>,
 });
 
 interface RichTextEditorProps {
@@ -23,37 +23,48 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   value,
   onChange,
   placeholder = 'Enter content...',
-  height = '200px'
+  height = '200px',
 }) => {
   const modules = {
     toolbar: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      [{ 'font': [] }],
-      [{ 'size': ['small', false, 'large', 'huge'] }],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [{ font: [] }],
+      [{ size: ['small', false, 'large', 'huge'] }],
       ['bold', 'italic', 'underline', 'strike'],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'script': 'sub'}, { 'script': 'super' }],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
-      [{ 'align': [] }],
+      [{ color: [] }, { background: [] }],
+      [{ script: 'sub' }, { script: 'super' }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ indent: '-1' }, { indent: '+1' }],
+      [{ align: [] }],
       ['blockquote', 'code-block'],
       ['link', 'image', 'video'],
-      ['clean']
+      ['clean'],
     ],
     clipboard: {
-      matchVisual: false
-    }
+      matchVisual: false,
+    },
   };
 
   const formats = [
-    'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike',
-    'color', 'background',
+    'header',
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'color',
+    'background',
     'script',
-    'list', 'bullet', 'indent',
+    'list',
+    'bullet',
+    'indent',
     'align',
-    'blockquote', 'code-block',
-    'link', 'image', 'video'
+    'blockquote',
+    'code-block',
+    'link',
+    'image',
+    'video',
   ];
 
   return (
@@ -74,9 +85,9 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         .ql-container {
           min-height: ${height};
           font-size: 14px;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-            'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-            sans-serif;
+          font-family:
+            -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+            'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
         }
         .ql-editor {
           min-height: ${height};

@@ -44,7 +44,7 @@ function LoginForm() {
       console.log('Calling login API...');
       const response = await api.login(formData);
       console.log('Login response:', response);
-      
+
       if (response.token) {
         console.log('Token received, saving to localStorage');
         localStorage.setItem('authToken', response.token);
@@ -83,9 +83,7 @@ function LoginForm() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
-          <p className="text-gray-600 mt-2">
-            Sign in to your account
-          </p>
+          <p className="text-gray-600 mt-2">Sign in to your account</p>
         </div>
 
         {showSuccess && (
@@ -104,9 +102,7 @@ function LoginForm() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Username
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
             <input
               type="text"
               name="username"
@@ -118,9 +114,7 @@ function LoginForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
               type="password"
               name="password"
@@ -154,7 +148,11 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>
+      }
+    >
       <LoginForm />
     </Suspense>
   );

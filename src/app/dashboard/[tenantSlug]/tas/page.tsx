@@ -4,9 +4,9 @@ import { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 
 // Dynamically import RichTextEditor to avoid SSR issues
-const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), { 
+const RichTextEditor = dynamic(() => import('@/components/RichTextEditor'), {
   ssr: false,
-  loading: () => <div className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>
+  loading: () => <div className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>,
 });
 
 interface User {
@@ -103,12 +103,14 @@ interface GenerationLog {
 export default function TASGeneratorPage({ params }: { params: { tenantSlug: string } }) {
   const [documents, setDocuments] = useState<TAS[]>([]);
   const [templates, setTemplates] = useState<TASTemplate[]>([]);
-  const [qualifications, setQualifications] = useState<Array<{
-    code: string;
-    title: string;
-    aqf_level: string;
-    training_package: string;
-  }>>([]);
+  const [qualifications, setQualifications] = useState<
+    Array<{
+      code: string;
+      title: string;
+      aqf_level: string;
+      training_package: string;
+    }>
+  >([]);
   const [loadingQualifications, setLoadingQualifications] = useState(false);
   const [qualificationSearch, setQualificationSearch] = useState('');
   const [unitsData, setUnitsData] = useState<any>(null);
@@ -185,11 +187,11 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         console.log('TAS Documents API response:', data);
-        
+
         // Handle both array and paginated response formats
         if (Array.isArray(data)) {
           setDocuments(data);
@@ -209,7 +211,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
 
   // Delete a TAS document
   const handleDeleteTAS = async (doc: TAS) => {
-    if (!confirm(`Are you sure you want to delete "${doc.title}"?\n\nThis action cannot be undone.`)) {
+    if (
+      !confirm(`Are you sure you want to delete "${doc.title}"?\n\nThis action cannot be undone.`)
+    ) {
       return;
     }
 
@@ -240,7 +244,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
     console.log('🔧 Opening edit modal for doc:', doc.id);
     console.log('📄 Document sections:', doc.sections);
     console.log('📊 Sections count:', doc.sections?.length || 0);
-    
+
     setSelectedDocument(doc);
     setEditForm({
       title: doc.title || '',
@@ -253,9 +257,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
       create_version: false,
       change_summary: '',
     });
-    
+
     console.log('✅ Edit form initialized with sections:', doc.sections?.length || 0);
-    
+
     setShowPreviewModal(false); // Close preview modal if open
     setShowEditModal(true);
   };
@@ -286,16 +290,16 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
       if (response.ok) {
         const data = await response.json();
         console.log('Edit response:', data);
-        
+
         alert(
           editForm.create_version
             ? `✅ New version created successfully!\n\nVersion: ${data.version}\n\n${data.message}`
             : `✅ Document updated successfully!\n\n${data.message}`
         );
-        
+
         setShowEditModal(false);
         setSelectedDocument(null);
-        
+
         // Reload documents
         await loadTASDocuments();
       } else {
@@ -336,11 +340,11 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
           // 'Authorization': `Bearer ${token}`,
         },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         console.log('Templates API response:', data);
-        
+
         // Handle both array and paginated response formats
         if (Array.isArray(data)) {
           setTemplates(data);
@@ -437,16 +441,19 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
   const loadQualifications = async () => {
     setLoadingQualifications(true);
     try {
-      const response = await fetch(`${API_URL}/api/tenants/${params.tenantSlug}/tas/qualifications/`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
+      const response = await fetch(
+        `${API_URL}/api/tenants/${params.tenantSlug}/tas/qualifications/`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
       if (response.ok) {
         const data = await response.json();
         console.log('Qualifications API response:', data);
-        
+
         // Handle both array and paginated response formats
         if (Array.isArray(data)) {
           setQualifications(data);
@@ -474,14 +481,54 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
   // Load mock qualifications as fallback
   const loadMockQualifications = () => {
     setQualifications([
-      { code: 'BSB50120', title: 'Diploma of Business', aqf_level: 'diploma', training_package: 'BSB' },
-      { code: 'BSB40120', title: 'Certificate IV in Business', aqf_level: 'certificate_iv', training_package: 'BSB' },
-      { code: 'ICT50220', title: 'Diploma of Information Technology', aqf_level: 'diploma', training_package: 'ICT' },
-      { code: 'ICT40120', title: 'Certificate IV in Information Technology', aqf_level: 'certificate_iv', training_package: 'ICT' },
-      { code: 'CHC50113', title: 'Diploma of Early Childhood Education and Care', aqf_level: 'diploma', training_package: 'CHC' },
-      { code: 'CHC43015', title: 'Certificate IV in Ageing Support', aqf_level: 'certificate_iv', training_package: 'CHC' },
-      { code: 'SIT50416', title: 'Diploma of Hospitality Management', aqf_level: 'diploma', training_package: 'SIT' },
-      { code: 'SIT40516', title: 'Certificate IV in Commercial Cookery', aqf_level: 'certificate_iv', training_package: 'SIT' },
+      {
+        code: 'BSB50120',
+        title: 'Diploma of Business',
+        aqf_level: 'diploma',
+        training_package: 'BSB',
+      },
+      {
+        code: 'BSB40120',
+        title: 'Certificate IV in Business',
+        aqf_level: 'certificate_iv',
+        training_package: 'BSB',
+      },
+      {
+        code: 'ICT50220',
+        title: 'Diploma of Information Technology',
+        aqf_level: 'diploma',
+        training_package: 'ICT',
+      },
+      {
+        code: 'ICT40120',
+        title: 'Certificate IV in Information Technology',
+        aqf_level: 'certificate_iv',
+        training_package: 'ICT',
+      },
+      {
+        code: 'CHC50113',
+        title: 'Diploma of Early Childhood Education and Care',
+        aqf_level: 'diploma',
+        training_package: 'CHC',
+      },
+      {
+        code: 'CHC43015',
+        title: 'Certificate IV in Ageing Support',
+        aqf_level: 'certificate_iv',
+        training_package: 'CHC',
+      },
+      {
+        code: 'SIT50416',
+        title: 'Diploma of Hospitality Management',
+        aqf_level: 'diploma',
+        training_package: 'SIT',
+      },
+      {
+        code: 'SIT40516',
+        title: 'Certificate IV in Commercial Cookery',
+        aqf_level: 'certificate_iv',
+        training_package: 'SIT',
+      },
     ]);
   };
 
@@ -491,25 +538,25 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
     setLoadingUnits(true);
     setUnitsData(null);
     setSelectedUnits([]);
-    
+
     try {
       const url = `${API_URL}/api/tenants/${params.tenantSlug}/tas/units/?qualification_code=${qualCode}`;
       console.log('📡 Fetching units from:', url);
-      
+
       const response = await fetch(url, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      
+
       console.log('📨 Units response status:', response.status, response.ok);
-      
+
       if (response.ok) {
         const data = await response.json();
         console.log('✅ Units data loaded:', data);
         console.log('📚 Number of groupings:', data.groupings?.length);
         setUnitsData(data);
-        
+
         // Auto-select all core units
         if (data.groupings) {
           const coreUnits = data.groupings
@@ -563,7 +610,6 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
     });
   };
 
-
   // Mock data for demonstration
   useEffect(() => {
     loadTemplates();
@@ -575,27 +621,28 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
     console.log('🚀 handleGenerate called');
     console.log('📝 Generate form data:', generateForm);
     console.log('📚 Selected units:', selectedUnits);
-    
+
     // Build units_of_competency from selected units
-    const selectedUnitsData = unitsData?.groupings
-      .flatMap((g: any) => g.units)
-      .filter((u: any) => selectedUnits.includes(u.code))
-      .map((u: any) => ({ code: u.code, title: u.title })) || [];
-    
+    const selectedUnitsData =
+      unitsData?.groupings
+        .flatMap((g: any) => g.units)
+        .filter((u: any) => selectedUnits.includes(u.code))
+        .map((u: any) => ({ code: u.code, title: u.title })) || [];
+
     const requestData = {
       ...generateForm,
       units_of_competency: selectedUnitsData,
     };
-    
+
     console.log('📦 Request data:', requestData);
-    
+
     setGenerating(true);
-    
+
     try {
       const url = `http://localhost:8000/api/tenants/${params.tenantSlug}/tas/generate/`;
       console.log('📡 Calling API:', url);
       console.log('📦 Request body:', JSON.stringify(requestData, null, 2));
-      
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -615,21 +662,21 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
 
       const data = await response.json();
       console.log('✅ Success response:', data);
-      
+
       setGenerating(false);
       setShowGenerateModal(false);
-      
+
       // Show success message with generation details
       alert(
         `✅ ${data.message || 'TAS generated successfully!'}\n\n` +
-        `📊 Generation Details:\n` +
-        `- Model Used: ${generateForm.ai_model.toUpperCase()}\n` +
-        `- Generation Time: ${data.generation_log?.generation_time_seconds?.toFixed(1) || 'N/A'} seconds\n` +
-        `- Tokens Used: ${data.generation_log?.tokens_total || 'N/A'}\n` +
-        `- TAS ID: ${data.tas?.id}\n\n` +
-        `🎉 Your TAS document is ready!`
+          `📊 Generation Details:\n` +
+          `- Model Used: ${generateForm.ai_model.toUpperCase()}\n` +
+          `- Generation Time: ${data.generation_log?.generation_time_seconds?.toFixed(1) || 'N/A'} seconds\n` +
+          `- Tokens Used: ${data.generation_log?.tokens_total || 'N/A'}\n` +
+          `- TAS ID: ${data.tas?.id}\n\n` +
+          `🎉 Your TAS document is ready!`
       );
-      
+
       // Reset form
       setGenerateForm({
         template_id: null,
@@ -645,21 +692,20 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
         use_gpt4: true,
         ai_model: 'gpt-4o',
       });
-      
+
       // Clear units data
       setUnitsData(null);
       setSelectedUnits([]);
       setQualificationSearch('');
-      
+
       // Reload the TAS documents list to show the new document
       console.log('🔄 Reloading TAS documents...');
       await loadTASDocuments();
       console.log('✅ TAS documents reloaded');
-      
     } catch (err: any) {
       setGenerating(false);
       console.error('❌ Generation error:', err);
-      
+
       // Parse error message
       let errorMessage = 'Failed to generate TAS document.';
       try {
@@ -672,7 +718,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
       } catch {
         errorMessage = err.message || errorMessage;
       }
-      
+
       alert(`❌ Generation Failed:\n\n${errorMessage}`);
     }
   };
@@ -680,10 +726,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
   const addUnit = () => {
     setGenerateForm({
       ...generateForm,
-      units_of_competency: [
-        ...generateForm.units_of_competency,
-        { code: '', title: '' },
-      ],
+      units_of_competency: [...generateForm.units_of_competency, { code: '', title: '' }],
     });
   };
 
@@ -737,7 +780,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
       alert('❌ System templates cannot be deleted');
       return;
     }
-    
+
     if (!confirm(`Are you sure you want to delete "${template.name}"?`)) {
       return;
     }
@@ -771,19 +814,20 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
 
   const handleSaveTemplate = async () => {
     setSavingTemplate(true);
-    
+
     try {
-      const url = templateFormMode === 'create'
-        ? `${API_URL}/api/tenants/${params.tenantSlug}/tas/templates/`
-        : `${API_URL}/api/tenants/${params.tenantSlug}/tas/templates/${selectedTemplate?.id}/`;
-      
+      const url =
+        templateFormMode === 'create'
+          ? `${API_URL}/api/tenants/${params.tenantSlug}/tas/templates/`
+          : `${API_URL}/api/tenants/${params.tenantSlug}/tas/templates/${selectedTemplate?.id}/`;
+
       const method = templateFormMode === 'create' ? 'POST' : 'PUT';
-      
+
       console.log(`Saving template to: ${url}`, {
         method,
         templateForm,
       });
-      
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -799,26 +843,24 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
       if (response.ok) {
         const savedTemplate = await response.json();
         console.log('Template saved successfully:', savedTemplate);
-        
+
         if (templateFormMode === 'create') {
           setTemplates([...templates, savedTemplate]);
           alert('✅ Template created successfully!');
         } else {
-          setTemplates(templates.map(t => 
-            t.id === selectedTemplate?.id ? savedTemplate : t
-          ));
+          setTemplates(templates.map(t => (t.id === selectedTemplate?.id ? savedTemplate : t)));
           alert('✅ Template updated successfully!');
         }
-        
+
         setShowTemplateFormModal(false);
         setShowTemplatesListModal(true); // Return to templates list
       } else {
         const errorData = await response.json().catch(() => ({}));
         console.error('Failed to save template. Status:', response.status, 'Error:', errorData);
-        
+
         // Show more detailed error message
         let errorMessage = 'Failed to save template';
-        
+
         // Try to extract meaningful error information
         if (typeof errorData === 'object' && errorData !== null) {
           if (errorData.detail) {
@@ -848,22 +890,23 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
         } else {
           errorMessage += `: ${response.statusText}`;
         }
-        
+
         alert(`❌ ${errorMessage}`);
       }
     } catch (error: any) {
       console.error('Error saving template:', error);
-      
+
       // More specific error messages
       let errorMessage = 'Error saving template';
       if (error.message) {
         if (error.message.includes('fetch')) {
-          errorMessage += ': Cannot connect to the backend server. Make sure it is running on ' + API_URL;
+          errorMessage +=
+            ': Cannot connect to the backend server. Make sure it is running on ' + API_URL;
         } else {
           errorMessage += `: ${error.message}`;
         }
       }
-      
+
       alert(`❌ ${errorMessage}`);
     } finally {
       setSavingTemplate(false);
@@ -912,18 +955,21 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
   const loadVersions = async (doc: TAS) => {
     setVersions([]);
     setShowVersionModal(true);
-    
+
     try {
-      const response = await fetch(`${API_URL}/api/tenants/${params.tenantSlug}/tas/${doc.id}/versions/`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
+      const response = await fetch(
+        `${API_URL}/api/tenants/${params.tenantSlug}/tas/${doc.id}/versions/`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
       if (response.ok) {
         const data = await response.json();
         console.log('Version history response:', data);
-        
+
         // Handle both array and paginated response formats
         if (Array.isArray(data)) {
           setVersions(data);
@@ -945,18 +991,21 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
   const loadLogs = async (doc: TAS) => {
     setLoadingLogs(true);
     setLogs([]);
-    
+
     try {
-      const response = await fetch(`${API_URL}/api/tenants/${params.tenantSlug}/tas/${doc.id}/generation_logs/`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
+      const response = await fetch(
+        `${API_URL}/api/tenants/${params.tenantSlug}/tas/${doc.id}/generation_logs/`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
       if (response.ok) {
         const data = await response.json();
         console.log('Generation logs response:', data);
-        
+
         // Handle both array and paginated response formats
         if (Array.isArray(data)) {
           setLogs(data);
@@ -977,7 +1026,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
     }
   };
 
-  const filteredDocuments = documents.filter((doc) => {
+  const filteredDocuments = documents.filter(doc => {
     if (activeTab === 'all') return true;
     return doc.status === activeTab;
   });
@@ -1011,7 +1060,8 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">📄 TAS Generator</h1>
             <p className="text-gray-600">
-              Auto TAS builder with GPT-4 synthesis • Version control • AQF alignment • 90% time reduction
+              Auto TAS builder with GPT-4 synthesis • Version control • AQF alignment • 90% time
+              reduction
             </p>
           </div>
           <button
@@ -1058,10 +1108,22 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
         <div className="flex border-b border-gray-200">
           {[
             { key: 'all', label: 'All Documents', count: documents.length },
-            { key: 'draft', label: 'Drafts', count: documents.filter(d => d.status === 'draft').length },
-            { key: 'approved', label: 'Approved', count: documents.filter(d => d.status === 'approved').length },
-            { key: 'published', label: 'Published', count: documents.filter(d => d.status === 'published').length },
-          ].map((tab) => (
+            {
+              key: 'draft',
+              label: 'Drafts',
+              count: documents.filter(d => d.status === 'draft').length,
+            },
+            {
+              key: 'approved',
+              label: 'Approved',
+              count: documents.filter(d => d.status === 'approved').length,
+            },
+            {
+              key: 'published',
+              label: 'Published',
+              count: documents.filter(d => d.status === 'published').length,
+            },
+          ].map(tab => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
@@ -1079,14 +1141,19 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
 
       {/* Documents Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredDocuments.map((doc) => (
-          <div key={doc.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        {filteredDocuments.map(doc => (
+          <div
+            key={doc.id}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+          >
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-xl font-bold text-gray-900">{doc.code}</h3>
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[doc.status]}`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[doc.status]}`}
+                  >
                     {doc.status_display}
                   </span>
                   {doc.gpt_generated && (
@@ -1109,14 +1176,18 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
               <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-semibold text-gray-700">⏱️ Time Saved</span>
-                  <span className="text-lg font-bold text-purple-600">{doc.time_saved.saved_hours}h</span>
+                  <span className="text-lg font-bold text-purple-600">
+                    {doc.time_saved.saved_hours}h
+                  </span>
                 </div>
                 <div className="flex items-center gap-4 text-xs text-gray-600">
                   <span>Traditional: {doc.time_saved.traditional_hours}h</span>
                   <span>•</span>
                   <span>GPT-4: {doc.time_saved.gpt_hours}h</span>
                   <span>•</span>
-                  <span className="font-semibold text-purple-600">{doc.time_saved.percentage_saved}% reduction</span>
+                  <span className="font-semibold text-purple-600">
+                    {doc.time_saved.percentage_saved}% reduction
+                  </span>
                 </div>
               </div>
             )}
@@ -1129,19 +1200,23 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
               </div>
               <div>
                 <div className="text-gray-500">GPT-4 Tokens</div>
-                <div className="font-medium text-gray-900">{doc.gpt_tokens_used.toLocaleString()}</div>
+                <div className="font-medium text-gray-900">
+                  {doc.gpt_tokens_used.toLocaleString()}
+                </div>
               </div>
               <div>
                 <div className="text-gray-500">Created By</div>
                 <div className="font-medium text-gray-900">
-                  {doc.created_by_details 
-                    ? `${doc.created_by_details.first_name} ${doc.created_by_details.last_name}` 
+                  {doc.created_by_details
+                    ? `${doc.created_by_details.first_name} ${doc.created_by_details.last_name}`
                     : 'System'}
                 </div>
               </div>
               <div>
                 <div className="text-gray-500">Last Updated</div>
-                <div className="font-medium text-gray-900">{new Date(doc.updated_at).toLocaleDateString()}</div>
+                <div className="font-medium text-gray-900">
+                  {new Date(doc.updated_at).toLocaleDateString()}
+                </div>
               </div>
             </div>
 
@@ -1191,7 +1266,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
           <div className="col-span-2 text-center py-12">
             <div className="text-6xl mb-4">📄</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No TAS documents found</h3>
-            <p className="text-gray-600 mb-4">Start by generating your first TAS document with GPT-4</p>
+            <p className="text-gray-600 mb-4">
+              Start by generating your first TAS document with GPT-4
+            </p>
             <button
               onClick={() => setShowGenerateModal(true)}
               className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold"
@@ -1208,7 +1285,10 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
           <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-gray-900">✨ Generate New TAS with GPT-4</h2>
-              <button onClick={() => setShowGenerateModal(false)} className="text-gray-500 hover:text-gray-700">
+              <button
+                onClick={() => setShowGenerateModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 ✕
               </button>
             </div>
@@ -1221,11 +1301,16 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 </label>
                 <select
                   value={generateForm.template_id || ''}
-                  onChange={(e) => setGenerateForm({ ...generateForm, template_id: e.target.value ? Number(e.target.value) : null })}
+                  onChange={e =>
+                    setGenerateForm({
+                      ...generateForm,
+                      template_id: e.target.value ? Number(e.target.value) : null,
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 >
                   <option value="">No template (use defaults)</option>
-                  {templates.map((template) => (
+                  {templates.map(template => (
                     <option key={template.id} value={template.id}>
                       {template.name} - {template.aqf_level_display}
                     </option>
@@ -1237,9 +1322,11 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
               <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-2xl">🎓</span>
-                  <h3 className="text-lg font-semibold text-gray-900">Select Qualification from Training.gov.au</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Select Qualification from Training.gov.au
+                  </h3>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Search & Select Qualification *
@@ -1248,7 +1335,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                     <input
                       type="text"
                       value={qualificationSearch}
-                      onChange={(e) => setQualificationSearch(e.target.value)}
+                      onChange={e => setQualificationSearch(e.target.value)}
                       placeholder="Type to search qualifications (e.g., Business, IT, Hospitality)..."
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
@@ -1258,21 +1345,24 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                       </div>
                     )}
                   </div>
-                  
+
                   {qualificationSearch && (
                     <div className="mt-2 max-h-60 overflow-y-auto border border-gray-300 rounded-lg bg-white shadow-lg">
                       {qualifications
-                        .filter(qual => 
-                          qual.code.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
-                          qual.title.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
-                          qual.training_package.toLowerCase().includes(qualificationSearch.toLowerCase())
+                        .filter(
+                          qual =>
+                            qual.code.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
+                            qual.title.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
+                            qual.training_package
+                              .toLowerCase()
+                              .includes(qualificationSearch.toLowerCase())
                         )
-                        .map((qual) => (
+                        .map(qual => (
                           <button
                             key={qual.code}
                             onClick={async () => {
                               console.log('🎓 Qualification selected:', qual.code, qual.title);
-                              
+
                               setGenerateForm({
                                 ...generateForm,
                                 code: qual.code,
@@ -1281,12 +1371,12 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                                 training_package: qual.training_package,
                               });
                               setQualificationSearch('');
-                              
+
                               console.log('📚 About to load units...');
-                              
+
                               // Load units for this qualification
                               await loadUnitsForQualification(qual.code);
-                              
+
                               console.log('✅ Qualification selection complete');
                             }}
                             className="w-full text-left px-4 py-3 hover:bg-blue-50 border-b border-gray-100 last:border-b-0 transition-colors"
@@ -1294,14 +1384,18 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                             <div className="font-semibold text-gray-900">{qual.code}</div>
                             <div className="text-sm text-gray-700">{qual.title}</div>
                             <div className="text-xs text-gray-500 mt-1">
-                              {qual.training_package} • {qual.aqf_level.replace('_', ' ').toUpperCase()}
+                              {qual.training_package} •{' '}
+                              {qual.aqf_level.replace('_', ' ').toUpperCase()}
                             </div>
                           </button>
                         ))}
-                      {qualifications.filter(qual => 
-                        qual.code.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
-                        qual.title.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
-                        qual.training_package.toLowerCase().includes(qualificationSearch.toLowerCase())
+                      {qualifications.filter(
+                        qual =>
+                          qual.code.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
+                          qual.title.toLowerCase().includes(qualificationSearch.toLowerCase()) ||
+                          qual.training_package
+                            .toLowerCase()
+                            .includes(qualificationSearch.toLowerCase())
                       ).length === 0 && (
                         <div className="px-4 py-3 text-sm text-gray-500 text-center">
                           No qualifications found. Try a different search term.
@@ -1310,7 +1404,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                     </div>
                   )}
                 </div>
-                
+
                 {generateForm.code && (
                   <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
@@ -1318,10 +1412,19 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                       <span className="font-semibold text-green-900">Selected Qualification:</span>
                     </div>
                     <div className="text-sm text-gray-700">
-                      <div><strong>Code:</strong> {generateForm.code}</div>
-                      <div><strong>Title:</strong> {generateForm.qualification_name}</div>
-                      <div><strong>Package:</strong> {generateForm.training_package}</div>
-                      <div><strong>AQF Level:</strong> {generateForm.aqf_level.replace('_', ' ').toUpperCase()}</div>
+                      <div>
+                        <strong>Code:</strong> {generateForm.code}
+                      </div>
+                      <div>
+                        <strong>Title:</strong> {generateForm.qualification_name}
+                      </div>
+                      <div>
+                        <strong>Package:</strong> {generateForm.training_package}
+                      </div>
+                      <div>
+                        <strong>AQF Level:</strong>{' '}
+                        {generateForm.aqf_level.replace('_', ' ').toUpperCase()}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1354,9 +1457,14 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
 
                   <div className="space-y-4 max-h-96 overflow-y-auto">
                     {unitsData.groupings.map((grouping: any, groupIdx: number) => (
-                      <div key={groupIdx} className="bg-white rounded-lg border border-gray-300 overflow-hidden">
+                      <div
+                        key={groupIdx}
+                        className="bg-white rounded-lg border border-gray-300 overflow-hidden"
+                      >
                         {/* Grouping Header */}
-                        <div className={`px-4 py-3 ${grouping.type === 'core' ? 'bg-blue-100' : 'bg-purple-100'}`}>
+                        <div
+                          className={`px-4 py-3 ${grouping.type === 'core' ? 'bg-blue-100' : 'bg-purple-100'}`}
+                        >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <h4 className="font-semibold text-gray-900">{grouping.name}</h4>
@@ -1364,7 +1472,8 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                                 <p className="text-sm text-gray-600 mt-1">{grouping.description}</p>
                               )}
                               <p className="text-sm text-gray-700 mt-1">
-                                <span className="font-medium">Required:</span> {grouping.required} units
+                                <span className="font-medium">Required:</span> {grouping.required}{' '}
+                                units
                                 {grouping.type === 'core' && ' (All core units must be selected)'}
                               </p>
                             </div>
@@ -1372,7 +1481,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                               onClick={() => selectAllInGrouping(grouping)}
                               className="ml-4 px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors font-medium"
                             >
-                              {grouping.units.every((u: any) => selectedUnits.includes(u.code)) ? '✓ Deselect All' : 'Select All'}
+                              {grouping.units.every((u: any) => selectedUnits.includes(u.code))
+                                ? '✓ Deselect All'
+                                : 'Select All'}
                             </button>
                           </div>
                         </div>
@@ -1397,11 +1508,13 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                                     <div className="font-semibold text-gray-900">{unit.code}</div>
                                     <div className="text-sm text-gray-700 mt-1">{unit.title}</div>
                                   </div>
-                                  <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded ${
-                                    unit.type === 'core' 
-                                      ? 'bg-blue-100 text-blue-800' 
-                                      : 'bg-purple-100 text-purple-800'
-                                  }`}>
+                                  <span
+                                    className={`ml-2 px-2 py-1 text-xs font-semibold rounded ${
+                                      unit.type === 'core'
+                                        ? 'bg-blue-100 text-blue-800'
+                                        : 'bg-purple-100 text-purple-800'
+                                    }`}
+                                  >
                                     {unit.type}
                                   </span>
                                 </div>
@@ -1418,8 +1531,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                       <div className="flex items-start gap-2">
                         <span className="text-yellow-600">💡</span>
                         <div className="text-sm text-gray-700">
-                          <strong>Packaging Rules:</strong> This qualification has specialization options. 
-                          {' '}Core units are pre-selected and required. Choose elective units based on your desired specialization or learning pathway.
+                          <strong>Packaging Rules:</strong> This qualification has specialization
+                          options. Core units are pre-selected and required. Choose elective units
+                          based on your desired specialization or learning pathway.
                         </div>
                       </div>
                     </div>
@@ -1437,10 +1551,12 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                         Units Data Not Available
                       </h3>
                       <p className="text-sm text-gray-700 mb-2">
-                        Detailed units data for <strong>{generateForm.code}</strong> is not yet available in our system.
+                        Detailed units data for <strong>{generateForm.code}</strong> is not yet
+                        available in our system.
                       </p>
                       <p className="text-sm text-gray-600">
-                        You can still generate the TAS document, and manually add units in the section below, or the system will use general qualification information.
+                        You can still generate the TAS document, and manually add units in the
+                        section below, or the system will use general qualification information.
                       </p>
                     </div>
                   </div>
@@ -1467,7 +1583,11 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   </label>
                   <input
                     type="text"
-                    value={generateForm.aqf_level ? generateForm.aqf_level.replace('_', ' ').toUpperCase() : ''}
+                    value={
+                      generateForm.aqf_level
+                        ? generateForm.aqf_level.replace('_', ' ').toUpperCase()
+                        : ''
+                    }
                     readOnly
                     placeholder="Auto-populated"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
@@ -1496,11 +1616,15 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   <input
                     type="text"
                     value={generateForm.training_package}
-                    onChange={(e) => setGenerateForm({ ...generateForm, training_package: e.target.value })}
+                    onChange={e =>
+                      setGenerateForm({ ...generateForm, training_package: e.target.value })
+                    }
                     placeholder="Auto-populated, can override"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Auto-populated from qualification, but you can override if needed</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Auto-populated from qualification, but you can override if needed
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -1508,7 +1632,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   </label>
                   <select
                     value={generateForm.delivery_mode}
-                    onChange={(e) => setGenerateForm({ ...generateForm, delivery_mode: e.target.value })}
+                    onChange={e =>
+                      setGenerateForm({ ...generateForm, delivery_mode: e.target.value })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
                     <option value="Face-to-face">Face-to-face</option>
@@ -1526,7 +1652,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 <input
                   type="number"
                   value={generateForm.duration_weeks}
-                  onChange={(e) => setGenerateForm({ ...generateForm, duration_weeks: Number(e.target.value) })}
+                  onChange={e =>
+                    setGenerateForm({ ...generateForm, duration_weeks: Number(e.target.value) })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
@@ -1550,14 +1678,14 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                       <input
                         type="text"
                         value={unit.code}
-                        onChange={(e) => updateUnit(index, 'code', e.target.value)}
+                        onChange={e => updateUnit(index, 'code', e.target.value)}
                         placeholder="Unit Code"
                         className="w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       />
                       <input
                         type="text"
                         value={unit.title}
-                        onChange={(e) => updateUnit(index, 'title', e.target.value)}
+                        onChange={e => updateUnit(index, 'title', e.target.value)}
                         placeholder="Unit Title"
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       />
@@ -1579,7 +1707,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 </label>
                 <textarea
                   value={generateForm.additional_context}
-                  onChange={(e) => setGenerateForm({ ...generateForm, additional_context: e.target.value })}
+                  onChange={e =>
+                    setGenerateForm({ ...generateForm, additional_context: e.target.value })
+                  }
                   placeholder="Provide any additional context or specific requirements for the TAS generation..."
                   rows={4}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -1593,7 +1723,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 </label>
                 <select
                   value={generateForm.ai_model}
-                  onChange={(e) => setGenerateForm({ ...generateForm, ai_model: e.target.value })}
+                  onChange={e => setGenerateForm({ ...generateForm, ai_model: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   disabled={!generateForm.use_gpt4}
                 >
@@ -1612,12 +1742,18 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   </optgroup>
                 </select>
                 <p className="text-xs text-gray-500 mt-1">
-                  {generateForm.ai_model === 'gpt-4o' && '🌟 Best for comprehensive TAS generation with fast responses'}
-                  {generateForm.ai_model === 'gpt-4o-mini' && '⚡ Optimized for speed while maintaining quality'}
-                  {generateForm.ai_model === 'gpt-4-turbo' && '📚 Large context window ideal for complex qualifications'}
-                  {generateForm.ai_model === 'gpt-4' && '🏆 Classic GPT-4 model with proven reliability'}
-                  {generateForm.ai_model === 'gpt-3.5-turbo' && '💨 Fastest and most economical option'}
-                  {generateForm.ai_model === 'o1-preview' && '🧠 Advanced reasoning for complex educational frameworks'}
+                  {generateForm.ai_model === 'gpt-4o' &&
+                    '🌟 Best for comprehensive TAS generation with fast responses'}
+                  {generateForm.ai_model === 'gpt-4o-mini' &&
+                    '⚡ Optimized for speed while maintaining quality'}
+                  {generateForm.ai_model === 'gpt-4-turbo' &&
+                    '📚 Large context window ideal for complex qualifications'}
+                  {generateForm.ai_model === 'gpt-4' &&
+                    '🏆 Classic GPT-4 model with proven reliability'}
+                  {generateForm.ai_model === 'gpt-3.5-turbo' &&
+                    '💨 Fastest and most economical option'}
+                  {generateForm.ai_model === 'o1-preview' &&
+                    '🧠 Advanced reasoning for complex educational frameworks'}
                   {generateForm.ai_model === 'o1-mini' && '🎯 Focused reasoning capabilities'}
                 </p>
               </div>
@@ -1628,7 +1764,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   type="checkbox"
                   id="use-gpt4"
                   checked={generateForm.use_gpt4}
-                  onChange={(e) => setGenerateForm({ ...generateForm, use_gpt4: e.target.checked })}
+                  onChange={e => setGenerateForm({ ...generateForm, use_gpt4: e.target.checked })}
                   className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
                 />
                 <label htmlFor="use-gpt4" className="text-sm font-medium text-gray-700">
@@ -1649,10 +1785,10 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 disabled={generating || !generateForm.code || !generateForm.qualification_name}
                 className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
               >
-                {generating 
-                  ? `⚡ Generating with ${generateForm.ai_model.toUpperCase()}...` 
-                  : generateForm.use_gpt4 
-                    ? `✨ Generate TAS with ${generateForm.ai_model.toUpperCase()}` 
+                {generating
+                  ? `⚡ Generating with ${generateForm.ai_model.toUpperCase()}...`
+                  : generateForm.use_gpt4
+                    ? `✨ Generate TAS with ${generateForm.ai_model.toUpperCase()}`
                     : '✨ Generate TAS'}
               </button>
             </div>
@@ -1665,21 +1801,33 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">📋 Version History - {selectedDocument.code}</h2>
-              <button onClick={() => setShowVersionModal(false)} className="text-gray-500 hover:text-gray-700">
+              <h2 className="text-2xl font-bold text-gray-900">
+                📋 Version History - {selectedDocument.code}
+              </h2>
+              <button
+                onClick={() => setShowVersionModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 ✕
               </button>
             </div>
 
             <div className="p-6">
               <div className="space-y-4">
-                {versions.map((version) => (
-                  <div key={version.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                {versions.map(version => (
+                  <div
+                    key={version.id}
+                    className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+                  >
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <div className="text-lg font-bold text-gray-900">Version {version.version_number}</div>
+                        <div className="text-lg font-bold text-gray-900">
+                          Version {version.version_number}
+                        </div>
                         <div className="text-sm text-gray-600">
-                          {new Date(version.created_at).toLocaleString()} by {version.created_by_details.first_name} {version.created_by_details.last_name}
+                          {new Date(version.created_at).toLocaleString()} by{' '}
+                          {version.created_by_details.first_name}{' '}
+                          {version.created_by_details.last_name}
                         </div>
                       </div>
                       {version.was_regenerated && (
@@ -1689,15 +1837,22 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                       )}
                     </div>
                     <div className="mb-2">
-                      <div className="text-sm font-semibold text-gray-700 mb-1">Change Summary:</div>
+                      <div className="text-sm font-semibold text-gray-700 mb-1">
+                        Change Summary:
+                      </div>
                       <div className="text-sm text-gray-600">{version.change_summary}</div>
                     </div>
                     {version.changed_sections.length > 0 && (
                       <div>
-                        <div className="text-sm font-semibold text-gray-700 mb-1">Changed Sections:</div>
+                        <div className="text-sm font-semibold text-gray-700 mb-1">
+                          Changed Sections:
+                        </div>
                         <div className="flex flex-wrap gap-2">
                           {version.changed_sections.map((section, idx) => (
-                            <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
+                            <span
+                              key={idx}
+                              className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs"
+                            >
                               {section.replace('_', ' ')}
                             </span>
                           ))}
@@ -1717,23 +1872,39 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">📄 {selectedDocument.code} - {selectedDocument.qualification_name}</h2>
-              <button onClick={() => setShowPreviewModal(false)} className="text-gray-500 hover:text-gray-700">
+              <h2 className="text-2xl font-bold text-gray-900">
+                📄 {selectedDocument.code} - {selectedDocument.qualification_name}
+              </h2>
+              <button
+                onClick={() => setShowPreviewModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 ✕
               </button>
             </div>
 
             <div className="p-6">
               <div className="prose max-w-none">
-                <p className="text-gray-700 mb-6">{selectedDocument.description || 'Training and Assessment Strategy document'}</p>
-                
+                <p className="text-gray-700 mb-6">
+                  {selectedDocument.description || 'Training and Assessment Strategy document'}
+                </p>
+
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
                   <h4 className="font-bold text-blue-900 mb-2">📊 Document Information</h4>
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div><strong>AQF Level:</strong> {selectedDocument.aqf_level_display}</div>
-                    <div><strong>Training Package:</strong> {selectedDocument.training_package || 'N/A'}</div>
-                    <div><strong>Version:</strong> {selectedDocument.version}</div>
-                    <div><strong>Status:</strong> {selectedDocument.status_display}</div>
+                    <div>
+                      <strong>AQF Level:</strong> {selectedDocument.aqf_level_display}
+                    </div>
+                    <div>
+                      <strong>Training Package:</strong>{' '}
+                      {selectedDocument.training_package || 'N/A'}
+                    </div>
+                    <div>
+                      <strong>Version:</strong> {selectedDocument.version}
+                    </div>
+                    <div>
+                      <strong>Status:</strong> {selectedDocument.status_display}
+                    </div>
                   </div>
                 </div>
 
@@ -1743,15 +1914,21 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                     <div className="grid grid-cols-3 gap-4 text-sm">
                       <div>
                         <div className="text-gray-600">Time Saved</div>
-                        <div className="font-bold text-purple-600">{selectedDocument.time_saved.saved_hours}h</div>
+                        <div className="font-bold text-purple-600">
+                          {selectedDocument.time_saved.saved_hours}h
+                        </div>
                       </div>
                       <div>
                         <div className="text-gray-600">Tokens Used</div>
-                        <div className="font-bold">{selectedDocument.gpt_tokens_used.toLocaleString()}</div>
+                        <div className="font-bold">
+                          {selectedDocument.gpt_tokens_used.toLocaleString()}
+                        </div>
                       </div>
                       <div>
                         <div className="text-gray-600">Reduction</div>
-                        <div className="font-bold text-green-600">{selectedDocument.time_saved.percentage_saved}%</div>
+                        <div className="font-bold text-green-600">
+                          {selectedDocument.time_saved.percentage_saved}%
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1760,7 +1937,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 <div className="text-center text-gray-500 py-8">
                   <div className="text-4xl mb-4">📄</div>
                   <p>Document content sections would be displayed here</p>
-                  <p className="text-sm">Including: Qualification Overview, Learning Outcomes, Assessment Strategy, etc.</p>
+                  <p className="text-sm">
+                    Including: Qualification Overview, Learning Outcomes, Assessment Strategy, etc.
+                  </p>
                 </div>
               </div>
             </div>
@@ -1793,7 +1972,10 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 >
                   ➕ Create Template
                 </button>
-                <button onClick={() => setShowTemplatesListModal(false)} className="text-gray-500 hover:text-gray-700">
+                <button
+                  onClick={() => setShowTemplatesListModal(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
                   ✕
                 </button>
               </div>
@@ -1807,101 +1989,114 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {templates.map((template) => (
-                  <div key={template.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-gray-900 mb-1">{template.name}</h3>
-                        <p className="text-sm text-gray-600 mb-2">{template.description}</p>
-                        <div className="flex flex-wrap gap-2">
-                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
-                            {template.template_type_display}
-                          </span>
-                          <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
-                            {template.aqf_level_display}
-                          </span>
-                          {template.is_system_template && (
-                            <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-medium">
-                              🔒 System
+                  {templates.map(template => (
+                    <div
+                      key={template.id}
+                      className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-bold text-gray-900 mb-1">{template.name}</h3>
+                          <p className="text-sm text-gray-600 mb-2">{template.description}</p>
+                          <div className="flex flex-wrap gap-2">
+                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                              {template.template_type_display}
                             </span>
-                          )}
-                          {!template.is_active && (
-                            <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-medium">
-                              Inactive
+                            <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
+                              {template.aqf_level_display}
+                            </span>
+                            {template.is_system_template && (
+                              <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-medium">
+                                🔒 System
+                              </span>
+                            )}
+                            {!template.is_active && (
+                              <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-medium">
+                                Inactive
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mb-3">
+                        <div className="text-xs font-semibold text-gray-700 mb-1">
+                          Default Sections ({template.default_sections.length}):
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {template.default_sections.slice(0, 5).map((section, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs"
+                            >
+                              {section.replace('_', ' ')}
+                            </span>
+                          ))}
+                          {template.default_sections.length > 5 && (
+                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
+                              +{template.default_sections.length - 5} more
                             </span>
                           )}
                         </div>
                       </div>
-                    </div>
 
-                    <div className="mb-3">
-                      <div className="text-xs font-semibold text-gray-700 mb-1">Default Sections ({template.default_sections.length}):</div>
-                      <div className="flex flex-wrap gap-1">
-                        {template.default_sections.slice(0, 5).map((section, idx) => (
-                          <span key={idx} className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
-                            {section.replace('_', ' ')}
-                          </span>
-                        ))}
-                        {template.default_sections.length > 5 && (
-                          <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
-                            +{template.default_sections.length - 5} more
-                          </span>
+                      <div className="text-xs text-gray-500 mb-3">
+                        Created by{' '}
+                        {template.created_by_details
+                          ? `${template.created_by_details.first_name} ${template.created_by_details.last_name}`
+                          : 'System'}{' '}
+                        • Updated {new Date(template.updated_at).toLocaleDateString()}
+                      </div>
+
+                      <div className="flex gap-2 pt-3 border-t border-gray-200">
+                        <button
+                          onClick={() => {
+                            setGenerateForm({ ...generateForm, template_id: template.id });
+                            setShowTemplatesListModal(false);
+                            setShowGenerateModal(true);
+                          }}
+                          className="flex-1 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+                        >
+                          ✨ Use Template
+                        </button>
+                        <button
+                          onClick={() => {
+                            handleEditTemplate(template);
+                            setShowTemplatesListModal(false);
+                          }}
+                          className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+                        >
+                          ✏️ Edit
+                        </button>
+                        {!template.is_system_template && (
+                          <button
+                            onClick={() => handleDeleteTemplate(template)}
+                            className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium"
+                          >
+                            🗑️
+                          </button>
                         )}
                       </div>
                     </div>
+                  ))}
 
-                    <div className="text-xs text-gray-500 mb-3">
-                      Created by {template.created_by_details 
-                        ? `${template.created_by_details.first_name} ${template.created_by_details.last_name}`
-                        : 'System'} • 
-                      Updated {new Date(template.updated_at).toLocaleDateString()}
-                    </div>
-
-                    <div className="flex gap-2 pt-3 border-t border-gray-200">
+                  {templates.length === 0 && !loadingTemplates && (
+                    <div className="col-span-2 text-center py-12">
+                      <div className="text-6xl mb-4">📋</div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                        No templates found
+                      </h3>
+                      <p className="text-gray-600 mb-4">
+                        Create your first template to streamline TAS generation
+                      </p>
                       <button
-                        onClick={() => {
-                          setGenerateForm({ ...generateForm, template_id: template.id });
-                          setShowTemplatesListModal(false);
-                          setShowGenerateModal(true);
-                        }}
-                        className="flex-1 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+                        onClick={handleCreateTemplate}
+                        className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold"
                       >
-                        ✨ Use Template
+                        ➕ Create Template
                       </button>
-                      <button
-                        onClick={() => {
-                          handleEditTemplate(template);
-                          setShowTemplatesListModal(false);
-                        }}
-                        className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
-                      >
-                        ✏️ Edit
-                      </button>
-                      {!template.is_system_template && (
-                        <button
-                          onClick={() => handleDeleteTemplate(template)}
-                          className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium"
-                        >
-                          🗑️
-                        </button>
-                      )}
                     </div>
-                  </div>
-                ))}
-
-                {templates.length === 0 && !loadingTemplates && (
-                  <div className="col-span-2 text-center py-12">
-                    <div className="text-6xl mb-4">📋</div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">No templates found</h3>
-                    <p className="text-gray-600 mb-4">Create your first template to streamline TAS generation</p>
-                    <button
-                      onClick={handleCreateTemplate}
-                      className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold"
-                    >
-                      ➕ Create Template
-                    </button>
-                  </div>
-                )}
+                  )}
                 </div>
               )}
             </div>
@@ -1917,7 +2112,10 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
               <h2 className="text-2xl font-bold text-gray-900">
                 {templateFormMode === 'create' ? '➕ Create New Template' : '✏️ Edit Template'}
               </h2>
-              <button onClick={() => setShowTemplateFormModal(false)} className="text-gray-500 hover:text-gray-700">
+              <button
+                onClick={() => setShowTemplateFormModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 ✕
               </button>
             </div>
@@ -1931,7 +2129,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 <input
                   type="text"
                   value={templateForm.name}
-                  onChange={(e) => setTemplateForm({ ...templateForm, name: e.target.value })}
+                  onChange={e => setTemplateForm({ ...templateForm, name: e.target.value })}
                   placeholder="e.g., Standard Diploma Template"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
@@ -1943,7 +2141,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 </label>
                 <textarea
                   value={templateForm.description}
-                  onChange={(e) => setTemplateForm({ ...templateForm, description: e.target.value })}
+                  onChange={e => setTemplateForm({ ...templateForm, description: e.target.value })}
                   placeholder="Describe the purpose and use case for this template..."
                   rows={3}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -1957,10 +2155,12 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   </label>
                   <select
                     value={templateForm.template_type}
-                    onChange={(e) => setTemplateForm({ ...templateForm, template_type: e.target.value })}
+                    onChange={e =>
+                      setTemplateForm({ ...templateForm, template_type: e.target.value })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
-                    {TEMPLATE_TYPES.map((type) => (
+                    {TEMPLATE_TYPES.map(type => (
                       <option key={type.value} value={type.value}>
                         {type.label}
                       </option>
@@ -1974,10 +2174,10 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   </label>
                   <select
                     value={templateForm.aqf_level}
-                    onChange={(e) => setTemplateForm({ ...templateForm, aqf_level: e.target.value })}
+                    onChange={e => setTemplateForm({ ...templateForm, aqf_level: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
-                    {AQF_LEVELS.map((level) => (
+                    {AQF_LEVELS.map(level => (
                       <option key={level.value} value={level.value}>
                         {level.label}
                       </option>
@@ -1992,8 +2192,11 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   Default Sections to Include
                 </label>
                 <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                  {DEFAULT_SECTIONS.map((section) => (
-                    <label key={section} className="flex items-center gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded">
+                  {DEFAULT_SECTIONS.map(section => (
+                    <label
+                      key={section}
+                      className="flex items-center gap-3 cursor-pointer hover:bg-gray-100 p-2 rounded"
+                    >
                       <input
                         type="checkbox"
                         checked={templateForm.default_sections.includes(section)}
@@ -2007,7 +2210,8 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   ))}
                 </div>
                 <div className="text-xs text-gray-500 mt-2">
-                  Selected: {templateForm.default_sections.length} of {DEFAULT_SECTIONS.length} sections
+                  Selected: {templateForm.default_sections.length} of {DEFAULT_SECTIONS.length}{' '}
+                  sections
                 </div>
               </div>
 
@@ -2018,20 +2222,26 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 </label>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p className="text-sm text-gray-600 mb-3">
-                    Define custom prompts for specific sections to guide GPT-4 generation. Leave blank to use defaults.
+                    Define custom prompts for specific sections to guide GPT-4 generation. Leave
+                    blank to use defaults.
                   </p>
                   <div className="space-y-3">
-                    {templateForm.default_sections.slice(0, 3).map((section) => (
+                    {templateForm.default_sections.slice(0, 3).map(section => (
                       <div key={section}>
                         <label className="block text-xs font-semibold text-gray-700 mb-1">
                           {section.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                         </label>
                         <textarea
                           value={templateForm.gpt_prompts[section] || ''}
-                          onChange={(e) => setTemplateForm({
-                            ...templateForm,
-                            gpt_prompts: { ...templateForm.gpt_prompts, [section]: e.target.value }
-                          })}
+                          onChange={e =>
+                            setTemplateForm({
+                              ...templateForm,
+                              gpt_prompts: {
+                                ...templateForm.gpt_prompts,
+                                [section]: e.target.value,
+                              },
+                            })
+                          }
                           placeholder={`Custom prompt for ${section.replace(/_/g, ' ')}...`}
                           rows={2}
                           className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -2040,7 +2250,8 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                     ))}
                     {templateForm.default_sections.length > 3 && (
                       <p className="text-xs text-gray-500 italic">
-                        + {templateForm.default_sections.length - 3} more sections (expand to customize all prompts)
+                        + {templateForm.default_sections.length - 3} more sections (expand to
+                        customize all prompts)
                       </p>
                     )}
                   </div>
@@ -2053,7 +2264,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   type="checkbox"
                   id="template-active"
                   checked={templateForm.is_active}
-                  onChange={(e) => setTemplateForm({ ...templateForm, is_active: e.target.checked })}
+                  onChange={e => setTemplateForm({ ...templateForm, is_active: e.target.checked })}
                   className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
                 />
                 <label htmlFor="template-active" className="text-sm font-medium text-gray-700">
@@ -2079,12 +2290,11 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 disabled={savingTemplate || !templateForm.name || !templateForm.description}
                 className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
               >
-                {savingTemplate 
-                  ? '💾 Saving...' 
-                  : templateFormMode === 'create' 
-                    ? '➕ Create Template' 
-                    : '💾 Save Changes'
-                }
+                {savingTemplate
+                  ? '💾 Saving...'
+                  : templateFormMode === 'create'
+                    ? '➕ Create Template'
+                    : '💾 Save Changes'}
               </button>
             </div>
           </div>
@@ -2107,12 +2317,17 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                     <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
                       Version {selectedDocument.version}
                     </span>
-                    <span className={`px-3 py-1 rounded-full ${
-                      selectedDocument.status === 'approved' ? 'bg-green-500' :
-                      selectedDocument.status === 'published' ? 'bg-blue-500' :
-                      selectedDocument.status === 'in_review' ? 'bg-yellow-500' :
-                      'bg-gray-400'
-                    }`}>
+                    <span
+                      className={`px-3 py-1 rounded-full ${
+                        selectedDocument.status === 'approved'
+                          ? 'bg-green-500'
+                          : selectedDocument.status === 'published'
+                            ? 'bg-blue-500'
+                            : selectedDocument.status === 'in_review'
+                              ? 'bg-yellow-500'
+                              : 'bg-gray-400'
+                      }`}
+                    >
                       {selectedDocument.status_display}
                     </span>
                   </div>
@@ -2131,7 +2346,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
               <button
                 onClick={() => {
                   // TODO: Implement PDF export
-                  alert('📄 PDF Export functionality will be implemented here.\n\nThis will generate a formatted PDF of the TAS document.');
+                  alert(
+                    '📄 PDF Export functionality will be implemented here.\n\nThis will generate a formatted PDF of the TAS document.'
+                  );
                 }}
                 className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
               >
@@ -2146,7 +2363,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
               <button
                 onClick={() => {
                   // TODO: Implement regenerate section
-                  alert('🔄 Regenerate Section functionality will be implemented here.\n\nThis will use AI to regenerate specific sections of the TAS document.');
+                  alert(
+                    '🔄 Regenerate Section functionality will be implemented here.\n\nThis will use AI to regenerate specific sections of the TAS document.'
+                  );
                 }}
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
               >
@@ -2158,7 +2377,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
             <div className="flex-1 overflow-y-auto p-6">
               {/* Document Metadata */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                <h3 className="text-lg font-semibold text-blue-900 mb-4">📋 Document Information</h3>
+                <h3 className="text-lg font-semibold text-blue-900 mb-4">
+                  📋 Document Information
+                </h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-blue-700 font-medium">Code:</span>
@@ -2166,11 +2387,15 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                   </div>
                   <div>
                     <span className="text-blue-700 font-medium">Qualification:</span>
-                    <span className="ml-2 text-blue-900">{selectedDocument.qualification_name}</span>
+                    <span className="ml-2 text-blue-900">
+                      {selectedDocument.qualification_name}
+                    </span>
                   </div>
                   <div>
                     <span className="text-blue-700 font-medium">Training Package:</span>
-                    <span className="ml-2 text-blue-900">{selectedDocument.training_package || 'N/A'}</span>
+                    <span className="ml-2 text-blue-900">
+                      {selectedDocument.training_package || 'N/A'}
+                    </span>
                   </div>
                   <div>
                     <span className="text-blue-700 font-medium">AQF Level:</span>
@@ -2180,11 +2405,15 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                     <>
                       <div>
                         <span className="text-blue-700 font-medium">AI Model:</span>
-                        <span className="ml-2 text-blue-900">{selectedDocument.gpt_model_used}</span>
+                        <span className="ml-2 text-blue-900">
+                          {selectedDocument.gpt_model_used}
+                        </span>
                       </div>
                       <div>
                         <span className="text-blue-700 font-medium">Generation Time:</span>
-                        <span className="ml-2 text-blue-900">{selectedDocument.generation_time_seconds.toFixed(2)}s</span>
+                        <span className="ml-2 text-blue-900">
+                          {selectedDocument.generation_time_seconds.toFixed(2)}s
+                        </span>
                       </div>
                     </>
                   )}
@@ -2196,15 +2425,19 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 <div className="space-y-6">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">📚 Document Sections</h3>
                   {selectedDocument.sections.map((section: any, index: number) => (
-                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                    <div
+                      key={index}
+                      className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+                    >
                       <div className="flex items-start justify-between mb-3">
                         <h4 className="text-lg font-semibold text-gray-900">
                           {section.title || section.name}
                         </h4>
                         <button
                           onClick={async () => {
-                            if (!confirm(`Regenerate "${section.title || section.name}" section?`)) return;
-                            
+                            if (!confirm(`Regenerate "${section.title || section.name}" section?`))
+                              return;
+
                             try {
                               const response = await fetch(
                                 `${API_URL}/api/tenants/${params.tenantSlug}/tas/${selectedDocument.id}/regenerate_section/`,
@@ -2227,7 +2460,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
 
                               const result = await response.json();
                               alert(result.message || 'Section regenerated successfully!');
-                              
+
                               // Fetch the updated document directly from the API
                               const docResponse = await fetch(
                                 `${API_URL}/api/tenants/${params.tenantSlug}/tas/${selectedDocument.id}/`,
@@ -2237,13 +2470,17 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                                   },
                                 }
                               );
-                              
+
                               if (docResponse.ok) {
                                 const updatedDoc = await docResponse.json();
-                                console.log('✅ Document refreshed after regeneration:', updatedDoc.sections?.length || 0, 'sections');
+                                console.log(
+                                  '✅ Document refreshed after regeneration:',
+                                  updatedDoc.sections?.length || 0,
+                                  'sections'
+                                );
                                 setSelectedDocument(updatedDoc);
                               }
-                              
+
                               // Refresh the document list for the grid view
                               await loadTASDocuments();
                             } catch (error: any) {
@@ -2258,7 +2495,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                           <span>Regenerate</span>
                         </button>
                       </div>
-                      <div 
+                      <div
                         className="prose prose-sm max-w-none text-gray-700"
                         dangerouslySetInnerHTML={{ __html: section.content }}
                       />
@@ -2348,23 +2585,26 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {logs.map((log) => (
+                  {logs.map(log => (
                     <div key={log.id} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
                       {/* Log Header */}
                       <div className="flex items-start justify-between mb-4">
                         <div>
                           <div className="flex items-center gap-3 mb-2">
-                            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                              log.status === 'completed' ? 'bg-green-100 text-green-800' :
-                              log.status === 'failed' ? 'bg-red-100 text-red-800' :
-                              log.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
+                            <span
+                              className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                                log.status === 'completed'
+                                  ? 'bg-green-100 text-green-800'
+                                  : log.status === 'failed'
+                                    ? 'bg-red-100 text-red-800'
+                                    : log.status === 'processing'
+                                      ? 'bg-blue-100 text-blue-800'
+                                      : 'bg-gray-100 text-gray-800'
+                              }`}
+                            >
                               {log.status_display || log.status}
                             </span>
-                            <span className="text-sm text-gray-600">
-                              Log #{log.id}
-                            </span>
+                            <span className="text-sm text-gray-600">Log #{log.id}</span>
                           </div>
                           <p className="text-sm text-gray-500">
                             Created: {new Date(log.created_at).toLocaleString()}
@@ -2453,21 +2693,26 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
               ) : (
                 <div className="space-y-4">
                   {versions.map((version, index) => (
-                    <div key={version.id} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                    <div
+                      key={version.id}
+                      className="bg-gray-50 rounded-lg p-6 border border-gray-200"
+                    >
                       {/* Version Header */}
                       <div className="flex items-start justify-between mb-4">
                         <div>
                           <div className="flex items-center gap-3 mb-2">
-                            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                              index === 0 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {index === 0 ? '✓ Current Version' : `Version ${version.version_number}`}
+                            <span
+                              className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                                index === 0
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-gray-100 text-gray-800'
+                              }`}
+                            >
+                              {index === 0
+                                ? '✓ Current Version'
+                                : `Version ${version.version_number}`}
                             </span>
-                            <span className="text-sm text-gray-600">
-                              v{version.version_number}
-                            </span>
+                            <span className="text-sm text-gray-600">v{version.version_number}</span>
                           </div>
                           <p className="text-sm text-gray-500">
                             {new Date(version.created_at).toLocaleString()}
@@ -2476,7 +2721,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                         {index !== 0 && (
                           <button
                             onClick={() => {
-                              alert('🔄 Restore Version\n\nThis will restore the TAS document to this version.\n\n(Feature coming soon)');
+                              alert(
+                                '🔄 Restore Version\n\nThis will restore the TAS document to this version.\n\n(Feature coming soon)'
+                              );
                             }}
                             className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-semibold"
                           >
@@ -2504,14 +2751,17 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                         {version.regeneration_reason && (
                           <div className="bg-white rounded-lg p-4 border border-gray-200">
                             <div className="text-sm text-gray-500 mb-1">Reason</div>
-                            <div className="text-sm text-gray-900">{version.regeneration_reason}</div>
+                            <div className="text-sm text-gray-900">
+                              {version.regeneration_reason}
+                            </div>
                           </div>
                         )}
                         {version.created_by_details && (
                           <div className="bg-white rounded-lg p-4 border border-gray-200">
                             <div className="text-sm text-gray-500 mb-1">Created By</div>
                             <div className="font-semibold text-gray-900">
-                              {version.created_by_details.first_name} {version.created_by_details.last_name}
+                              {version.created_by_details.first_name}{' '}
+                              {version.created_by_details.last_name}
                             </div>
                           </div>
                         )}
@@ -2570,7 +2820,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 {/* Basic Information */}
                 <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 Basic Information</h3>
-                  
+
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -2579,7 +2829,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                       <input
                         type="text"
                         value={editForm.title}
-                        onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                        onChange={e => setEditForm({ ...editForm, title: e.target.value })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Enter document title"
                       />
@@ -2591,7 +2841,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                       </label>
                       <textarea
                         value={editForm.description}
-                        onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                        onChange={e => setEditForm({ ...editForm, description: e.target.value })}
                         rows={3}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Enter document description"
@@ -2606,7 +2856,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                         <input
                           type="text"
                           value={editForm.qualification_name}
-                          onChange={(e) => setEditForm({ ...editForm, qualification_name: e.target.value })}
+                          onChange={e =>
+                            setEditForm({ ...editForm, qualification_name: e.target.value })
+                          }
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="e.g., Certificate IV in IT"
                         />
@@ -2619,7 +2871,9 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                         <input
                           type="text"
                           value={editForm.training_package}
-                          onChange={(e) => setEditForm({ ...editForm, training_package: e.target.value })}
+                          onChange={e =>
+                            setEditForm({ ...editForm, training_package: e.target.value })
+                          }
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="e.g., ICT"
                         />
@@ -2627,12 +2881,10 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Status
-                      </label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                       <select
                         value={editForm.status}
-                        onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                        onChange={e => setEditForm({ ...editForm, status: e.target.value })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="draft">Draft</option>
@@ -2647,13 +2899,17 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
 
                 {/* Units of Competency Table */}
                 <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">📚 Units of Competency</h3>
-                  
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    📚 Units of Competency
+                  </h3>
+
                   {editForm.units_of_competency.length === 0 ? (
                     <div className="text-center py-8">
                       <div className="text-4xl mb-2">📚</div>
                       <p className="text-gray-600">No units of competency defined</p>
-                      <p className="text-sm text-gray-500 mt-1">Units will appear here once the TAS is generated with unit information</p>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Units will appear here once the TAS is generated with unit information
+                      </p>
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
@@ -2672,19 +2928,19 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                          {editForm.units_of_competency.map((unit: { code: string; title: string }, index: number) => (
-                            <tr key={index} className="hover:bg-gray-50 transition-colors">
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                {index + 1}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                                {unit.code}
-                              </td>
-                              <td className="px-6 py-4 text-sm text-gray-900">
-                                {unit.title}
-                              </td>
-                            </tr>
-                          ))}
+                          {editForm.units_of_competency.map(
+                            (unit: { code: string; title: string }, index: number) => (
+                              <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                  {index + 1}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
+                                  {unit.code}
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-900">{unit.title}</td>
+                              </tr>
+                            )
+                          )}
                         </tbody>
                       </table>
                       <div className="mt-3 text-sm text-gray-600 flex items-center gap-2">
@@ -2700,12 +2956,14 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 {/* Sections Editor */}
                 <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">📝 Document Sections</h3>
-                  
+
                   {editForm.sections.length === 0 ? (
                     <div className="text-center py-8">
                       <div className="text-4xl mb-2">📄</div>
                       <p className="text-gray-600">No sections available to edit</p>
-                      <p className="text-sm text-gray-500 mt-1">Sections will appear here once generated</p>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Sections will appear here once generated
+                      </p>
                     </div>
                   ) : (
                     <div className="space-y-6">
@@ -2716,20 +2974,23 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                           return !sectionTitle.includes('units of competency');
                         })
                         .map((section: any, index: number) => (
-                        <div key={index} className="bg-white rounded-lg p-6 border border-gray-300 shadow-sm">
-                          <div className="flex items-center justify-between mb-4">
-                            <h4 className="font-semibold text-gray-900 text-lg">
-                              {section.title || section.name || `Section ${index + 1}`}
-                            </h4>
-                            <div className="flex items-center gap-3">
-                              <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                                {section.tokens || 0} tokens
-                              </span>
-                              <button
-                                onClick={() => {
-                                  const preview = window.open('', '_blank');
-                                  if (preview) {
-                                    preview.document.write(`
+                          <div
+                            key={index}
+                            className="bg-white rounded-lg p-6 border border-gray-300 shadow-sm"
+                          >
+                            <div className="flex items-center justify-between mb-4">
+                              <h4 className="font-semibold text-gray-900 text-lg">
+                                {section.title || section.name || `Section ${index + 1}`}
+                              </h4>
+                              <div className="flex items-center gap-3">
+                                <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                                  {section.tokens || 0} tokens
+                                </span>
+                                <button
+                                  onClick={() => {
+                                    const preview = window.open('', '_blank');
+                                    if (preview) {
+                                      preview.document.write(`
                                       <!DOCTYPE html>
                                       <html>
                                         <head>
@@ -2782,34 +3043,37 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                                         </body>
                                       </html>
                                     `);
-                                    preview.document.close();
-                                  }
-                                }}
-                                className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1 rounded-lg transition-colors"
-                              >
-                                <span>👁️</span>
-                                <span className="font-medium">Preview</span>
-                              </button>
+                                      preview.document.close();
+                                    }
+                                  }}
+                                  className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1 rounded-lg transition-colors"
+                                >
+                                  <span>👁️</span>
+                                  <span className="font-medium">Preview</span>
+                                </button>
+                              </div>
+                            </div>
+
+                            <div className="mt-4">
+                              <RichTextEditor
+                                value={section.content || ''}
+                                onChange={content => updateSectionContent(index, content)}
+                                placeholder="Enter section content with rich formatting..."
+                                height="300px"
+                              />
+                            </div>
+
+                            <div className="mt-4 flex items-center justify-between text-xs text-gray-500 bg-blue-50 px-4 py-2 rounded-lg">
+                              <span className="flex items-center gap-2">
+                                <span>💡</span>
+                                <span>
+                                  Use the toolbar above for rich text formatting (bold, italic,
+                                  lists, headings, etc.)
+                                </span>
+                              </span>
                             </div>
                           </div>
-                          
-                          <div className="mt-4">
-                            <RichTextEditor
-                              value={section.content || ''}
-                              onChange={(content) => updateSectionContent(index, content)}
-                              placeholder="Enter section content with rich formatting..."
-                              height="300px"
-                            />
-                          </div>
-                          
-                          <div className="mt-4 flex items-center justify-between text-xs text-gray-500 bg-blue-50 px-4 py-2 rounded-lg">
-                            <span className="flex items-center gap-2">
-                              <span>💡</span>
-                              <span>Use the toolbar above for rich text formatting (bold, italic, lists, headings, etc.)</span>
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   )}
                 </div>
@@ -2817,22 +3081,28 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                 {/* Version Control */}
                 <div className="bg-yellow-50 rounded-lg p-6 border border-yellow-200">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">🔄 Version Control</h3>
-                  
+
                   <div className="space-y-4">
                     <div className="flex items-start gap-3">
                       <input
                         type="checkbox"
                         id="create-version"
                         checked={editForm.create_version}
-                        onChange={(e) => setEditForm({ ...editForm, create_version: e.target.checked })}
+                        onChange={e =>
+                          setEditForm({ ...editForm, create_version: e.target.checked })
+                        }
                         className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       />
                       <div className="flex-1">
-                        <label htmlFor="create-version" className="font-medium text-gray-900 cursor-pointer">
+                        <label
+                          htmlFor="create-version"
+                          className="font-medium text-gray-900 cursor-pointer"
+                        >
                           Create New Version
                         </label>
                         <p className="text-sm text-gray-600 mt-1">
-                          Creates a new version instead of overwriting the current one. Recommended for major changes.
+                          Creates a new version instead of overwriting the current one. Recommended
+                          for major changes.
                         </p>
                       </div>
                     </div>
@@ -2840,11 +3110,14 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
                     {editForm.create_version && (
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Change Summary * <span className="text-red-500">(Required for new version)</span>
+                          Change Summary *{' '}
+                          <span className="text-red-500">(Required for new version)</span>
                         </label>
                         <textarea
                           value={editForm.change_summary}
-                          onChange={(e) => setEditForm({ ...editForm, change_summary: e.target.value })}
+                          onChange={e =>
+                            setEditForm({ ...editForm, change_summary: e.target.value })
+                          }
                           rows={3}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Describe what changes you made (e.g., 'Updated assessment strategy section')"
@@ -2868,7 +3141,7 @@ export default function TASGeneratorPage({ params }: { params: { tenantSlug: str
               >
                 Cancel
               </button>
-              
+
               <button
                 onClick={handleSaveEdit}
                 disabled={savingEdit || !editForm.title || !editForm.qualification_name}

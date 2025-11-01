@@ -1,71 +1,71 @@
-'use client'
+'use client';
 
-import { useParams } from 'next/navigation'
-import { useState } from 'react'
+import { useParams } from 'next/navigation';
+import { useState } from 'react';
 
 interface AuthenticityCheck {
-  id: number
-  check_number: string
-  name: string
-  status: string
-  total_submissions_checked: number
-  plagiarism_cases_detected: number
-  metadata_issues_found: number
-  anomalies_detected: number
-  overall_integrity_score: number
+  id: number;
+  check_number: string;
+  name: string;
+  status: string;
+  total_submissions_checked: number;
+  plagiarism_cases_detected: number;
+  metadata_issues_found: number;
+  anomalies_detected: number;
+  overall_integrity_score: number;
 }
 
 interface SubmissionAnalysis {
-  id: number
-  analysis_number: string
-  submission_id: string
-  student_name: string
-  plagiarism_score: number
-  metadata_verification_score: number
-  anomaly_score: number
-  combined_integrity_score: number
-  integrity_status: string
-  plagiarism_detected: boolean
-  metadata_issues: boolean
-  anomalies_found: boolean
+  id: number;
+  analysis_number: string;
+  submission_id: string;
+  student_name: string;
+  plagiarism_score: number;
+  metadata_verification_score: number;
+  anomaly_score: number;
+  combined_integrity_score: number;
+  integrity_status: string;
+  plagiarism_detected: boolean;
+  metadata_issues: boolean;
+  anomalies_found: boolean;
 }
 
 interface PlagiarismMatch {
-  id: number
-  match_number: string
-  similarity_score: number
-  match_type: string
-  severity: string
-  matched_percentage: number
+  id: number;
+  match_number: string;
+  similarity_score: number;
+  match_type: string;
+  severity: string;
+  matched_percentage: number;
 }
 
 interface AnomalyDetection {
-  id: number
-  anomaly_number: string
-  anomaly_type: string
-  severity: string
-  description: string
-  confidence_score: number
-  impact_score: number
+  id: number;
+  anomaly_number: string;
+  anomaly_type: string;
+  severity: string;
+  description: string;
+  confidence_score: number;
+  impact_score: number;
 }
 
 export default function AuthenticityCheckPage() {
-  const params = useParams()
-  const tenantSlug = params?.tenantSlug as string
+  const params = useParams();
+  const tenantSlug = params?.tenantSlug as string;
 
-  const [activeTab, setActiveTab] = useState('checks')
-  const [checks, setChecks] = useState<AuthenticityCheck[]>([])
-  const [analyses, setAnalyses] = useState<SubmissionAnalysis[]>([])
-  const [selectedAnalysis, setSelectedAnalysis] = useState<SubmissionAnalysis | null>(null)
-  const [plagiarismMatches, setPlagiarismMatches] = useState<PlagiarismMatch[]>([])
-  const [anomalies, setAnomalies] = useState<AnomalyDetection[]>([])
+  const [activeTab, setActiveTab] = useState('checks');
+  const [checks, setChecks] = useState<AuthenticityCheck[]>([]);
+  const [analyses, setAnalyses] = useState<SubmissionAnalysis[]>([]);
+  const [selectedAnalysis, setSelectedAnalysis] = useState<SubmissionAnalysis | null>(null);
+  const [plagiarismMatches, setPlagiarismMatches] = useState<PlagiarismMatch[]>([]);
+  const [anomalies, setAnomalies] = useState<AnomalyDetection[]>([]);
 
-  const tabs = ['checks', 'submissions', 'plagiarism', 'anomalies', 'reports']
+  const tabs = ['checks', 'submissions', 'plagiarism', 'anomalies', 'reports'];
 
   const handleCreateCheck = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     const newCheck = {
       name: formData.get('name'),
       assessment_id: formData.get('assessment_id'),
@@ -73,40 +73,45 @@ export default function AuthenticityCheckPage() {
       metadata_verification_enabled: formData.get('metadata_verification') === 'on',
       anomaly_detection_enabled: formData.get('anomaly_detection') === 'on',
       academic_integrity_mode: formData.get('academic_integrity') === 'on',
-    }
+    };
 
-    console.log('Creating authenticity check:', newCheck)
-    e.currentTarget.reset()
-  }
+    console.log('Creating authenticity check:', newCheck);
+    e.currentTarget.reset();
+  };
 
   const handleAnalyzeSubmission = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     const analysisRequest = {
       submission_id: formData.get('submission_id'),
       content: formData.get('content'),
-    }
+    };
 
-    console.log('Analyzing submission:', analysisRequest)
-    e.currentTarget.reset()
-  }
+    console.log('Analyzing submission:', analysisRequest);
+    e.currentTarget.reset();
+  };
 
   const getIntegrityColor = (score: number) => {
-    if (score >= 80) return 'text-green-600'
-    if (score >= 60) return 'text-yellow-600'
-    return 'text-red-600'
-  }
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-yellow-600';
+    return 'text-red-600';
+  };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'bg-red-100 text-red-800'
-      case 'high': return 'bg-orange-100 text-orange-800'
-      case 'medium': return 'bg-yellow-100 text-yellow-800'
-      case 'low': return 'bg-blue-100 text-blue-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'critical':
+        return 'bg-red-100 text-red-800';
+      case 'high':
+        return 'bg-orange-100 text-orange-800';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'low':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -114,7 +119,8 @@ export default function AuthenticityCheckPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Authenticity Check</h1>
           <p className="mt-2 text-gray-600">
-            Plagiarism detection • Metadata verification • Anomaly detection • Academic integrity compliance
+            Plagiarism detection • Metadata verification • Anomaly detection • Academic integrity
+            compliance
           </p>
         </div>
 
@@ -146,7 +152,7 @@ export default function AuthenticityCheckPage() {
         <div className="bg-white rounded-lg shadow">
           <div className="border-b border-gray-200">
             <nav className="flex -mb-px">
-              {tabs.map((tab) => (
+              {tabs.map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -165,7 +171,9 @@ export default function AuthenticityCheckPage() {
           <div className="p-6">
             {activeTab === 'checks' && (
               <div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Create Authenticity Check</h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Create Authenticity Check
+                </h2>
                 <form onSubmit={handleCreateCheck} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -249,18 +257,22 @@ export default function AuthenticityCheckPage() {
                 <div className="mt-8">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Checks</h3>
                   <div className="space-y-3">
-                    {checks.map((check) => (
+                    {checks.map(check => (
                       <div key={check.id} className="border border-gray-200 rounded-lg p-4">
                         <div className="flex justify-between items-start">
                           <div>
                             <div className="font-medium text-gray-900">{check.name}</div>
                             <div className="text-sm text-gray-500">{check.check_number}</div>
                           </div>
-                          <span className={`px-2 py-1 text-xs font-medium rounded ${
-                            check.status === 'completed' ? 'bg-green-100 text-green-700' :
-                            check.status === 'processing' ? 'bg-blue-100 text-blue-700' :
-                            'bg-gray-100 text-gray-700'
-                          }`}>
+                          <span
+                            className={`px-2 py-1 text-xs font-medium rounded ${
+                              check.status === 'completed'
+                                ? 'bg-green-100 text-green-700'
+                                : check.status === 'processing'
+                                  ? 'bg-blue-100 text-blue-700'
+                                  : 'bg-gray-100 text-gray-700'
+                            }`}
+                          >
                             {check.status}
                           </span>
                         </div>
@@ -271,15 +283,21 @@ export default function AuthenticityCheckPage() {
                           </div>
                           <div>
                             <div className="text-gray-500">Plagiarism</div>
-                            <div className="font-medium text-red-600">{check.plagiarism_cases_detected}</div>
+                            <div className="font-medium text-red-600">
+                              {check.plagiarism_cases_detected}
+                            </div>
                           </div>
                           <div>
                             <div className="text-gray-500">Metadata Issues</div>
-                            <div className="font-medium text-orange-600">{check.metadata_issues_found}</div>
+                            <div className="font-medium text-orange-600">
+                              {check.metadata_issues_found}
+                            </div>
                           </div>
                           <div>
                             <div className="text-gray-500">Integrity Score</div>
-                            <div className={`font-medium ${getIntegrityColor(check.overall_integrity_score)}`}>
+                            <div
+                              className={`font-medium ${getIntegrityColor(check.overall_integrity_score)}`}
+                            >
                               {check.overall_integrity_score.toFixed(1)}%
                             </div>
                           </div>
@@ -332,7 +350,7 @@ export default function AuthenticityCheckPage() {
                 <div className="mt-8">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Analysis Results</h3>
                   <div className="space-y-3">
-                    {analyses.map((analysis) => (
+                    {analyses.map(analysis => (
                       <div
                         key={analysis.id}
                         className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-red-300"
@@ -340,33 +358,47 @@ export default function AuthenticityCheckPage() {
                       >
                         <div className="flex justify-between items-start">
                           <div>
-                            <div className="font-medium text-gray-900">{analysis.student_name || analysis.submission_id}</div>
+                            <div className="font-medium text-gray-900">
+                              {analysis.student_name || analysis.submission_id}
+                            </div>
                             <div className="text-sm text-gray-500">{analysis.analysis_number}</div>
                           </div>
-                          <span className={`px-2 py-1 text-xs font-medium rounded ${
-                            analysis.integrity_status === 'pass' ? 'bg-green-100 text-green-700' :
-                            analysis.integrity_status === 'warning' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-red-100 text-red-700'
-                          }`}>
+                          <span
+                            className={`px-2 py-1 text-xs font-medium rounded ${
+                              analysis.integrity_status === 'pass'
+                                ? 'bg-green-100 text-green-700'
+                                : analysis.integrity_status === 'warning'
+                                  ? 'bg-yellow-100 text-yellow-700'
+                                  : 'bg-red-100 text-red-700'
+                            }`}
+                          >
                             {analysis.integrity_status}
                           </span>
                         </div>
                         <div className="mt-3 grid grid-cols-4 gap-4 text-sm">
                           <div>
                             <div className="text-gray-500">Plagiarism</div>
-                            <div className="font-medium text-red-600">{(analysis.plagiarism_score * 100).toFixed(1)}%</div>
+                            <div className="font-medium text-red-600">
+                              {(analysis.plagiarism_score * 100).toFixed(1)}%
+                            </div>
                           </div>
                           <div>
                             <div className="text-gray-500">Metadata</div>
-                            <div className="font-medium">{analysis.metadata_verification_score.toFixed(1)}%</div>
+                            <div className="font-medium">
+                              {analysis.metadata_verification_score.toFixed(1)}%
+                            </div>
                           </div>
                           <div>
                             <div className="text-gray-500">Anomaly</div>
-                            <div className="font-medium text-orange-600">{analysis.anomaly_score.toFixed(1)}%</div>
+                            <div className="font-medium text-orange-600">
+                              {analysis.anomaly_score.toFixed(1)}%
+                            </div>
                           </div>
                           <div>
                             <div className="text-gray-500">Integrity</div>
-                            <div className={`font-medium ${getIntegrityColor(analysis.combined_integrity_score)}`}>
+                            <div
+                              className={`font-medium ${getIntegrityColor(analysis.combined_integrity_score)}`}
+                            >
                               {analysis.combined_integrity_score.toFixed(1)}%
                             </div>
                           </div>
@@ -382,14 +414,18 @@ export default function AuthenticityCheckPage() {
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Plagiarism Matches</h2>
                 <div className="space-y-3">
-                  {plagiarismMatches.map((match) => (
+                  {plagiarismMatches.map(match => (
                     <div key={match.id} className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div>
                           <div className="font-medium text-gray-900">{match.match_number}</div>
-                          <div className="text-sm text-gray-500">Similarity: {(match.similarity_score * 100).toFixed(1)}%</div>
+                          <div className="text-sm text-gray-500">
+                            Similarity: {(match.similarity_score * 100).toFixed(1)}%
+                          </div>
                         </div>
-                        <span className={`px-2 py-1 text-xs font-medium rounded ${getSeverityColor(match.severity)}`}>
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded ${getSeverityColor(match.severity)}`}
+                        >
                           {match.severity}
                         </span>
                       </div>
@@ -413,25 +449,31 @@ export default function AuthenticityCheckPage() {
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Detected Anomalies</h2>
                 <div className="space-y-3">
-                  {anomalies.map((anomaly) => (
+                  {anomalies.map(anomaly => (
                     <div key={anomaly.id} className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div>
                           <div className="font-medium text-gray-900">{anomaly.anomaly_number}</div>
                           <div className="text-sm text-gray-500">{anomaly.description}</div>
                         </div>
-                        <span className={`px-2 py-1 text-xs font-medium rounded ${getSeverityColor(anomaly.severity)}`}>
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded ${getSeverityColor(anomaly.severity)}`}
+                        >
                           {anomaly.severity}
                         </span>
                       </div>
                       <div className="grid grid-cols-3 gap-4 text-sm">
                         <div>
                           <div className="text-gray-500">Type</div>
-                          <div className="font-medium">{anomaly.anomaly_type.replace('_', ' ')}</div>
+                          <div className="font-medium">
+                            {anomaly.anomaly_type.replace('_', ' ')}
+                          </div>
                         </div>
                         <div>
                           <div className="text-gray-500">Confidence</div>
-                          <div className="font-medium">{(anomaly.confidence_score * 100).toFixed(1)}%</div>
+                          <div className="font-medium">
+                            {(anomaly.confidence_score * 100).toFixed(1)}%
+                          </div>
                         </div>
                         <div>
                           <div className="text-gray-500">Impact</div>
@@ -461,5 +503,5 @@ export default function AuthenticityCheckPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

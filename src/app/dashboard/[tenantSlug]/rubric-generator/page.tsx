@@ -47,14 +47,14 @@ export default function RubricGeneratorPage() {
   const params = useParams();
   const router = useRouter();
   const tenantSlug = params.tenantSlug as string;
-  
+
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [rubrics, setRubrics] = useState<Rubric[]>([]);
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [showGenerateForm, setShowGenerateForm] = useState(false);
-  
+
   // Form state
   const [assessmentId, setAssessmentId] = useState<number | null>(null);
   const [title, setTitle] = useState('');
@@ -79,50 +79,50 @@ export default function RubricGeneratorPage() {
     try {
       const authToken = localStorage.getItem('authToken');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      
+
       // Fetch rubrics
       const rubricsRes = await fetch(
         `${baseUrl}/api/tenants/${tenantSlug}/rubric-generator/rubrics/`,
         {
           headers: {
-            'Authorization': `Token ${authToken}`,
+            Authorization: `Token ${authToken}`,
             'Content-Type': 'application/json',
           },
         }
       );
-      
+
       if (rubricsRes.ok) {
         const data = await rubricsRes.json();
         setRubrics(data.results || []);
       }
-      
+
       // Fetch assessments for dropdown
       const assessmentsRes = await fetch(
         `${baseUrl}/api/tenants/${tenantSlug}/assessment-builder/assessments/`,
         {
           headers: {
-            'Authorization': `Token ${authToken}`,
+            Authorization: `Token ${authToken}`,
             'Content-Type': 'application/json',
           },
         }
       );
-      
+
       if (assessmentsRes.ok) {
         const data = await assessmentsRes.json();
         setAssessments(data.results || []);
       }
-      
+
       // Fetch stats
       const statsRes = await fetch(
         `${baseUrl}/api/tenants/${tenantSlug}/rubric-generator/rubrics/dashboard_stats/`,
         {
           headers: {
-            'Authorization': `Token ${authToken}`,
+            Authorization: `Token ${authToken}`,
             'Content-Type': 'application/json',
           },
         }
       );
-      
+
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         setStats(statsData);
@@ -136,24 +136,24 @@ export default function RubricGeneratorPage() {
 
   const handleGenerateRubric = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!assessmentId) {
       alert('Please select an assessment');
       return;
     }
-    
+
     setGenerating(true);
-    
+
     try {
       const authToken = localStorage.getItem('authToken');
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      
+
       const response = await fetch(
         `${baseUrl}/api/tenants/${tenantSlug}/rubric-generator/rubrics/generate_rubric/`,
         {
           method: 'POST',
           headers: {
-            'Authorization': `Token ${authToken}`,
+            Authorization: `Token ${authToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -169,7 +169,7 @@ export default function RubricGeneratorPage() {
           }),
         }
       );
-      
+
       if (response.ok) {
         const data = await response.json();
         fetchDashboardData();
@@ -181,7 +181,7 @@ export default function RubricGeneratorPage() {
         setNumberOfCriteria(5);
         setNumberOfLevels(4);
         setTotalPoints(100);
-        
+
         router.push(`/dashboard/${tenantSlug}/rubric-generator/${data.id}`);
       } else {
         const error = await response.json();
@@ -224,9 +224,7 @@ export default function RubricGeneratorPage() {
               <Link href={`/dashboard/${tenantSlug}`} className="text-pink-600 hover:text-pink-800">
                 ← Back to Dashboard
               </Link>
-              <h1 className="text-xl font-semibold text-gray-900">
-                Rubric Generator
-              </h1>
+              <h1 className="text-xl font-semibold text-gray-900">Rubric Generator</h1>
             </div>
           </div>
         </div>
@@ -256,41 +254,49 @@ export default function RubricGeneratorPage() {
               <div className="text-gray-600 text-sm font-medium mb-1">Total Rubrics</div>
               <div className="text-3xl font-bold text-gray-900">{stats.total_rubrics}</div>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="text-gray-600 text-sm font-medium mb-1">AI Generated</div>
               <div className="text-3xl font-bold text-pink-600">{stats.ai_generation_rate}%</div>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="text-gray-600 text-sm font-medium mb-1">Avg Criteria</div>
-              <div className="text-3xl font-bold text-blue-600">{stats.avg_criteria_per_rubric}</div>
+              <div className="text-3xl font-bold text-blue-600">
+                {stats.avg_criteria_per_rubric}
+              </div>
             </div>
-            
+
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="text-gray-600 text-sm font-medium mb-1">In Review</div>
-              <div className="text-3xl font-bold text-yellow-600">{stats.by_status.review || 0}</div>
+              <div className="text-3xl font-bold text-yellow-600">
+                {stats.by_status.review || 0}
+              </div>
             </div>
           </div>
         )}
 
         {/* Taxonomy Distribution */}
-        {stats && stats.taxonomy_distribution && Object.keys(stats.taxonomy_distribution).length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Taxonomy Tag Distribution</h3>
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(stats.taxonomy_distribution).map(([tag, percentage]) => (
-                <div
-                  key={tag}
-                  className="px-4 py-2 bg-gradient-to-r from-pink-100 to-purple-100 rounded-full"
-                >
-                  <span className="text-sm font-medium text-gray-900">{tag}</span>
-                  <span className="text-xs text-gray-600 ml-2">{percentage}%</span>
-                </div>
-              ))}
+        {stats &&
+          stats.taxonomy_distribution &&
+          Object.keys(stats.taxonomy_distribution).length > 0 && (
+            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Taxonomy Tag Distribution
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(stats.taxonomy_distribution).map(([tag, percentage]) => (
+                  <div
+                    key={tag}
+                    className="px-4 py-2 bg-gradient-to-r from-pink-100 to-purple-100 rounded-full"
+                  >
+                    <span className="text-sm font-medium text-gray-900">{tag}</span>
+                    <span className="text-xs text-gray-600 ml-2">{percentage}%</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Generate Rubric Form */}
         {showGenerateForm && (
@@ -304,29 +310,29 @@ export default function RubricGeneratorPage() {
                   </label>
                   <select
                     value={assessmentId || ''}
-                    onChange={(e) => setAssessmentId(Number(e.target.value))}
+                    onChange={e => setAssessmentId(Number(e.target.value))}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   >
                     <option value="">Select an assessment</option>
-                    {assessments.map((assessment) => (
+                    {assessments.map(assessment => (
                       <option key={assessment.id} value={assessment.id}>
                         {assessment.assessment_number} - {assessment.unit_code}
                       </option>
                     ))}
                   </select>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Rubric Type
                   </label>
                   <select
                     value={rubricType}
-                    onChange={(e) => setRubricType(e.target.value)}
+                    onChange={e => setRubricType(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   >
-                    {RUBRIC_TYPES.map((type) => (
+                    {RUBRIC_TYPES.map(type => (
                       <option key={type.value} value={type.value}>
                         {type.label}
                       </option>
@@ -334,7 +340,7 @@ export default function RubricGeneratorPage() {
                   </select>
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Custom Title (Optional)
@@ -342,12 +348,12 @@ export default function RubricGeneratorPage() {
                 <input
                   type="text"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={e => setTitle(e.target.value)}
                   placeholder="Leave blank for auto-generated title"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                 />
               </div>
-              
+
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -358,11 +364,11 @@ export default function RubricGeneratorPage() {
                     min="1"
                     max="20"
                     value={numberOfCriteria}
-                    onChange={(e) => setNumberOfCriteria(parseInt(e.target.value))}
+                    onChange={e => setNumberOfCriteria(parseInt(e.target.value))}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Performance Levels (2-10)
@@ -372,11 +378,11 @@ export default function RubricGeneratorPage() {
                     min="2"
                     max="10"
                     value={numberOfLevels}
-                    onChange={(e) => setNumberOfLevels(parseInt(e.target.value))}
+                    onChange={e => setNumberOfLevels(parseInt(e.target.value))}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Total Points
@@ -386,50 +392,46 @@ export default function RubricGeneratorPage() {
                     min="1"
                     max="1000"
                     value={totalPoints}
-                    onChange={(e) => setTotalPoints(parseInt(e.target.value))}
+                    onChange={e => setTotalPoints(parseInt(e.target.value))}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="flex items-center cursor-pointer">
                   <input
                     type="checkbox"
                     checked={includeExamples}
-                    onChange={(e) => setIncludeExamples(e.target.checked)}
+                    onChange={e => setIncludeExamples(e.target.checked)}
                     className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
                   />
                   <span className="ml-2 text-sm text-gray-700">
                     Include examples and indicators
                   </span>
                 </label>
-                
+
                 <label className="flex items-center cursor-pointer">
                   <input
                     type="checkbox"
                     checked={enableNlpSummary}
-                    onChange={(e) => setEnableNlpSummary(e.target.checked)}
+                    onChange={e => setEnableNlpSummary(e.target.checked)}
                     className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
                   />
-                  <span className="ml-2 text-sm text-gray-700">
-                    Enable NLP summarization
-                  </span>
+                  <span className="ml-2 text-sm text-gray-700">Enable NLP summarization</span>
                 </label>
-                
+
                 <label className="flex items-center cursor-pointer">
                   <input
                     type="checkbox"
                     checked={enableTaxonomyTagging}
-                    onChange={(e) => setEnableTaxonomyTagging(e.target.checked)}
+                    onChange={e => setEnableTaxonomyTagging(e.target.checked)}
                     className="w-4 h-4 text-pink-600 border-gray-300 rounded focus:ring-pink-500"
                   />
-                  <span className="ml-2 text-sm text-gray-700">
-                    Enable taxonomy tagging
-                  </span>
+                  <span className="ml-2 text-sm text-gray-700">Enable taxonomy tagging</span>
                 </label>
               </div>
-              
+
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
@@ -455,7 +457,7 @@ export default function RubricGeneratorPage() {
           <div className="px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">Rubrics</h3>
           </div>
-          
+
           {rubrics.length === 0 ? (
             <div className="p-12 text-center">
               <div className="text-6xl mb-4">📋</div>
@@ -511,12 +513,14 @@ export default function RubricGeneratorPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {rubrics.map((rubric) => (
+                  {rubrics.map(rubric => (
                     <tr key={rubric.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           {rubric.ai_generated && (
-                            <span className="mr-2" title="AI Generated">🤖</span>
+                            <span className="mr-2" title="AI Generated">
+                              🤖
+                            </span>
                           )}
                           <div>
                             <div className="text-sm font-medium text-gray-900">
@@ -535,7 +539,9 @@ export default function RubricGeneratorPage() {
                         {rubric.rubric_type}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(rubric.status)}`}>
+                        <span
+                          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(rubric.status)}`}
+                        >
                           {rubric.status}
                         </span>
                       </td>

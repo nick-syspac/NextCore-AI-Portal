@@ -24,12 +24,12 @@ export function QuotaWidget({ tenantSlug }: QuotaWidgetProps) {
   const loadQuotaData = async () => {
     // Mock data - replace with actual API call
     // const result = await api.getTenantQuotas(tenantSlug, authToken);
-    
+
     setTimeout(() => {
       setQuotas({
         calls: { used: 15847, limit: 50000 },
         tokens: { used: 2845692, limit: 10000000 },
-        cost: { used: 127.45, limit: 500 }
+        cost: { used: 127.45, limit: 500 },
       });
       setLoading(false);
     }, 300);
@@ -72,7 +72,7 @@ export function QuotaWidget({ tenantSlug }: QuotaWidgetProps) {
         <h3 className="text-lg font-semibold text-gray-900">Usage Limits</h3>
         <span className="text-xs text-gray-500">Monthly quotas</span>
       </div>
-      
+
       {quotas && (
         <div className="space-y-4">
           {/* API Calls */}
@@ -127,7 +127,7 @@ export function QuotaWidget({ tenantSlug }: QuotaWidgetProps) {
           </div>
 
           {/* Warning if approaching limits */}
-          {Object.values(quotas).some(q => (q.used / q.limit) >= 0.8) && (
+          {Object.values(quotas).some(q => q.used / q.limit >= 0.8) && (
             <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p className="text-sm text-yellow-800">
                 ⚠️ You're approaching your monthly limits. Consider upgrading your plan.

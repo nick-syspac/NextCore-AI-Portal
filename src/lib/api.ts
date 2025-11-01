@@ -76,7 +76,7 @@ export const api = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Token ${authToken}`,
+        Authorization: `Token ${authToken}`,
       },
       body: JSON.stringify({ token }),
     });
@@ -92,7 +92,7 @@ export const api = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Token ${authToken}`,
+        Authorization: `Token ${authToken}`,
       },
       body: JSON.stringify(data),
     });
@@ -106,7 +106,7 @@ export const api = {
   async getMyTenants(authToken: string) {
     const response = await fetch(`${API_URL}/api/users/my-tenants/`, {
       headers: {
-        'Authorization': `Token ${authToken}`,
+        Authorization: `Token ${authToken}`,
       },
     });
     if (!response.ok) {
@@ -121,7 +121,7 @@ export const api = {
   async getProfile(authToken: string) {
     const response = await fetch(`${API_URL}/api/users/profile/`, {
       headers: {
-        'Authorization': `Token ${authToken}`,
+        Authorization: `Token ${authToken}`,
       },
     });
     if (!response.ok) {
@@ -134,7 +134,7 @@ export const api = {
   async getTenantUsers(tenantSlug: string, authToken: string) {
     const response = await fetch(`${API_URL}/api/tenant-users/?tenant__slug=${tenantSlug}`, {
       headers: {
-        'Authorization': `Token ${authToken}`,
+        Authorization: `Token ${authToken}`,
       },
     });
     if (!response.ok) {
@@ -147,7 +147,7 @@ export const api = {
   async getAPIKeys(tenantSlug: string, authToken: string) {
     const response = await fetch(`${API_URL}/api/api-keys/?tenant__slug=${tenantSlug}`, {
       headers: {
-        'Authorization': `Token ${authToken}`,
+        Authorization: `Token ${authToken}`,
       },
     });
     if (!response.ok) {
@@ -157,12 +157,15 @@ export const api = {
     return response.json();
   },
 
-  async createAPIKey(data: { tenant: string; name: string; description?: string }, authToken: string) {
+  async createAPIKey(
+    data: { tenant: string; name: string; description?: string },
+    authToken: string
+  ) {
     const response = await fetch(`${API_URL}/api/api-keys/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Token ${authToken}`,
+        Authorization: `Token ${authToken}`,
       },
       body: JSON.stringify(data),
     });
@@ -177,7 +180,7 @@ export const api = {
     const response = await fetch(`${API_URL}/api/api-keys/${keyId}/revoke/`, {
       method: 'POST',
       headers: {
-        'Authorization': `Token ${authToken}`,
+        Authorization: `Token ${authToken}`,
       },
     });
     if (!response.ok) {
@@ -187,12 +190,16 @@ export const api = {
     return response.json();
   },
 
-  async getAuditLogs(tenantSlug: string, authToken: string, filters?: {
-    event_type?: string;
-    severity?: string;
-    search?: string;
-    page?: number;
-  }) {
+  async getAuditLogs(
+    tenantSlug: string,
+    authToken: string,
+    filters?: {
+      event_type?: string;
+      severity?: string;
+      search?: string;
+      page?: number;
+    }
+  ) {
     const params = new URLSearchParams();
     params.append('tenant__slug', tenantSlug);
     if (filters?.event_type) params.append('event_type', filters.event_type);
@@ -202,7 +209,7 @@ export const api = {
 
     const response = await fetch(`${API_URL}/api/audit/events/?${params.toString()}`, {
       headers: {
-        'Authorization': `Token ${authToken}`,
+        Authorization: `Token ${authToken}`,
       },
     });
     if (!response.ok) {
@@ -216,7 +223,7 @@ export const api = {
     const response = await fetch(`${API_URL}/api/audit/verify/?tenant_id=${tenantId}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Token ${authToken}`,
+        Authorization: `Token ${authToken}`,
       },
     });
     if (!response.ok) {

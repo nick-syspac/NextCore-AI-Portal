@@ -9,6 +9,7 @@ This directory contains comprehensive usage analytics and statistics components 
 Full-page analytics dashboard showing detailed usage statistics.
 
 **Features:**
+
 - Period selector (Today, Week, Month, Year)
 - Key metrics cards (API Calls, Tokens Used, Total Cost)
 - Daily usage trend chart
@@ -17,6 +18,7 @@ Full-page analytics dashboard showing detailed usage statistics.
 - Usage insights and recommendations
 
 **Metrics Displayed:**
+
 - Total API calls with success/failure breakdown
 - Token usage (prompt vs completion)
 - Cost tracking with per-call average
@@ -29,6 +31,7 @@ Full-page analytics dashboard showing detailed usage statistics.
 Mini dashboard widget showing high-level usage summary.
 
 **Features:**
+
 - Compact 2x2 grid layout
 - Four key metrics: API Calls, Tokens, Cost, Success Rate
 - Color-coded stat cards
@@ -36,10 +39,11 @@ Mini dashboard widget showing high-level usage summary.
 - Auto-refresh capability
 
 **Usage:**
+
 ```tsx
 import { UsageOverview } from '@/components/usage/UsageOverview';
 
-<UsageOverview tenantSlug={tenantSlug} />
+<UsageOverview tenantSlug={tenantSlug} />;
 ```
 
 ### 3. Quota Widget (`/components/usage/QuotaWidget.tsx`)
@@ -47,6 +51,7 @@ import { UsageOverview } from '@/components/usage/UsageOverview';
 Displays usage against monthly quotas/limits.
 
 **Features:**
+
 - Progress bars for API calls, tokens, and spend
 - Visual indicators for usage levels (blue/purple/red)
 - Warning alerts when approaching limits
@@ -54,10 +59,11 @@ Displays usage against monthly quotas/limits.
 - Responsive design
 
 **Usage:**
+
 ```tsx
 import { QuotaWidget } from '@/components/usage/QuotaWidget';
 
-<QuotaWidget tenantSlug={tenantSlug} />
+<QuotaWidget tenantSlug={tenantSlug} />;
 ```
 
 ### 4. Reusable Stats Components (`/components/stats/StatsComponents.tsx`)
@@ -65,29 +71,31 @@ import { QuotaWidget } from '@/components/usage/QuotaWidget';
 Collection of reusable UI components for displaying statistics.
 
 **Components:**
+
 - `StatCard` - Full-featured stat card with trend indicators
 - `MiniStat` - Compact stat display with color coding
 - `ProgressBar` - Customizable progress indicator
 - `UsageChart` - Bar chart visualization for usage data
 
 **Example:**
+
 ```tsx
 import { StatCard, MiniStat, ProgressBar } from '@/components/stats/StatsComponents';
 
-<StatCard 
-  title="API Calls" 
-  value={15847} 
-  change={12.5} 
+<StatCard
+  title="API Calls"
+  value={15847}
+  change={12.5}
   trend="up"
   icon="📊"
 />
 
 <MiniStat label="Tokens" value="2.8M" color="purple" />
 
-<ProgressBar 
-  label="Usage" 
-  value={1584} 
-  max={5000} 
+<ProgressBar
+  label="Usage"
+  value={1584}
+  max={5000}
   color="blue"
 />
 ```
@@ -95,6 +103,7 @@ import { StatCard, MiniStat, ProgressBar } from '@/components/stats/StatsCompone
 ## Data Structure
 
 ### UsageStats Interface
+
 ```typescript
 interface UsageStats {
   period: string;
@@ -139,6 +148,7 @@ interface UsageStats {
 Currently using mock data. To integrate with real backend:
 
 1. **Add API endpoint** in `src/lib/api.ts`:
+
 ```typescript
 async getUsageStats(tenantSlug: string, authToken: string, period: string) {
   const response = await fetch(
@@ -152,10 +162,11 @@ async getUsageStats(tenantSlug: string, authToken: string, period: string) {
 ```
 
 2. **Create Django view** in `control-plane`:
+
 ```python
 class TenantUsageStatsView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, tenant_slug):
         period = request.query_params.get('period', 'month')
         # Query usage data from database
@@ -168,6 +179,7 @@ class TenantUsageStatsView(APIView):
 ## Styling
 
 All components use Tailwind CSS with consistent color schemes:
+
 - **Blue** - Primary actions, main metrics
 - **Green** - Success states, positive trends
 - **Red** - Errors, warnings, negative trends

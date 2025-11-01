@@ -2,26 +2,26 @@
 
 /**
  * Billing Page - Stripe Integration
- * 
+ *
  * PRODUCTION SETUP INSTRUCTIONS:
- * 
+ *
  * 1. Install Stripe SDK:
  *    npm install @stripe/stripe-js @stripe/react-stripe-js
- * 
+ *
  * 2. Set environment variables:
  *    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxx
- * 
+ *
  * 3. Wrap this component with Stripe Elements:
  *    import { Elements } from '@stripe/react-stripe-js';
  *    import { loadStripe } from '@stripe/stripe-js';
  *    const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
  *    <Elements stripe={stripePromise}><BillingPage /></Elements>
- * 
+ *
  * 4. Replace mock addPaymentMethod() with real Stripe integration:
  *    - Use stripe.createToken() or stripe.createPaymentMethod()
  *    - Send token/payment method ID to backend
  *    - Backend creates Stripe Customer and attaches payment method
- * 
+ *
  * 5. Backend API endpoints needed:
  *    - POST /api/tenants/{slug}/payment-methods (attach payment method)
  *    - PUT /api/tenants/{slug}/payment-methods/{id}/default
@@ -115,10 +115,12 @@ export default function BillingPage() {
   const params = useParams();
   const router = useRouter();
   const tenantSlug = params.tenantSlug as string;
-  
+
   const [billingData, setBillingData] = useState<BillingData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'invoices' | 'payment' | 'usage'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'invoices' | 'payment' | 'usage'>(
+    'overview'
+  );
   const [showAddPayment, setShowAddPayment] = useState(false);
   const [downloadingReceipt, setDownloadingReceipt] = useState<string | null>(null);
   const [showChangePlan, setShowChangePlan] = useState(false);
@@ -150,7 +152,7 @@ export default function BillingPage() {
           plan_name: 'Professional Plan',
           plan_tier: 'professional',
           status: 'active',
-          amount: 99.00,
+          amount: 99.0,
           interval: 'month',
           current_period_start: '2025-10-01',
           current_period_end: '2025-10-31',
@@ -182,13 +184,28 @@ export default function BillingPage() {
             invoice_number: 'INV-2025-10-001',
             date: '2025-10-01',
             due_date: '2025-10-15',
-            amount: 156.50,
+            amount: 156.5,
             status: 'paid',
             pdf_url: '/invoices/inv_1.pdf',
             line_items: [
-              { description: 'Professional Plan - Monthly', quantity: 1, unit_price: 99.00, amount: 99.00 },
-              { description: 'API Calls (overage)', quantity: 15000, unit_price: 0.002, amount: 30.00 },
-              { description: 'Token Usage (overage)', quantity: 2750000, unit_price: 0.00001, amount: 27.50 },
+              {
+                description: 'Professional Plan - Monthly',
+                quantity: 1,
+                unit_price: 99.0,
+                amount: 99.0,
+              },
+              {
+                description: 'API Calls (overage)',
+                quantity: 15000,
+                unit_price: 0.002,
+                amount: 30.0,
+              },
+              {
+                description: 'Token Usage (overage)',
+                quantity: 2750000,
+                unit_price: 0.00001,
+                amount: 27.5,
+              },
             ],
           },
           {
@@ -196,11 +213,16 @@ export default function BillingPage() {
             invoice_number: 'INV-2025-09-001',
             date: '2025-09-01',
             due_date: '2025-09-15',
-            amount: 99.00,
+            amount: 99.0,
             status: 'paid',
             pdf_url: '/invoices/inv_2.pdf',
             line_items: [
-              { description: 'Professional Plan - Monthly', quantity: 1, unit_price: 99.00, amount: 99.00 },
+              {
+                description: 'Professional Plan - Monthly',
+                quantity: 1,
+                unit_price: 99.0,
+                amount: 99.0,
+              },
             ],
           },
           {
@@ -212,9 +234,24 @@ export default function BillingPage() {
             status: 'paid',
             pdf_url: '/invoices/inv_3.pdf',
             line_items: [
-              { description: 'Professional Plan - Monthly', quantity: 1, unit_price: 99.00, amount: 99.00 },
-              { description: 'API Calls (overage)', quantity: 10000, unit_price: 0.002, amount: 20.00 },
-              { description: 'Token Usage (overage)', quantity: 1525000, unit_price: 0.00001, amount: 15.25 },
+              {
+                description: 'Professional Plan - Monthly',
+                quantity: 1,
+                unit_price: 99.0,
+                amount: 99.0,
+              },
+              {
+                description: 'API Calls (overage)',
+                quantity: 10000,
+                unit_price: 0.002,
+                amount: 20.0,
+              },
+              {
+                description: 'Token Usage (overage)',
+                quantity: 1525000,
+                unit_price: 0.00001,
+                amount: 15.25,
+              },
             ],
           },
         ],
@@ -225,7 +262,7 @@ export default function BillingPage() {
             quantity: 45250,
             unit: 'calls',
             unit_price: 0.002,
-            total_cost: 0.00, // Within quota
+            total_cost: 0.0, // Within quota
           },
           {
             resource_type: 'tokens',
@@ -233,14 +270,14 @@ export default function BillingPage() {
             quantity: 8543210,
             unit: 'tokens',
             unit_price: 0.00001,
-            total_cost: 0.00, // Within quota
+            total_cost: 0.0, // Within quota
           },
           {
             resource_type: 'storage',
             description: 'Data Storage',
             quantity: 15.7,
             unit: 'GB',
-            unit_price: 0.10,
+            unit_price: 0.1,
             total_cost: 1.57,
           },
         ],
@@ -248,7 +285,7 @@ export default function BillingPage() {
         billing_email: 'billing@acme-college.com',
         next_billing_date: '2025-10-31',
       };
-      
+
       setBillingData(mockData);
     } catch (error) {
       console.error('Failed to load billing data:', error);
@@ -283,9 +320,11 @@ export default function BillingPage() {
       overdue: 'bg-red-100 text-red-800',
       draft: 'bg-gray-100 text-gray-800',
     };
-    
+
     return (
-      <span className={`px-3 py-1 text-xs font-medium rounded-full ${styles[status as keyof typeof styles]}`}>
+      <span
+        className={`px-3 py-1 text-xs font-medium rounded-full ${styles[status as keyof typeof styles]}`}
+      >
         {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
       </span>
     );
@@ -294,11 +333,11 @@ export default function BillingPage() {
   const downloadReceipt = async (invoiceId?: string) => {
     try {
       setDownloadingReceipt(invoiceId || 'current');
-      
+
       // Determine which invoice/receipt to download
       let invoice: Invoice | null = null;
       let filename: string;
-      
+
       if (invoiceId) {
         // Download specific invoice
         invoice = billingData?.invoices.find(inv => inv.id === invoiceId) || null;
@@ -320,16 +359,16 @@ export default function BillingPage() {
       // });
       // const blob = await response.blob();
       // const url = window.URL.createObjectURL(blob);
-      
+
       // For now, generate a mock PDF-like receipt
       const receiptContent = generateReceiptHTML(invoice);
-      
+
       // Create a printable receipt
       const printWindow = window.open('', '_blank');
       if (printWindow) {
         printWindow.document.write(receiptContent);
         printWindow.document.close();
-        
+
         // Trigger print dialog after a short delay
         setTimeout(() => {
           printWindow.print();
@@ -356,7 +395,7 @@ export default function BillingPage() {
 
   const generateReceiptHTML = (invoice: Invoice): string => {
     if (!billingData) return '';
-    
+
     const org = billingData;
     const subtotal = invoice.line_items.reduce((sum, item) => sum + item.amount, 0);
     const tax = subtotal * 0.0; // No tax for now
@@ -554,14 +593,18 @@ export default function BillingPage() {
       </tr>
     </thead>
     <tbody>
-      ${invoice.line_items.map(item => `
+      ${invoice.line_items
+        .map(
+          item => `
         <tr>
           <td>${item.description}</td>
           <td class="right">${item.quantity.toLocaleString()}</td>
           <td class="right">${formatCurrency(item.unit_price)}</td>
           <td class="right">${formatCurrency(item.amount)}</td>
         </tr>
-      `).join('')}
+      `
+        )
+        .join('')}
     </tbody>
   </table>
 
@@ -571,12 +614,16 @@ export default function BillingPage() {
         <td>Subtotal:</td>
         <td class="right">${formatCurrency(subtotal)}</td>
       </tr>
-      ${tax > 0 ? `
+      ${
+        tax > 0
+          ? `
       <tr>
         <td>Tax (0%):</td>
         <td class="right">${formatCurrency(tax)}</td>
       </tr>
-      ` : ''}
+      `
+          : ''
+      }
       <tr class="total-row">
         <td>Total:</td>
         <td class="right">${formatCurrency(total)}</td>
@@ -613,7 +660,7 @@ export default function BillingPage() {
 
       // In production, call API:
       // await api.emailInvoice(tenantSlug, invoiceId);
-      
+
       alert(`Invoice ${invoice.invoice_number} will be sent to ${billingData?.billing_email}`);
     } catch (error) {
       console.error('Failed to email invoice:', error);
@@ -711,7 +758,7 @@ export default function BillingPage() {
 
       // In production, call API:
       // await api.updateSubscription(tenantSlug, { plan_id: planId, interval });
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
 
@@ -730,7 +777,9 @@ export default function BillingPage() {
       }
 
       setShowChangePlan(false);
-      alert(`Successfully changed to ${selectedPlan.name} Plan (${interval === 'month' ? 'Monthly' : 'Annual'})`);
+      alert(
+        `Successfully changed to ${selectedPlan.name} Plan (${interval === 'month' ? 'Monthly' : 'Annual'})`
+      );
     } catch (error) {
       console.error('Failed to change plan:', error);
       alert('Failed to change plan. Please try again.');
@@ -860,7 +909,8 @@ export default function BillingPage() {
       const last4 = cardNumber.slice(-4);
       const brand = getCardBrand(cardNumber);
       const currentYear = new Date().getFullYear();
-      const expYear = parseInt(cardDetails.expYear) + (parseInt(cardDetails.expYear) < 50 ? 2000 : 1900);
+      const expYear =
+        parseInt(cardDetails.expYear) + (parseInt(cardDetails.expYear) < 50 ? 2000 : 1900);
 
       const newPaymentMethod: PaymentMethod = {
         id: `pm_${Date.now()}`,
@@ -902,7 +952,7 @@ export default function BillingPage() {
   const setDefaultPaymentMethod = async (paymentMethodId: string) => {
     try {
       // In production: await api.setDefaultPaymentMethod(tenantSlug, paymentMethodId);
-      
+
       if (billingData) {
         setBillingData({
           ...billingData,
@@ -912,7 +962,7 @@ export default function BillingPage() {
           })),
         });
       }
-      
+
       alert('Default payment method updated');
     } catch (error) {
       console.error('Failed to set default payment method:', error);
@@ -924,7 +974,9 @@ export default function BillingPage() {
     try {
       const pm = billingData?.payment_methods.find(p => p.id === paymentMethodId);
       if (pm?.is_default) {
-        alert('Cannot remove the default payment method. Please set another payment method as default first.');
+        alert(
+          'Cannot remove the default payment method. Please set another payment method as default first.'
+        );
         return;
       }
 
@@ -933,14 +985,14 @@ export default function BillingPage() {
       }
 
       // In production: await api.removePaymentMethod(tenantSlug, paymentMethodId);
-      
+
       if (billingData) {
         setBillingData({
           ...billingData,
           payment_methods: billingData.payment_methods.filter(pm => pm.id !== paymentMethodId),
         });
       }
-      
+
       alert('Payment method removed');
     } catch (error) {
       console.error('Failed to remove payment method:', error);
@@ -1009,33 +1061,39 @@ export default function BillingPage() {
             </div>
             {getStatusBadge(billingData.subscription.status)}
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <p className="text-blue-100 text-sm">Current Amount</p>
               <p className="text-3xl font-bold mt-1">
                 {formatCurrency(billingData.subscription.amount)}
-                <span className="text-lg font-normal text-blue-100">/{billingData.subscription.interval}</span>
+                <span className="text-lg font-normal text-blue-100">
+                  /{billingData.subscription.interval}
+                </span>
               </p>
             </div>
             <div>
               <p className="text-blue-100 text-sm">Estimated This Month</p>
-              <p className="text-3xl font-bold mt-1">{formatCurrency(billingData.estimated_monthly_cost)}</p>
+              <p className="text-3xl font-bold mt-1">
+                {formatCurrency(billingData.estimated_monthly_cost)}
+              </p>
             </div>
             <div>
               <p className="text-blue-100 text-sm">Next Billing Date</p>
-              <p className="text-xl font-semibold mt-1">{formatDate(billingData.next_billing_date)}</p>
+              <p className="text-xl font-semibold mt-1">
+                {formatDate(billingData.next_billing_date)}
+              </p>
             </div>
           </div>
 
           <div className="mt-6 flex gap-3">
-            <button 
+            <button
               onClick={() => setShowChangePlan(true)}
               className="px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium"
             >
               Change Plan
             </button>
-            <button 
+            <button
               onClick={() => downloadReceipt()}
               disabled={downloadingReceipt === 'current'}
               className="px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -1103,7 +1161,9 @@ export default function BillingPage() {
                   <div className="bg-gray-50 rounded-lg p-4 space-y-3">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Plan</span>
-                      <span className="font-medium text-gray-900">{billingData.subscription.plan_name}</span>
+                      <span className="font-medium text-gray-900">
+                        {billingData.subscription.plan_name}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Status</span>
@@ -1112,13 +1172,16 @@ export default function BillingPage() {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Billing Cycle</span>
                       <span className="font-medium text-gray-900">
-                        {formatDate(billingData.subscription.current_period_start)} - {formatDate(billingData.subscription.current_period_end)}
+                        {formatDate(billingData.subscription.current_period_start)} -{' '}
+                        {formatDate(billingData.subscription.current_period_end)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Renewal</span>
                       <span className="font-medium text-gray-900">
-                        {billingData.subscription.cancel_at_period_end ? 'Cancels at period end' : 'Auto-renew enabled'}
+                        {billingData.subscription.cancel_at_period_end
+                          ? 'Cancels at period end'
+                          : 'Auto-renew enabled'}
                       </span>
                     </div>
                   </div>
@@ -1128,13 +1191,19 @@ export default function BillingPage() {
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900">Recent Invoices</h3>
-                    <button onClick={() => setActiveTab('invoices')} className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                    <button
+                      onClick={() => setActiveTab('invoices')}
+                      className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                    >
                       View All
                     </button>
                   </div>
                   <div className="space-y-3">
-                    {billingData.invoices.slice(0, 3).map((invoice) => (
-                      <div key={invoice.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    {billingData.invoices.slice(0, 3).map(invoice => (
+                      <div
+                        key={invoice.id}
+                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      >
                         <div className="flex items-center gap-4">
                           <div>
                             <p className="font-medium text-gray-900">{invoice.invoice_number}</p>
@@ -1143,8 +1212,10 @@ export default function BillingPage() {
                         </div>
                         <div className="flex items-center gap-4">
                           {getStatusBadge(invoice.status)}
-                          <span className="font-semibold text-gray-900">{formatCurrency(invoice.amount)}</span>
-                          <button 
+                          <span className="font-semibold text-gray-900">
+                            {formatCurrency(invoice.amount)}
+                          </span>
+                          <button
                             onClick={() => downloadReceipt(invoice.id)}
                             disabled={downloadingReceipt === invoice.id}
                             className="text-blue-600 hover:text-blue-700 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
@@ -1161,30 +1232,38 @@ export default function BillingPage() {
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900">Default Payment Method</h3>
-                    <button onClick={() => setActiveTab('payment')} className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                    <button
+                      onClick={() => setActiveTab('payment')}
+                      className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                    >
                       Manage
                     </button>
                   </div>
-                  {billingData.payment_methods.filter(pm => pm.is_default).map((pm) => (
-                    <div key={pm.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-8 bg-gray-300 rounded flex items-center justify-center text-xs font-bold text-gray-700">
-                          {pm.brand?.toUpperCase()}
+                  {billingData.payment_methods
+                    .filter(pm => pm.is_default)
+                    .map(pm => (
+                      <div
+                        key={pm.id}
+                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-8 bg-gray-300 rounded flex items-center justify-center text-xs font-bold text-gray-700">
+                            {pm.brand?.toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {pm.brand} •••• {pm.last4}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Expires {pm.exp_month}/{pm.exp_year}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {pm.brand} •••• {pm.last4}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Expires {pm.exp_month}/{pm.exp_year}
-                          </p>
-                        </div>
+                        <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                          Default
+                        </span>
                       </div>
-                      <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                        Default
-                      </span>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
             )}
@@ -1198,20 +1277,27 @@ export default function BillingPage() {
                     Export All
                   </button>
                 </div>
-                
+
                 <div className="space-y-4">
-                  {billingData.invoices.map((invoice) => (
-                    <div key={invoice.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                  {billingData.invoices.map(invoice => (
+                    <div
+                      key={invoice.id}
+                      className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+                    >
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h4 className="text-lg font-semibold text-gray-900">{invoice.invoice_number}</h4>
+                          <h4 className="text-lg font-semibold text-gray-900">
+                            {invoice.invoice_number}
+                          </h4>
                           <p className="text-sm text-gray-600 mt-1">
                             Issued: {formatDate(invoice.date)} • Due: {formatDate(invoice.due_date)}
                           </p>
                         </div>
                         <div className="text-right">
                           {getStatusBadge(invoice.status)}
-                          <p className="text-2xl font-bold text-gray-900 mt-2">{formatCurrency(invoice.amount)}</p>
+                          <p className="text-2xl font-bold text-gray-900 mt-2">
+                            {formatCurrency(invoice.amount)}
+                          </p>
                         </div>
                       </div>
 
@@ -1230,9 +1316,15 @@ export default function BillingPage() {
                             {invoice.line_items.map((item, idx) => (
                               <tr key={idx} className="border-t border-gray-100">
                                 <td className="py-2">{item.description}</td>
-                                <td className="py-2 text-right">{item.quantity.toLocaleString()}</td>
-                                <td className="py-2 text-right">{formatCurrency(item.unit_price)}</td>
-                                <td className="py-2 text-right font-medium">{formatCurrency(item.amount)}</td>
+                                <td className="py-2 text-right">
+                                  {item.quantity.toLocaleString()}
+                                </td>
+                                <td className="py-2 text-right">
+                                  {formatCurrency(item.unit_price)}
+                                </td>
+                                <td className="py-2 text-right font-medium">
+                                  {formatCurrency(item.amount)}
+                                </td>
                               </tr>
                             ))}
                           </tbody>
@@ -1240,14 +1332,14 @@ export default function BillingPage() {
                       </div>
 
                       <div className="mt-4 flex gap-3">
-                        <button 
+                        <button
                           onClick={() => downloadReceipt(invoice.id)}
                           disabled={downloadingReceipt === invoice.id}
                           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {downloadingReceipt === invoice.id ? 'Downloading...' : 'Download PDF'}
                         </button>
-                        <button 
+                        <button
                           onClick={() => emailInvoice(invoice.id)}
                           className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
                         >
@@ -1265,7 +1357,7 @@ export default function BillingPage() {
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-semibold text-gray-900">Payment Methods</h3>
-                  <button 
+                  <button
                     onClick={() => setShowAddPayment(true)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
@@ -1274,10 +1366,13 @@ export default function BillingPage() {
                 </div>
 
                 <div className="space-y-4">
-                  {billingData.payment_methods.map((pm) => (
-                    <div key={pm.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-                      <div 
-                        className="flex items-center gap-4 flex-1 cursor-pointer" 
+                  {billingData.payment_methods.map(pm => (
+                    <div
+                      key={pm.id}
+                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                    >
+                      <div
+                        className="flex items-center gap-4 flex-1 cursor-pointer"
                         onClick={() => setSelectedPaymentMethod(pm)}
                       >
                         <div className="w-16 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded flex items-center justify-center text-xs font-bold text-white">
@@ -1285,18 +1380,27 @@ export default function BillingPage() {
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">
-                            {pm.type === 'card' 
-                              ? `${pm.brand} •••• ${pm.last4}` 
-                              : `${pm.bank_name} •••• ${pm.last4}`
-                            }
+                            {pm.type === 'card'
+                              ? `${pm.brand} •••• ${pm.last4}`
+                              : `${pm.bank_name} •••• ${pm.last4}`}
                           </p>
                           <p className="text-sm text-gray-600">
                             {pm.type === 'card' && `Expires ${pm.exp_month}/${pm.exp_year}`}
                             {pm.type === 'bank_account' && 'Bank Account'}
                           </p>
                         </div>
-                        <svg className="w-5 h-5 text-gray-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <svg
+                          className="w-5 h-5 text-gray-400 ml-auto"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
                         </svg>
                       </div>
                       <div className="flex items-center gap-3 ml-4">
@@ -1305,8 +1409,8 @@ export default function BillingPage() {
                             Default
                           </span>
                         ) : (
-                          <button 
-                            onClick={(e) => {
+                          <button
+                            onClick={e => {
                               e.stopPropagation();
                               setDefaultPaymentMethod(pm.id);
                             }}
@@ -1315,8 +1419,8 @@ export default function BillingPage() {
                             Set as Default
                           </button>
                         )}
-                        <button 
-                          onClick={(e) => {
+                        <button
+                          onClick={e => {
                             e.stopPropagation();
                             removePaymentMethod(pm.id);
                           }}
@@ -1335,30 +1439,48 @@ export default function BillingPage() {
                     <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
                       <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
                         <h3 className="text-xl font-bold text-gray-900">Add Payment Method</h3>
-                        <button 
+                        <button
                           onClick={() => setShowAddPayment(false)}
                           className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
                         >
                           ×
                         </button>
                       </div>
-                      
+
                       <div className="p-6">
                         {/* Stripe Security Badge */}
                         <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
                           <div className="flex items-center gap-3">
-                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            <svg
+                              className="w-5 h-5 text-blue-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                              />
                             </svg>
                             <div>
                               <p className="text-sm font-medium text-blue-900">Secure Payment</p>
-                              <p className="text-xs text-blue-700">Powered by Stripe. Your payment information is encrypted and secure.</p>
+                              <p className="text-xs text-blue-700">
+                                Powered by Stripe. Your payment information is encrypted and secure.
+                              </p>
                             </div>
                           </div>
                         </div>
 
                         {/* Card Form */}
-                        <form onSubmit={(e) => { e.preventDefault(); addPaymentMethod(); }} className="space-y-4">
+                        <form
+                          onSubmit={e => {
+                            e.preventDefault();
+                            addPaymentMethod();
+                          }}
+                          className="space-y-4"
+                        >
                           {/* Cardholder Name */}
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1367,7 +1489,7 @@ export default function BillingPage() {
                             <input
                               type="text"
                               value={cardDetails.cardName}
-                              onChange={(e) => handleCardInputChange('cardName', e.target.value)}
+                              onChange={e => handleCardInputChange('cardName', e.target.value)}
                               placeholder="John Doe"
                               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               required
@@ -1383,7 +1505,7 @@ export default function BillingPage() {
                               <input
                                 type="text"
                                 value={cardDetails.cardNumber}
-                                onChange={(e) => handleCardInputChange('cardNumber', e.target.value)}
+                                onChange={e => handleCardInputChange('cardNumber', e.target.value)}
                                 placeholder="1234 5678 9012 3456"
                                 maxLength={19}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1397,7 +1519,9 @@ export default function BillingPage() {
                                 </div>
                               )}
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">Enter your 16-digit card number</p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Enter your 16-digit card number
+                            </p>
                           </div>
 
                           {/* Expiration and CVC */}
@@ -1409,7 +1533,7 @@ export default function BillingPage() {
                               <input
                                 type="text"
                                 value={cardDetails.expMonth}
-                                onChange={(e) => handleCardInputChange('expMonth', e.target.value)}
+                                onChange={e => handleCardInputChange('expMonth', e.target.value)}
                                 placeholder="MM"
                                 maxLength={2}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1423,7 +1547,7 @@ export default function BillingPage() {
                               <input
                                 type="text"
                                 value={cardDetails.expYear}
-                                onChange={(e) => handleCardInputChange('expYear', e.target.value)}
+                                onChange={e => handleCardInputChange('expYear', e.target.value)}
                                 placeholder="YY"
                                 maxLength={2}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1437,7 +1561,7 @@ export default function BillingPage() {
                               <input
                                 type="text"
                                 value={cardDetails.cvc}
-                                onChange={(e) => handleCardInputChange('cvc', e.target.value)}
+                                onChange={e => handleCardInputChange('cvc', e.target.value)}
                                 placeholder="123"
                                 maxLength={4}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1454,7 +1578,7 @@ export default function BillingPage() {
                             <input
                               type="text"
                               value={cardDetails.zipCode}
-                              onChange={(e) => handleCardInputChange('zipCode', e.target.value)}
+                              onChange={e => handleCardInputChange('zipCode', e.target.value)}
                               placeholder="12345"
                               maxLength={5}
                               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1467,7 +1591,9 @@ export default function BillingPage() {
                             <div className="mt-6 p-4 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl text-white">
                               <div className="flex justify-between items-start mb-8">
                                 <div className="w-12 h-8 bg-yellow-400 rounded"></div>
-                                <span className="text-xs font-semibold">{getCardBrand(cardDetails.cardNumber)}</span>
+                                <span className="text-xs font-semibold">
+                                  {getCardBrand(cardDetails.cardNumber)}
+                                </span>
                               </div>
                               <div className="text-lg tracking-wider mb-4 font-mono">
                                 {cardDetails.cardNumber || '•••• •••• •••• ••••'}
@@ -1492,13 +1618,15 @@ export default function BillingPage() {
                           {/* Terms */}
                           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                             <p className="text-xs text-gray-600">
-                              By adding this payment method, you authorize NextCore AI Cloud to charge this card for current and future payments in accordance with our terms of service.
+                              By adding this payment method, you authorize NextCore AI Cloud to
+                              charge this card for current and future payments in accordance with
+                              our terms of service.
                             </p>
                           </div>
 
                           {/* Buttons */}
                           <div className="flex gap-3 pt-4">
-                            <button 
+                            <button
                               type="button"
                               onClick={() => setShowAddPayment(false)}
                               className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
@@ -1506,7 +1634,7 @@ export default function BillingPage() {
                             >
                               Cancel
                             </button>
-                            <button 
+                            <button
                               type="submit"
                               className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                               disabled={addingPayment}
@@ -1514,8 +1642,20 @@ export default function BillingPage() {
                               {addingPayment ? (
                                 <span className="flex items-center justify-center gap-2">
                                   <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                    <circle
+                                      className="opacity-25"
+                                      cx="12"
+                                      cy="12"
+                                      r="10"
+                                      stroke="currentColor"
+                                      strokeWidth="4"
+                                      fill="none"
+                                    />
+                                    <path
+                                      className="opacity-75"
+                                      fill="currentColor"
+                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    />
                                   </svg>
                                   Processing...
                                 </span>
@@ -1529,7 +1669,13 @@ export default function BillingPage() {
                         {/* Help Text */}
                         <div className="mt-6 text-center">
                           <p className="text-xs text-gray-500">
-                            Need help? Contact <a href="mailto:billing@nextcore.ai" className="text-blue-600 hover:underline">billing@nextcore.ai</a>
+                            Need help? Contact{' '}
+                            <a
+                              href="mailto:billing@nextcore.ai"
+                              className="text-blue-600 hover:underline"
+                            >
+                              billing@nextcore.ai
+                            </a>
                           </p>
                         </div>
                       </div>
@@ -1543,9 +1689,12 @@ export default function BillingPage() {
             {activeTab === 'usage' && (
               <div>
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Current Billing Period</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Current Billing Period
+                  </h3>
                   <p className="text-gray-600">
-                    {formatDate(billingData.subscription.current_period_start)} - {formatDate(billingData.subscription.current_period_end)}
+                    {formatDate(billingData.subscription.current_period_start)} -{' '}
+                    {formatDate(billingData.subscription.current_period_end)}
                   </p>
                 </div>
 
@@ -1553,14 +1702,18 @@ export default function BillingPage() {
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-blue-700 font-medium">Estimated Total This Period</p>
+                      <p className="text-sm text-blue-700 font-medium">
+                        Estimated Total This Period
+                      </p>
                       <p className="text-3xl font-bold text-blue-900 mt-1">
                         {formatCurrency(billingData.estimated_monthly_cost)}
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-blue-700">Base Subscription</p>
-                      <p className="text-xl font-semibold text-blue-900">{formatCurrency(billingData.subscription.amount)}</p>
+                      <p className="text-xl font-semibold text-blue-900">
+                        {formatCurrency(billingData.subscription.amount)}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1578,7 +1731,8 @@ export default function BillingPage() {
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-600">
                         <span>
-                          {usage.quantity.toLocaleString()} {usage.unit} × {formatCurrency(usage.unit_price)}/{usage.unit}
+                          {usage.quantity.toLocaleString()} {usage.unit} ×{' '}
+                          {formatCurrency(usage.unit_price)}/{usage.unit}
                         </span>
                         {usage.total_cost === 0 && (
                           <span className="text-green-600 font-medium">Within quota</span>
@@ -1597,20 +1751,28 @@ export default function BillingPage() {
                         <div className="w-4 h-4 bg-blue-600 rounded"></div>
                         <span className="text-gray-700">Base Subscription</span>
                       </div>
-                      <span className="font-medium text-gray-900">{formatCurrency(billingData.subscription.amount)}</span>
+                      <span className="font-medium text-gray-900">
+                        {formatCurrency(billingData.subscription.amount)}
+                      </span>
                     </div>
-                    {billingData.current_usage.filter(u => u.total_cost > 0).map((usage, idx) => (
-                      <div key={idx} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-4 h-4 bg-green-500 rounded"></div>
-                          <span className="text-gray-700">{usage.description}</span>
+                    {billingData.current_usage
+                      .filter(u => u.total_cost > 0)
+                      .map((usage, idx) => (
+                        <div key={idx} className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-4 h-4 bg-green-500 rounded"></div>
+                            <span className="text-gray-700">{usage.description}</span>
+                          </div>
+                          <span className="font-medium text-gray-900">
+                            {formatCurrency(usage.total_cost)}
+                          </span>
                         </div>
-                        <span className="font-medium text-gray-900">{formatCurrency(usage.total_cost)}</span>
-                      </div>
-                    ))}
+                      ))}
                     <div className="border-t border-gray-200 pt-3 flex items-center justify-between">
                       <span className="font-semibold text-gray-900">Total Estimated</span>
-                      <span className="text-xl font-bold text-gray-900">{formatCurrency(billingData.estimated_monthly_cost)}</span>
+                      <span className="text-xl font-bold text-gray-900">
+                        {formatCurrency(billingData.estimated_monthly_cost)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -1618,13 +1780,29 @@ export default function BillingPage() {
                 {/* Usage Alerts */}
                 <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                   <div className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-yellow-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    <svg
+                      className="w-5 h-5 text-yellow-600 mt-0.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
                     </svg>
                     <div>
                       <h5 className="font-medium text-yellow-900">Usage Alert</h5>
                       <p className="text-sm text-yellow-700 mt-1">
-                        You've used 90% of your included API calls. Additional usage will be billed at ${billingData.current_usage.find(u => u.resource_type === 'api_calls')?.unit_price}/call.
+                        You've used 90% of your included API calls. Additional usage will be billed
+                        at $
+                        {
+                          billingData.current_usage.find(u => u.resource_type === 'api_calls')
+                            ?.unit_price
+                        }
+                        /call.
                       </p>
                     </div>
                   </div>
@@ -1641,7 +1819,9 @@ export default function BillingPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-gray-900">Email Invoices</p>
-                <p className="text-sm text-gray-600">Receive invoices via email at {billingData.billing_email}</p>
+                <p className="text-sm text-gray-600">
+                  Receive invoices via email at {billingData.billing_email}
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" className="sr-only peer" defaultChecked />
@@ -1661,7 +1841,9 @@ export default function BillingPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-gray-900">Auto-pay</p>
-                <p className="text-sm text-gray-600">Automatically charge payment method on due date</p>
+                <p className="text-sm text-gray-600">
+                  Automatically charge payment method on due date
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" className="sr-only peer" defaultChecked />
@@ -1680,7 +1862,7 @@ export default function BillingPage() {
                   <h2 className="text-2xl font-bold text-gray-900">Change Your Plan</h2>
                   <p className="text-gray-600 mt-1">Choose the plan that best fits your needs</p>
                 </div>
-                <button 
+                <button
                   onClick={() => setShowChangePlan(false)}
                   className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
                 >
@@ -1720,9 +1902,10 @@ export default function BillingPage() {
 
                 {/* Plans Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                  {availablePlans.map((plan) => {
+                  {availablePlans.map(plan => {
                     const isCurrentPlan = plan.tier === billingData?.subscription.plan_tier;
-                    const price = selectedInterval === 'month' ? plan.monthly_price : plan.annual_price;
+                    const price =
+                      selectedInterval === 'month' ? plan.monthly_price : plan.annual_price;
                     const displayPrice = selectedInterval === 'month' ? price : price / 12;
 
                     return (
@@ -1732,8 +1915,8 @@ export default function BillingPage() {
                           isCurrentPlan
                             ? 'border-blue-600 bg-blue-50'
                             : plan.popular
-                            ? 'border-blue-300 shadow-lg'
-                            : 'border-gray-200'
+                              ? 'border-blue-300 shadow-lg'
+                              : 'border-gray-200'
                         }`}
                       >
                         {plan.popular && !isCurrentPlan && (
@@ -1777,8 +1960,18 @@ export default function BillingPage() {
                           </div>
                           {plan.features.map((feature, idx) => (
                             <div key={idx} className="flex items-start gap-2">
-                              <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              <svg
+                                className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
+                                />
                               </svg>
                               <span className="text-sm text-gray-700">{feature}</span>
                             </div>
@@ -1792,15 +1985,15 @@ export default function BillingPage() {
                             isCurrentPlan
                               ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                               : plan.popular
-                              ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800'
-                              : 'bg-blue-600 text-white hover:bg-blue-700'
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800'
+                                : 'bg-blue-600 text-white hover:bg-blue-700'
                           } disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
                           {changingPlan
                             ? 'Processing...'
                             : isCurrentPlan
-                            ? 'Current Plan'
-                            : `Switch to ${plan.name}`}
+                              ? 'Current Plan'
+                              : `Switch to ${plan.name}`}
                         </button>
                       </div>
                     );
@@ -1810,8 +2003,18 @@ export default function BillingPage() {
                 {/* Plan Comparison Note */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      className="w-5 h-5 text-blue-600 mt-0.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                     <div>
                       <h5 className="font-medium text-blue-900">Plan Change Information</h5>
@@ -1834,7 +2037,8 @@ export default function BillingPage() {
                     <div>
                       <h4 className="text-lg font-semibold text-gray-900">Need a Custom Plan?</h4>
                       <p className="text-gray-600 mt-1">
-                        Contact our sales team for custom pricing, volume discounts, or specialized requirements.
+                        Contact our sales team for custom pricing, volume discounts, or specialized
+                        requirements.
                       </p>
                     </div>
                     <button className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors whitespace-nowrap">
@@ -1846,7 +2050,10 @@ export default function BillingPage() {
 
               <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-between">
                 <div className="text-sm text-gray-600">
-                  Questions? Contact <a href="mailto:billing@nextcore.ai" className="text-blue-600 hover:underline">billing@nextcore.ai</a>
+                  Questions? Contact{' '}
+                  <a href="mailto:billing@nextcore.ai" className="text-blue-600 hover:underline">
+                    billing@nextcore.ai
+                  </a>
                 </div>
                 <button
                   onClick={() => setShowChangePlan(false)}
@@ -1865,7 +2072,7 @@ export default function BillingPage() {
             <div className="bg-white rounded-lg max-w-2xl w-full">
               <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
                 <h3 className="text-xl font-bold text-gray-900">Payment Method Details</h3>
-                <button 
+                <button
                   onClick={() => setSelectedPaymentMethod(null)}
                   className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
                 >
@@ -1890,10 +2097,14 @@ export default function BillingPage() {
                         <div className="flex justify-between items-start mb-12">
                           <div className="w-14 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg"></div>
                           <div className="text-right">
-                            <span className="text-lg font-bold">{selectedPaymentMethod.brand?.toUpperCase()}</span>
+                            <span className="text-lg font-bold">
+                              {selectedPaymentMethod.brand?.toUpperCase()}
+                            </span>
                             {selectedPaymentMethod.is_default && (
                               <div className="mt-1">
-                                <span className="text-xs bg-blue-500 px-2 py-1 rounded-full">Default</span>
+                                <span className="text-xs bg-blue-500 px-2 py-1 rounded-full">
+                                  Default
+                                </span>
                               </div>
                             )}
                           </div>
@@ -1911,13 +2122,15 @@ export default function BillingPage() {
                           <div>
                             <p className="text-xs opacity-75 mb-1">CARDHOLDER</p>
                             <p className="text-sm font-semibold">
-                              {billingData?.billing_email.split('@')[0].toUpperCase() || 'ACCOUNT HOLDER'}
+                              {billingData?.billing_email.split('@')[0].toUpperCase() ||
+                                'ACCOUNT HOLDER'}
                             </p>
                           </div>
                           <div className="text-right">
                             <p className="text-xs opacity-75 mb-1">EXPIRES</p>
                             <p className="text-sm font-semibold">
-                              {String(selectedPaymentMethod.exp_month).padStart(2, '0')}/{selectedPaymentMethod.exp_year}
+                              {String(selectedPaymentMethod.exp_month).padStart(2, '0')}/
+                              {selectedPaymentMethod.exp_year}
                             </p>
                           </div>
                         </div>
@@ -1928,10 +2141,16 @@ export default function BillingPage() {
                       <div className="flex items-center justify-between mb-8">
                         <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                          <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
+                          <path
+                            fillRule="evenodd"
+                            d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                         {selectedPaymentMethod.is_default && (
-                          <span className="text-xs bg-blue-500 px-2 py-1 rounded-full">Default</span>
+                          <span className="text-xs bg-blue-500 px-2 py-1 rounded-full">
+                            Default
+                          </span>
                         )}
                       </div>
                       <div className="space-y-4">
@@ -1941,7 +2160,9 @@ export default function BillingPage() {
                         </div>
                         <div>
                           <p className="text-xs opacity-75">ACCOUNT NUMBER</p>
-                          <p className="text-xl font-mono">•••• •••• •••• {selectedPaymentMethod.last4}</p>
+                          <p className="text-xl font-mono">
+                            •••• •••• •••• {selectedPaymentMethod.last4}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -1956,23 +2177,30 @@ export default function BillingPage() {
                       <div>
                         <p className="text-sm text-gray-600">Type</p>
                         <p className="font-medium text-gray-900">
-                          {selectedPaymentMethod.type === 'card' ? 'Credit/Debit Card' : 'Bank Account'}
+                          {selectedPaymentMethod.type === 'card'
+                            ? 'Credit/Debit Card'
+                            : 'Bank Account'}
                         </p>
                       </div>
                       {selectedPaymentMethod.type === 'card' && (
                         <>
                           <div>
                             <p className="text-sm text-gray-600">Brand</p>
-                            <p className="font-medium text-gray-900">{selectedPaymentMethod.brand}</p>
+                            <p className="font-medium text-gray-900">
+                              {selectedPaymentMethod.brand}
+                            </p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-600">Last 4 Digits</p>
-                            <p className="font-medium text-gray-900">•••• {selectedPaymentMethod.last4}</p>
+                            <p className="font-medium text-gray-900">
+                              •••• {selectedPaymentMethod.last4}
+                            </p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-600">Expiration Date</p>
                             <p className="font-medium text-gray-900">
-                              {String(selectedPaymentMethod.exp_month).padStart(2, '0')}/{selectedPaymentMethod.exp_year}
+                              {String(selectedPaymentMethod.exp_month).padStart(2, '0')}/
+                              {selectedPaymentMethod.exp_year}
                             </p>
                           </div>
                         </>
@@ -1981,11 +2209,15 @@ export default function BillingPage() {
                         <>
                           <div>
                             <p className="text-sm text-gray-600">Bank Name</p>
-                            <p className="font-medium text-gray-900">{selectedPaymentMethod.bank_name}</p>
+                            <p className="font-medium text-gray-900">
+                              {selectedPaymentMethod.bank_name}
+                            </p>
                           </div>
                           <div>
                             <p className="text-sm text-gray-600">Last 4 Digits</p>
-                            <p className="font-medium text-gray-900">•••• {selectedPaymentMethod.last4}</p>
+                            <p className="font-medium text-gray-900">
+                              •••• {selectedPaymentMethod.last4}
+                            </p>
                           </div>
                         </>
                       )}
@@ -2001,7 +2233,9 @@ export default function BillingPage() {
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Payment Method ID</p>
-                        <p className="font-medium text-gray-900 text-xs truncate">{selectedPaymentMethod.id}</p>
+                        <p className="font-medium text-gray-900 text-xs truncate">
+                          {selectedPaymentMethod.id}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -2009,16 +2243,32 @@ export default function BillingPage() {
                   {/* Usage Information */}
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg
+                        className="w-5 h-5 text-blue-600 mt-0.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
                       <div className="flex-1">
                         <h5 className="font-medium text-blue-900">Payment Method Usage</h5>
                         <p className="text-sm text-blue-700 mt-1">
                           {selectedPaymentMethod.is_default ? (
-                            <>This is your default payment method and will be used for all subscription charges and invoices.</>
+                            <>
+                              This is your default payment method and will be used for all
+                              subscription charges and invoices.
+                            </>
                           ) : (
-                            <>This payment method is available but not set as default. You can set it as default or remove it at any time.</>
+                            <>
+                              This payment method is available but not set as default. You can set
+                              it as default or remove it at any time.
+                            </>
                           )}
                         </p>
                       </div>
@@ -2028,13 +2278,24 @@ export default function BillingPage() {
                   {/* Security Information */}
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      <svg
+                        className="w-5 h-5 text-green-600 mt-0.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                        />
                       </svg>
                       <div className="flex-1">
                         <h5 className="font-medium text-green-900">Secure & Encrypted</h5>
                         <p className="text-sm text-green-700 mt-1">
-                          Your payment information is encrypted and securely stored by Stripe, a PCI-DSS Level 1 certified payment processor.
+                          Your payment information is encrypted and securely stored by Stripe, a
+                          PCI-DSS Level 1 certified payment processor.
                         </p>
                       </div>
                     </div>
@@ -2044,7 +2305,7 @@ export default function BillingPage() {
                 {/* Action Buttons */}
                 <div className="flex gap-3">
                   {!selectedPaymentMethod.is_default && (
-                    <button 
+                    <button
                       onClick={() => {
                         setDefaultPaymentMethod(selectedPaymentMethod.id);
                         setSelectedPaymentMethod(null);
@@ -2054,7 +2315,7 @@ export default function BillingPage() {
                       Set as Default
                     </button>
                   )}
-                  <button 
+                  <button
                     onClick={() => {
                       removePaymentMethod(selectedPaymentMethod.id);
                       setSelectedPaymentMethod(null);
@@ -2063,7 +2324,7 @@ export default function BillingPage() {
                   >
                     Remove Payment Method
                   </button>
-                  <button 
+                  <button
                     onClick={() => setSelectedPaymentMethod(null)}
                     className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                   >

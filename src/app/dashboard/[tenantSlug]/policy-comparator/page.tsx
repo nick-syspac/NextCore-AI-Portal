@@ -282,7 +282,8 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">🔍 Policy Comparator</h1>
             <p className="text-gray-600">
-              Compare policies to ASQA clauses • NLP-based text similarity • Instant compliance gap detection
+              Compare policies to ASQA clauses • NLP-based text similarity • Instant compliance gap
+              detection
             </p>
           </div>
           <button
@@ -325,7 +326,7 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
             { key: 'policies', label: 'Policies', icon: '📋' },
             { key: 'gaps', label: 'Gap Analysis', icon: '🔍' },
             { key: 'results', label: 'Comparison Results', icon: '📊' },
-          ].map((tab) => (
+          ].map(tab => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
@@ -345,16 +346,23 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
       {/* Policies Tab */}
       {activeTab === 'policies' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {policies.map((policy) => (
-            <div key={policy.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+          {policies.map(policy => (
+            <div
+              key={policy.id}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+            >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="text-xl font-bold text-gray-900">{policy.policy_number}</h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      policy.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        policy.status === 'approved'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
                       {policy.status_display}
                     </span>
                   </div>
@@ -368,7 +376,9 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 mb-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-semibold text-gray-700">🎯 Compliance Score</span>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getComplianceColor(policy.compliance_score)}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${getComplianceColor(policy.compliance_score)}`}
+                    >
                       {getComplianceLabel(policy.compliance_score)}
                     </span>
                   </div>
@@ -379,13 +389,15 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
                           policy.compliance_score >= 80
                             ? 'bg-green-500'
                             : policy.compliance_score >= 60
-                            ? 'bg-yellow-500'
-                            : 'bg-red-500'
+                              ? 'bg-yellow-500'
+                              : 'bg-red-500'
                         }`}
                         style={{ width: `${policy.compliance_score}%` }}
                       />
                     </div>
-                    <span className="text-lg font-bold text-gray-900">{policy.compliance_score}%</span>
+                    <span className="text-lg font-bold text-gray-900">
+                      {policy.compliance_score}%
+                    </span>
                   </div>
                 </div>
               )}
@@ -395,7 +407,9 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
                 <div>
                   <div className="text-gray-500">Last Compared</div>
                   <div className="font-medium text-gray-900">
-                    {policy.last_compared_at ? new Date(policy.last_compared_at).toLocaleDateString() : 'Never'}
+                    {policy.last_compared_at
+                      ? new Date(policy.last_compared_at).toLocaleDateString()
+                      : 'Never'}
                   </div>
                 </div>
                 <div>
@@ -435,7 +449,9 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
         <div className="space-y-6">
           {/* Summary */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Gap Analysis Summary - {selectedPolicy.policy_number}</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              Gap Analysis Summary - {selectedPolicy.policy_number}
+            </h3>
             <div className="grid grid-cols-4 gap-4">
               <div className="text-center p-4 bg-red-50 rounded-lg">
                 <div className="text-3xl font-bold text-red-600">2</div>
@@ -458,53 +474,70 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
 
           {/* Gap Details */}
           <div className="space-y-4">
-            {comparisonResults.filter(r => r.requires_action).map((result) => (
-              <div key={result.id} className="bg-white rounded-xl shadow-sm border-l-4 border-red-500 p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h4 className="text-lg font-bold text-gray-900">
-                        Clause {result.asqa_clause_details.clause_number}: {result.asqa_clause_details.title}
-                      </h4>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getMatchColor(result.match_type)}`}>
-                        {result.match_type_display}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600">{result.gap_description}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-gray-900">{(result.similarity_score * 100).toFixed(0)}%</div>
-                    <div className="text-xs text-gray-500">Similarity</div>
-                  </div>
-                </div>
-
-                {/* Missing Keywords */}
-                {result.keywords_missing.length > 0 && (
-                  <div className="mb-4">
-                    <div className="text-sm font-semibold text-gray-700 mb-2">❌ Missing Keywords:</div>
-                    <div className="flex flex-wrap gap-2">
-                      {result.keywords_missing.map((keyword, idx) => (
-                        <span key={idx} className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs">
-                          {keyword}
+            {comparisonResults
+              .filter(r => r.requires_action)
+              .map(result => (
+                <div
+                  key={result.id}
+                  className="bg-white rounded-xl shadow-sm border-l-4 border-red-500 p-6"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="text-lg font-bold text-gray-900">
+                          Clause {result.asqa_clause_details.clause_number}:{' '}
+                          {result.asqa_clause_details.title}
+                        </h4>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${getMatchColor(result.match_type)}`}
+                        >
+                          {result.match_type_display}
                         </span>
-                      ))}
+                      </div>
+                      <p className="text-sm text-gray-600">{result.gap_description}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-gray-900">
+                        {(result.similarity_score * 100).toFixed(0)}%
+                      </div>
+                      <div className="text-xs text-gray-500">Similarity</div>
                     </div>
                   </div>
-                )}
 
-                {/* Recommendations */}
-                {result.recommendations.length > 0 && (
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <div className="text-sm font-semibold text-blue-900 mb-2">💡 Recommendations:</div>
-                    <ul className="space-y-1 text-sm text-blue-800">
-                      {result.recommendations.map((rec, idx) => (
-                        <li key={idx}>• {rec}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            ))}
+                  {/* Missing Keywords */}
+                  {result.keywords_missing.length > 0 && (
+                    <div className="mb-4">
+                      <div className="text-sm font-semibold text-gray-700 mb-2">
+                        ❌ Missing Keywords:
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {result.keywords_missing.map((keyword, idx) => (
+                          <span
+                            key={idx}
+                            className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs"
+                          >
+                            {keyword}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Recommendations */}
+                  {result.recommendations.length > 0 && (
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <div className="text-sm font-semibold text-blue-900 mb-2">
+                        💡 Recommendations:
+                      </div>
+                      <ul className="space-y-1 text-sm text-blue-800">
+                        {result.recommendations.map((rec, idx) => (
+                          <li key={idx}>• {rec}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ))}
           </div>
         </div>
       )}
@@ -512,17 +545,23 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
       {/* Results Tab */}
       {activeTab === 'results' && (
         <div className="space-y-4">
-          {comparisonResults.map((result) => (
-            <div key={result.id} className={`bg-white rounded-xl shadow-sm border-l-4 p-6 ${
-              result.is_compliant ? 'border-green-500' : 'border-yellow-500'
-            }`}>
+          {comparisonResults.map(result => (
+            <div
+              key={result.id}
+              className={`bg-white rounded-xl shadow-sm border-l-4 p-6 ${
+                result.is_compliant ? 'border-green-500' : 'border-yellow-500'
+              }`}
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <h4 className="text-lg font-bold text-gray-900">
-                      Clause {result.asqa_clause_details.clause_number}: {result.asqa_clause_details.title}
+                      Clause {result.asqa_clause_details.clause_number}:{' '}
+                      {result.asqa_clause_details.title}
                     </h4>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getMatchColor(result.match_type)}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${getMatchColor(result.match_type)}`}
+                    >
                       {result.match_type_display}
                     </span>
                     {result.is_compliant && (
@@ -552,7 +591,9 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-gray-900">{(result.similarity_score * 100).toFixed(0)}%</div>
+                  <div className="text-3xl font-bold text-gray-900">
+                    {(result.similarity_score * 100).toFixed(0)}%
+                  </div>
                   <div className="text-xs text-gray-500">NLP Score</div>
                 </div>
               </div>
@@ -575,7 +616,10 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
           <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-gray-900">📄 Add New Policy</h2>
-              <button onClick={() => setShowAddPolicyModal(false)} className="text-gray-500 hover:text-gray-700">
+              <button
+                onClick={() => setShowAddPolicyModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 ✕
               </button>
             </div>
@@ -583,20 +627,24 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Policy Number *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Policy Number *
+                  </label>
                   <input
                     type="text"
                     value={newPolicy.policy_number}
-                    onChange={(e) => setNewPolicy({ ...newPolicy, policy_number: e.target.value })}
+                    onChange={e => setNewPolicy({ ...newPolicy, policy_number: e.target.value })}
                     placeholder="POL-001"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Policy Type *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Policy Type *
+                  </label>
                   <select
                     value={newPolicy.policy_type}
-                    onChange={(e) => setNewPolicy({ ...newPolicy, policy_type: e.target.value })}
+                    onChange={e => setNewPolicy({ ...newPolicy, policy_type: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="assessment">Assessment</option>
@@ -611,21 +659,25 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Policy Title *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Policy Title *
+                </label>
                 <input
                   type="text"
                   value={newPolicy.title}
-                  onChange={(e) => setNewPolicy({ ...newPolicy, title: e.target.value })}
+                  onChange={e => setNewPolicy({ ...newPolicy, title: e.target.value })}
                   placeholder="e.g., Assessment Policy"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Description
+                </label>
                 <textarea
                   value={newPolicy.description}
-                  onChange={(e) => setNewPolicy({ ...newPolicy, description: e.target.value })}
+                  onChange={e => setNewPolicy({ ...newPolicy, description: e.target.value })}
                   placeholder="Brief description of the policy"
                   rows={3}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -633,10 +685,12 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Policy Content *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Policy Content *
+                </label>
                 <textarea
                   value={newPolicy.content}
-                  onChange={(e) => setNewPolicy({ ...newPolicy, content: e.target.value })}
+                  onChange={e => setNewPolicy({ ...newPolicy, content: e.target.value })}
                   placeholder="Full policy text..."
                   rows={10}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
@@ -668,8 +722,13 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
             <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl">
-              <h2 className="text-2xl font-bold text-gray-900">🔍 Compare Policy to ASQA Standards</h2>
-              <button onClick={() => setShowCompareModal(false)} className="text-gray-500 hover:text-gray-700">
+              <h2 className="text-2xl font-bold text-gray-900">
+                🔍 Compare Policy to ASQA Standards
+              </h2>
+              <button
+                onClick={() => setShowCompareModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 ✕
               </button>
             </div>
@@ -677,18 +736,25 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
             <div className="p-6">
               <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
                 <div className="font-semibold text-blue-900 mb-1">Selected Policy:</div>
-                <div className="text-blue-800">{selectedPolicy.policy_number} - {selectedPolicy.title}</div>
+                <div className="text-blue-800">
+                  {selectedPolicy.policy_number} - {selectedPolicy.title}
+                </div>
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-3">Select ASQA Standards to Compare:</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  Select ASQA Standards to Compare:
+                </label>
                 <div className="space-y-2">
-                  {standards.map((standard) => (
-                    <label key={standard.id} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                  {standards.map(standard => (
+                    <label
+                      key={standard.id}
+                      className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                    >
                       <input
                         type="checkbox"
                         checked={compareForm.standard_ids.includes(standard.id)}
-                        onChange={(e) => {
+                        onChange={e => {
                           if (e.target.checked) {
                             setCompareForm({
                               ...compareForm,
@@ -697,15 +763,21 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
                           } else {
                             setCompareForm({
                               ...compareForm,
-                              standard_ids: compareForm.standard_ids.filter((id) => id !== standard.id),
+                              standard_ids: compareForm.standard_ids.filter(
+                                id => id !== standard.id
+                              ),
                             });
                           }
                         }}
                         className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                       />
                       <div className="flex-1">
-                        <div className="font-semibold text-gray-900">Standard {standard.standard_number}: {standard.title}</div>
-                        <div className="text-sm text-gray-600">{standard.clause_count} clauses • {standard.standard_type_display}</div>
+                        <div className="font-semibold text-gray-900">
+                          Standard {standard.standard_number}: {standard.title}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {standard.clause_count} clauses • {standard.standard_type_display}
+                        </div>
                       </div>
                     </label>
                   ))}
@@ -718,8 +790,9 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
                   <div>
                     <div className="font-semibold text-purple-900 mb-1">NLP-Based Comparison</div>
                     <div className="text-sm text-purple-800">
-                      Using advanced text similarity algorithms to analyze policy text against ASQA requirements.
-                      Results include similarity scores, matched keywords, and compliance gaps.
+                      Using advanced text similarity algorithms to analyze policy text against ASQA
+                      requirements. Results include similarity scores, matched keywords, and
+                      compliance gaps.
                     </div>
                   </div>
                 </div>
@@ -751,7 +824,10 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
           <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-gray-900">📊 Comparison Results</h2>
-              <button onClick={() => setShowResultsModal(false)} className="text-gray-500 hover:text-gray-700">
+              <button
+                onClick={() => setShowResultsModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
                 ✕
               </button>
             </div>
@@ -760,23 +836,30 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
               <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
                 <div className="font-semibold text-green-900 mb-2">✓ Comparison Complete!</div>
                 <div className="text-green-800">
-                  Analyzed {selectedPolicy?.policy_number} against {compareForm.standard_ids.length} ASQA standards.
-                  Found {comparisonResults.filter(r => r.requires_action).length} areas requiring attention.
+                  Analyzed {selectedPolicy?.policy_number} against {compareForm.standard_ids.length}{' '}
+                  ASQA standards. Found {comparisonResults.filter(r => r.requires_action).length}{' '}
+                  areas requiring attention.
                 </div>
               </div>
 
               {/* Summary Stats */}
               <div className="grid grid-cols-4 gap-4 mb-6">
                 <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">{comparisonResults.filter(r => r.is_compliant).length}</div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {comparisonResults.filter(r => r.is_compliant).length}
+                  </div>
                   <div className="text-xs text-gray-600">Compliant</div>
                 </div>
                 <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                  <div className="text-2xl font-bold text-yellow-600">{comparisonResults.filter(r => r.match_type === 'partial').length}</div>
+                  <div className="text-2xl font-bold text-yellow-600">
+                    {comparisonResults.filter(r => r.match_type === 'partial').length}
+                  </div>
                   <div className="text-xs text-gray-600">Partial Match</div>
                 </div>
                 <div className="text-center p-4 bg-red-50 rounded-lg">
-                  <div className="text-2xl font-bold text-red-600">{comparisonResults.filter(r => r.match_type === 'no_match').length}</div>
+                  <div className="text-2xl font-bold text-red-600">
+                    {comparisonResults.filter(r => r.match_type === 'no_match').length}
+                  </div>
                   <div className="text-xs text-gray-600">Gaps Found</div>
                 </div>
                 <div className="text-center p-4 bg-blue-50 rounded-lg">
@@ -786,7 +869,19 @@ export default function PolicyComparatorPage({ params }: { params: { tenantSlug:
               </div>
 
               <div className="text-center text-gray-600">
-                <p>View detailed results in the <button onClick={() => {setShowResultsModal(false); setActiveTab('results');}} className="text-blue-600 hover:underline">Comparison Results</button> tab</p>
+                <p>
+                  View detailed results in the{' '}
+                  <button
+                    onClick={() => {
+                      setShowResultsModal(false);
+                      setActiveTab('results');
+                    }}
+                    className="text-blue-600 hover:underline"
+                  >
+                    Comparison Results
+                  </button>{' '}
+                  tab
+                </p>
               </div>
             </div>
 

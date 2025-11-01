@@ -88,11 +88,15 @@ export default function ModerationToolPage() {
       const sessionsData = await sessionsRes.json();
       setSessions(sessionsData.results || sessionsData || []);
 
-      const outliersRes = await fetch(`/api/tenants/${tenantSlug}/moderation-tool/outliers/?limit=20`);
+      const outliersRes = await fetch(
+        `/api/tenants/${tenantSlug}/moderation-tool/outliers/?limit=20`
+      );
       const outliersData = await outliersRes.json();
       setOutliers(outliersData.results || outliersData || []);
 
-      const biasRes = await fetch(`/api/tenants/${tenantSlug}/moderation-tool/bias-scores/?limit=20`);
+      const biasRes = await fetch(
+        `/api/tenants/${tenantSlug}/moderation-tool/bias-scores/?limit=20`
+      );
       const biasData = await biasRes.json();
       setBiasScores(biasData.results || biasData || []);
     } catch (error) {
@@ -177,11 +181,16 @@ export default function ModerationToolPage() {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-300';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-300';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'low': return 'bg-blue-100 text-blue-800 border-blue-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-300';
+      case 'high':
+        return 'bg-orange-100 text-orange-800 border-orange-300';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      case 'low':
+        return 'bg-blue-100 text-blue-800 border-blue-300';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-300';
     }
   };
 
@@ -209,9 +218,10 @@ export default function ModerationToolPage() {
 
   const totalOutliers = sessions.reduce((sum, s) => sum + s.outliers_detected, 0);
   const totalBiasFlags = sessions.reduce((sum, s) => sum + s.bias_flags_raised, 0);
-  const avgFairness = sessions.length > 0
-    ? sessions.reduce((sum, s) => sum + (s.fairness_score || 0), 0) / sessions.length
-    : 0;
+  const avgFairness =
+    sessions.length > 0
+      ? sessions.reduce((sum, s) => sum + (s.fairness_score || 0), 0) / sessions.length
+      : 0;
 
   return (
     <div className="p-8 space-y-8">
@@ -220,7 +230,8 @@ export default function ModerationToolPage() {
         <div>
           <h2 className="text-3xl font-bold text-gray-900">Moderation Tool</h2>
           <p className="text-gray-600 mt-2">
-            Compare assessor decisions • Outlier detection + bias scoring • Validation & fairness evidence
+            Compare assessor decisions • Outlier detection + bias scoring • Validation & fairness
+            evidence
           </p>
         </div>
         <button
@@ -270,7 +281,7 @@ export default function ModerationToolPage() {
                   type="text"
                   required
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                   placeholder="e.g., Final Exam Moderation 2025"
                 />
@@ -282,7 +293,7 @@ export default function ModerationToolPage() {
                 </label>
                 <select
                   value={formData.assessment_type}
-                  onChange={(e) => setFormData({ ...formData, assessment_type: e.target.value })}
+                  onChange={e => setFormData({ ...formData, assessment_type: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="exam">Exam</option>
@@ -302,18 +313,16 @@ export default function ModerationToolPage() {
                 type="text"
                 required
                 value={formData.assessment_title}
-                onChange={(e) => setFormData({ ...formData, assessment_title: e.target.value })}
+                onChange={e => setFormData({ ...formData, assessment_title: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Description
-              </label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={e => setFormData({ ...formData, description: e.target.value })}
                 rows={2}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
               />
@@ -327,7 +336,7 @@ export default function ModerationToolPage() {
                 <input
                   type="number"
                   value={formData.total_submissions}
-                  onChange={(e) => setFormData({ ...formData, total_submissions: e.target.value })}
+                  onChange={e => setFormData({ ...formData, total_submissions: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
@@ -339,7 +348,7 @@ export default function ModerationToolPage() {
                 <input
                   type="number"
                   value={formData.assessors_count}
-                  onChange={(e) => setFormData({ ...formData, assessors_count: e.target.value })}
+                  onChange={e => setFormData({ ...formData, assessors_count: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
@@ -358,7 +367,7 @@ export default function ModerationToolPage() {
                   max="5"
                   step="0.5"
                   value={formData.outlier_threshold}
-                  onChange={(e) => setFormData({ ...formData, outlier_threshold: e.target.value })}
+                  onChange={e => setFormData({ ...formData, outlier_threshold: e.target.value })}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -377,7 +386,7 @@ export default function ModerationToolPage() {
                   min="1"
                   max="10"
                   value={formData.bias_sensitivity}
-                  onChange={(e) => setFormData({ ...formData, bias_sensitivity: e.target.value })}
+                  onChange={e => setFormData({ ...formData, bias_sensitivity: e.target.value })}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -418,8 +427,11 @@ export default function ModerationToolPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {sessions.map((session) => (
-              <div key={session.id} className="border border-gray-200 rounded-lg p-6 hover:border-emerald-300 transition-all">
+            {sessions.map(session => (
+              <div
+                key={session.id}
+                className="border border-gray-200 rounded-lg p-6 hover:border-emerald-300 transition-all"
+              >
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
@@ -452,15 +464,21 @@ export default function ModerationToolPage() {
                 <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4 pt-4 border-t border-gray-100">
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Decisions</div>
-                    <div className="text-sm font-semibold text-gray-900">{session.decisions_compared}</div>
+                    <div className="text-sm font-semibold text-gray-900">
+                      {session.decisions_compared}
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Outliers</div>
-                    <div className="text-sm font-semibold text-orange-600">{session.outliers_detected}</div>
+                    <div className="text-sm font-semibold text-orange-600">
+                      {session.outliers_detected}
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Bias Flags</div>
-                    <div className="text-sm font-semibold text-red-600">{session.bias_flags_raised}</div>
+                    <div className="text-sm font-semibold text-red-600">
+                      {session.bias_flags_raised}
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Agreement</div>
@@ -470,7 +488,9 @@ export default function ModerationToolPage() {
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Fairness</div>
-                    <div className={`text-sm font-semibold ${getFairnessColor(session.fairness_score)}`}>
+                    <div
+                      className={`text-sm font-semibold ${getFairnessColor(session.fairness_score)}`}
+                    >
                       {session.fairness_score?.toFixed(0) || 0}%
                     </div>
                   </div>
@@ -496,8 +516,11 @@ export default function ModerationToolPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {outliers.map((outlier) => (
-              <div key={outlier.id} className={`border-2 rounded-lg p-4 ${getSeverityColor(outlier.severity)}`}>
+            {outliers.map(outlier => (
+              <div
+                key={outlier.id}
+                className={`border-2 rounded-lg p-4 ${getSeverityColor(outlier.severity)}`}
+              >
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
@@ -513,13 +536,16 @@ export default function ModerationToolPage() {
                         <span className="font-semibold">Z-Score:</span> {outlier.z_score.toFixed(2)}
                       </div>
                       <div>
-                        <span className="font-semibold">Expected:</span> {outlier.expected_score.toFixed(1)}%
+                        <span className="font-semibold">Expected:</span>{' '}
+                        {outlier.expected_score.toFixed(1)}%
                       </div>
                       <div>
-                        <span className="font-semibold">Actual:</span> {outlier.actual_score.toFixed(1)}%
+                        <span className="font-semibold">Actual:</span>{' '}
+                        {outlier.actual_score.toFixed(1)}%
                       </div>
                       <div>
-                        <span className="font-semibold">Confidence:</span> {(outlier.confidence_score * 100).toFixed(0)}%
+                        <span className="font-semibold">Confidence:</span>{' '}
+                        {(outlier.confidence_score * 100).toFixed(0)}%
                       </div>
                     </div>
                   </div>
@@ -549,36 +575,51 @@ export default function ModerationToolPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b-2 border-gray-200">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Assessor</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Bias Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Score</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Severity</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Sample Size</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Recommendation</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Assessor
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Bias Type
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Score
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Severity
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Sample Size
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Recommendation
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {biasScores.map((bias) => (
+                {biasScores.map(bias => (
                   <tr key={bias.id} className="hover:bg-gray-50">
                     <td className="px-4 py-4">
                       <div className="font-semibold text-gray-900">{bias.assessor_name}</div>
                       <div className="text-sm text-gray-500">{bias.assessor_id}</div>
                     </td>
-                    <td className="px-4 py-4 text-sm">
-                      {bias.bias_type.replace('_', ' ')}
-                    </td>
+                    <td className="px-4 py-4 text-sm">{bias.bias_type.replace('_', ' ')}</td>
                     <td className="px-4 py-4">
                       <span className={`font-semibold ${getBiasColor(bias.bias_score)}`}>
                         {(bias.bias_score * 100).toFixed(0)}%
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                        bias.severity_label === 'Critical' ? 'bg-red-100 text-red-800' :
-                        bias.severity_label === 'Significant' ? 'bg-orange-100 text-orange-800' :
-                        bias.severity_label === 'Moderate' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-blue-100 text-blue-800'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-semibold ${
+                          bias.severity_label === 'Critical'
+                            ? 'bg-red-100 text-red-800'
+                            : bias.severity_label === 'Significant'
+                              ? 'bg-orange-100 text-orange-800'
+                              : bias.severity_label === 'Moderate'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-blue-100 text-blue-800'
+                        }`}
+                      >
                         {bias.severity_label}
                       </span>
                     </td>

@@ -96,15 +96,29 @@ export default function FeedbackAssistantPage() {
       setTemplates(templatesData.results || templatesData || []);
 
       // Fetch recent feedbacks
-      const feedbacksRes = await fetch(`/api/tenants/${tenantSlug}/feedback-assistant/generated/?limit=20`);
+      const feedbacksRes = await fetch(
+        `/api/tenants/${tenantSlug}/feedback-assistant/generated/?limit=20`
+      );
       const feedbacksData = await feedbacksRes.json();
       setFeedbacks(feedbacksData.results || feedbacksData || []);
 
       // Calculate stats
       const totalTemplates = templatesData.results?.length || templatesData?.length || 0;
-      const totalGenerated = templatesData.results?.reduce((sum: number, t: FeedbackTemplate) => sum + t.total_feedback_generated, 0) || 0;
-      const avgSent = (feedbacksData.results || feedbacksData || []).reduce((sum: number, f: GeneratedFeedback) => sum + f.sentiment_score, 0) / ((feedbacksData.results || feedbacksData || []).length || 1);
-      const avgPers = (feedbacksData.results || feedbacksData || []).reduce((sum: number, f: GeneratedFeedback) => sum + f.personalization_score, 0) / ((feedbacksData.results || feedbacksData || []).length || 1);
+      const totalGenerated =
+        templatesData.results?.reduce(
+          (sum: number, t: FeedbackTemplate) => sum + t.total_feedback_generated,
+          0
+        ) || 0;
+      const avgSent =
+        (feedbacksData.results || feedbacksData || []).reduce(
+          (sum: number, f: GeneratedFeedback) => sum + f.sentiment_score,
+          0
+        ) / ((feedbacksData.results || feedbacksData || []).length || 1);
+      const avgPers =
+        (feedbacksData.results || feedbacksData || []).reduce(
+          (sum: number, f: GeneratedFeedback) => sum + f.personalization_score,
+          0
+        ) / ((feedbacksData.results || feedbacksData || []).length || 1);
 
       setStats({
         total_templates: totalTemplates,
@@ -273,7 +287,7 @@ export default function FeedbackAssistantPage() {
                   type="text"
                   required
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                   placeholder="e.g., Essay Feedback Template"
                 />
@@ -285,7 +299,7 @@ export default function FeedbackAssistantPage() {
                 </label>
                 <select
                   value={formData.feedback_type}
-                  onChange={(e) => setFormData({ ...formData, feedback_type: e.target.value })}
+                  onChange={e => setFormData({ ...formData, feedback_type: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="formative">Formative</option>
@@ -297,12 +311,10 @@ export default function FeedbackAssistantPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Description
-              </label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={e => setFormData({ ...formData, description: e.target.value })}
                 rows={2}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 placeholder="Brief description of this template..."
@@ -311,12 +323,10 @@ export default function FeedbackAssistantPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Sentiment
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Sentiment</label>
                 <select
                   value={formData.sentiment}
-                  onChange={(e) => setFormData({ ...formData, sentiment: e.target.value })}
+                  onChange={e => setFormData({ ...formData, sentiment: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="encouraging">Encouraging</option>
@@ -328,12 +338,10 @@ export default function FeedbackAssistantPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Tone
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Tone</label>
                 <select
                   value={formData.tone}
-                  onChange={(e) => setFormData({ ...formData, tone: e.target.value })}
+                  onChange={e => setFormData({ ...formData, tone: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 >
                   <option value="formal">Formal</option>
@@ -358,7 +366,9 @@ export default function FeedbackAssistantPage() {
                   min="1"
                   max="10"
                   value={formData.positivity_level}
-                  onChange={(e) => setFormData({ ...formData, positivity_level: parseInt(e.target.value) })}
+                  onChange={e =>
+                    setFormData({ ...formData, positivity_level: parseInt(e.target.value) })
+                  }
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600"
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -377,7 +387,9 @@ export default function FeedbackAssistantPage() {
                   min="1"
                   max="10"
                   value={formData.directness_level}
-                  onChange={(e) => setFormData({ ...formData, directness_level: parseInt(e.target.value) })}
+                  onChange={e =>
+                    setFormData({ ...formData, directness_level: parseInt(e.target.value) })
+                  }
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-600"
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -396,7 +408,9 @@ export default function FeedbackAssistantPage() {
                   min="1"
                   max="10"
                   value={formData.formality_level}
-                  onChange={(e) => setFormData({ ...formData, formality_level: parseInt(e.target.value) })}
+                  onChange={e =>
+                    setFormData({ ...formData, formality_level: parseInt(e.target.value) })
+                  }
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -440,7 +454,7 @@ export default function FeedbackAssistantPage() {
                   type="text"
                   required
                   value={generateData.student_id}
-                  onChange={(e) => setGenerateData({ ...generateData, student_id: e.target.value })}
+                  onChange={e => setGenerateData({ ...generateData, student_id: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
                 />
               </div>
@@ -453,7 +467,7 @@ export default function FeedbackAssistantPage() {
                   type="text"
                   required
                   value={generateData.student_name}
-                  onChange={(e) => setGenerateData({ ...generateData, student_name: e.target.value })}
+                  onChange={e => setGenerateData({ ...generateData, student_name: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
                 />
               </div>
@@ -466,46 +480,42 @@ export default function FeedbackAssistantPage() {
               <input
                 type="text"
                 value={generateData.assessment_title}
-                onChange={(e) => setGenerateData({ ...generateData, assessment_title: e.target.value })}
+                onChange={e =>
+                  setGenerateData({ ...generateData, assessment_title: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Score
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Score</label>
                 <input
                   type="number"
                   step="0.1"
                   value={generateData.score}
-                  onChange={(e) => setGenerateData({ ...generateData, score: e.target.value })}
+                  onChange={e => setGenerateData({ ...generateData, score: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Max Score
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Max Score</label>
                 <input
                   type="number"
                   step="0.1"
                   value={generateData.max_score}
-                  onChange={(e) => setGenerateData({ ...generateData, max_score: e.target.value })}
+                  onChange={e => setGenerateData({ ...generateData, max_score: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Grade
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Grade</label>
                 <input
                   type="text"
                   value={generateData.grade}
-                  onChange={(e) => setGenerateData({ ...generateData, grade: e.target.value })}
+                  onChange={e => setGenerateData({ ...generateData, grade: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500"
                   placeholder="e.g., A, B+, HD"
                 />
@@ -542,8 +552,11 @@ export default function FeedbackAssistantPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {templates.map((template) => (
-              <div key={template.id} className="border border-gray-200 rounded-lg p-6 hover:border-teal-300 transition-all">
+            {templates.map(template => (
+              <div
+                key={template.id}
+                className="border border-gray-200 rounded-lg p-6 hover:border-teal-300 transition-all"
+              >
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
@@ -573,7 +586,9 @@ export default function FeedbackAssistantPage() {
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4 pt-4 border-t border-gray-100">
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Type</div>
-                    <div className="text-sm font-semibold text-gray-900">{template.feedback_type}</div>
+                    <div className="text-sm font-semibold text-gray-900">
+                      {template.feedback_type}
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Tone</div>
@@ -581,15 +596,21 @@ export default function FeedbackAssistantPage() {
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Positivity</div>
-                    <div className="text-sm font-semibold text-teal-600">{template.positivity_level}/10</div>
+                    <div className="text-sm font-semibold text-teal-600">
+                      {template.positivity_level}/10
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Directness</div>
-                    <div className="text-sm font-semibold text-cyan-600">{template.directness_level}/10</div>
+                    <div className="text-sm font-semibold text-cyan-600">
+                      {template.directness_level}/10
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 uppercase">Generated</div>
-                    <div className="text-sm font-semibold text-gray-900">{template.total_feedback_generated}</div>
+                    <div className="text-sm font-semibold text-gray-900">
+                      {template.total_feedback_generated}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -612,17 +633,31 @@ export default function FeedbackAssistantPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b-2 border-gray-200">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Feedback ID</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Score</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Words</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Sentiment</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Personal</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Student
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Feedback ID
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Score
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Words
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Sentiment
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Personal
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {feedbacks.map((feedback) => (
+                {feedbacks.map(feedback => (
                   <tr key={feedback.id} className="hover:bg-gray-50">
                     <td className="px-4 py-4">
                       <div className="font-semibold text-gray-900">{feedback.student_name}</div>
@@ -640,7 +675,9 @@ export default function FeedbackAssistantPage() {
                     </td>
                     <td className="px-4 py-4 text-sm text-gray-600">{feedback.word_count}</td>
                     <td className="px-4 py-4">
-                      <span className={`font-semibold ${getSentimentColor(feedback.sentiment_score)}`}>
+                      <span
+                        className={`font-semibold ${getSentimentColor(feedback.sentiment_score)}`}
+                      >
                         {getSentimentLabel(feedback.sentiment_score)}
                       </span>
                     </td>
