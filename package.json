@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.5",
@@ -34,6 +35,8 @@
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "eslint": "^8",
     "eslint-config-next": "14",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
     "postcss": "^8.4.38",
     "prettier": "^3.6.2",
     "semantic-release": "^23.1.1",
@@ -44,5 +47,8 @@
     "react-quill": {
       "quill": "^2.0.3"
     }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css,md}": "prettier --write"
   }
 }
