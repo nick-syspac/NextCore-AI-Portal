@@ -5,57 +5,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Filter, Download, LayoutGrid, List } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-
-import { ImprovementActionList } from '@/components/cir/ImprovementActionList';
-import { ImprovementKanban } from '@/components/cir/ImprovementKanban';
-import { CreateActionDialog } from '@/components/cir/CreateActionDialog';
-import { useImprovementActions } from '@/lib/hooks/useCIR';
+import { Plus, Download, LayoutGrid, List } from 'lucide-react';
 
 export default function CIRPage() {
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  
-  // Filters
-  const [filters, setFilters] = useState({
-    status: '',
-    priority: '',
-    compliance: '',
-    category: '',
-    assignee: '',
-    search: '',
-    overdue: false,
-  });
-  
-  // Fetch actions with filters
-  const { data: actions, isLoading, refetch } = useImprovementActions(filters);
-  
-  const handleFilterChange = (key: string, value: any) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-  };
-  
-  const handleClearFilters = () => {
-    setFilters({
-      status: '',
-      priority: '',
-      compliance: '',
-      category: '',
-      assignee: '',
-      search: '',
-      overdue: false,
-    });
-  };
   
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -71,133 +24,71 @@ export default function CIRPage() {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
+          <button className="px-4 py-2 border rounded-md hover:bg-gray-50 flex items-center gap-2">
+            <Download className="h-4 w-4" />
             Export
-          </Button>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
+          </button>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-2">
+            <Plus className="h-4 w-4" />
             New Action
-          </Button>
+          </button>
         </div>
       </div>
       
       {/* Filters & Controls */}
-      <div className="flex items-center gap-4 bg-card p-4 rounded-lg border">
-        {/* Search */}
+      <div className="flex items-center gap-4 bg-white p-4 rounded-lg border">
         <div className="flex-1">
-          <Input
+          <input
+            type="text"
             placeholder="Search actions..."
-            value={filters.search}
-            onChange={(e) => handleFilterChange('search', e.target.value)}
-            className="max-w-sm"
+            className="w-full max-w-sm px-3 py-2 border rounded-md"
           />
         </div>
         
-        {/* Status Filter */}
-        <Select
-          value={filters.status}
-          onValueChange={(value) => handleFilterChange('status', value)}
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All Statuses</SelectItem>
-            <SelectItem value="identified">Identified</SelectItem>
-            <SelectItem value="planned">Planned</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
-            <SelectItem value="on_hold">On Hold</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
-          </SelectContent>
-        </Select>
+        <select className="px-3 py-2 border rounded-md">
+          <option value="">All Statuses</option>
+          <option value="identified">Identified</option>
+          <option value="planned">Planned</option>
+          <option value="in_progress">In Progress</option>
+          <option value="completed">Completed</option>
+        </select>
         
-        {/* Priority Filter */}
-        <Select
-          value={filters.priority}
-          onValueChange={(value) => handleFilterChange('priority', value)}
-        >
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="Priority" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All Priorities</SelectItem>
-            <SelectItem value="critical">Critical</SelectItem>
-            <SelectItem value="high">High</SelectItem>
-            <SelectItem value="medium">Medium</SelectItem>
-            <SelectItem value="low">Low</SelectItem>
-          </SelectContent>
-        </Select>
+        <select className="px-3 py-2 border rounded-md">
+          <option value="">All Priorities</option>
+          <option value="critical">Critical</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
         
-        {/* Compliance Filter */}
-        <Select
-          value={filters.compliance}
-          onValueChange={(value) => handleFilterChange('compliance', value)}
-        >
-          <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="Compliance" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All</SelectItem>
-            <SelectItem value="compliant">Compliant</SelectItem>
-            <SelectItem value="at_risk">At Risk</SelectItem>
-            <SelectItem value="overdue">Overdue</SelectItem>
-          </SelectContent>
-        </Select>
-        
-        {/* Clear Filters */}
-        {Object.values(filters).some(v => v) && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleClearFilters}
-          >
-            Clear
-          </Button>
-        )}
-        
-        {/* View Toggle */}
         <div className="flex items-center gap-1 ml-auto border rounded-md">
-          <Button
-            variant={viewMode === 'kanban' ? 'default' : 'ghost'}
-            size="sm"
+          <button
+            className={`p-2 ${viewMode === 'kanban' ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'} rounded-l-md`}
             onClick={() => setViewMode('kanban')}
           >
             <LayoutGrid className="h-4 w-4" />
-          </Button>
-          <Button
-            variant={viewMode === 'list' ? 'default' : 'ghost'}
-            size="sm"
+          </button>
+          <button
+            className={`p-2 ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'} rounded-r-md`}
             onClick={() => setViewMode('list')}
           >
             <List className="h-4 w-4" />
-          </Button>
+          </button>
         </div>
       </div>
       
       {/* Main Content */}
-      <div className="min-h-[600px]">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-[600px]">
-            <div className="text-center space-y-2">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
-              <p className="text-sm text-muted-foreground">Loading actions...</p>
-            </div>
-          </div>
-        ) : viewMode === 'kanban' ? (
-          <ImprovementKanban actions={actions || []} refetch={refetch} />
-        ) : (
-          <ImprovementActionList actions={actions || []} refetch={refetch} />
-        )}
+      <div className="min-h-[600px] bg-white rounded-lg border p-8">
+        <div className="text-center space-y-4">
+          <h2 className="text-xl font-semibold text-gray-700">
+            Continuous Improvement Register
+          </h2>
+          <p className="text-gray-500">
+            This feature is being configured. Components will be available soon.
+          </p>
+        </div>
       </div>
-      
-      {/* Create Dialog */}
-      <CreateActionDialog
-        open={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-        onSuccess={refetch}
-      />
     </div>
   );
 }
+
