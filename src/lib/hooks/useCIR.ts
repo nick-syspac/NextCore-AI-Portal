@@ -2,7 +2,7 @@
  * React Query hooks for Continuous Improvement Register (CIR) API
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import { apiClient } from '@/lib/api-client';
 
 // Types
 export interface ImprovementAction {
@@ -127,7 +127,7 @@ export function useImprovementActions(filters?: {
       if (filters?.search) params.append('search', filters.search);
       if (filters?.overdue) params.append('overdue', 'true');
       
-      const response = await api.get<ImprovementAction[]>(
+      const response = await apiClient.get<ImprovementAction[]>(
         `/continuous_improvement/actions/?${params.toString()}`
       );
       
@@ -143,7 +143,7 @@ export function useImprovementAction(id: number) {
   return useQuery({
     queryKey: cirKeys.action(id),
     queryFn: async () => {
-      const response = await api.get<ImprovementAction>(
+      const response = await apiClient.get<ImprovementAction>(
         `/continuous_improvement/actions/${id}/`
       );
       return response.data;
@@ -160,7 +160,7 @@ export function useCreateAction() {
   
   return useMutation({
     mutationFn: async (data: Partial<ImprovementAction>) => {
-      const response = await api.post('/continuous_improvement/actions/', data);
+      const response = await apiClient.post('/continuous_improvement/actions/', data);
       return response.data;
     },
     onSuccess: () => {
@@ -178,7 +178,7 @@ export function useUpdateAction(id: number) {
   
   return useMutation({
     mutationFn: async (data: Partial<ImprovementAction>) => {
-      const response = await api.patch(`/continuous_improvement/actions/${id}/`, data);
+      const response = await apiClient.patch(`/continuous_improvement/actions/${id}/`, data);
       return response.data;
     },
     onSuccess: () => {
@@ -197,7 +197,7 @@ export function useClassifyAction(id: number) {
   
   return useMutation({
     mutationFn: async () => {
-      const response = await api.post(`/continuous_improvement/actions-cir/${id}/ai_classify/`);
+      const response = await apiClient.post(`/continuous_improvement/actions-cir/${id}/ai_classify/`);
       return response.data;
     },
     onSuccess: () => {
@@ -215,7 +215,7 @@ export function useSummarizeAction(id: number) {
   
   return useMutation({
     mutationFn: async (options?: { max_length?: number; style?: string }) => {
-      const response = await api.post(
+      const response = await apiClient.post(
         `/continuous_improvement/actions-cir/${id}/ai_summarize/`,
         options
       );
@@ -234,7 +234,7 @@ export function useActionSteps(actionId: number) {
   return useQuery({
     queryKey: cirKeys.steps(actionId),
     queryFn: async () => {
-      const response = await api.get<ActionStep[]>(
+      const response = await apiClient.get<ActionStep[]>(
         `/continuous_improvement/steps/?action_id=${actionId}`
       );
       return response.data;
@@ -251,7 +251,7 @@ export function useCreateActionStep(actionId: number) {
   
   return useMutation({
     mutationFn: async (data: Partial<ActionStep>) => {
-      const response = await api.post('/continuous_improvement/steps/', data);
+      const response = await apiClient.post('/continuous_improvement/steps/', data);
       return response.data;
     },
     onSuccess: () => {
@@ -268,7 +268,7 @@ export function useComments(actionId: number) {
   return useQuery({
     queryKey: cirKeys.comments(actionId),
     queryFn: async () => {
-      const response = await api.get<Comment[]>(
+      const response = await apiClient.get<Comment[]>(
         `/continuous_improvement/comments/?action_id=${actionId}`
       );
       return response.data;
@@ -285,7 +285,7 @@ export function useCreateComment(actionId: number) {
   
   return useMutation({
     mutationFn: async (data: Partial<Comment>) => {
-      const response = await api.post('/continuous_improvement/comments/', data);
+      const response = await apiClient.post('/continuous_improvement/comments/', data);
       return response.data;
     },
     onSuccess: () => {
@@ -301,7 +301,7 @@ export function useClauseLinks(actionId: number) {
   return useQuery({
     queryKey: cirKeys.clauseLinks(actionId),
     queryFn: async () => {
-      const response = await api.get<ClauseLink[]>(
+      const response = await apiClient.get<ClauseLink[]>(
         `/continuous_improvement/clause-links/?action_id=${actionId}`
       );
       return response.data;
@@ -318,7 +318,7 @@ export function useCreateClauseLink(actionId: number) {
   
   return useMutation({
     mutationFn: async (data: Partial<ClauseLink>) => {
-      const response = await api.post('/continuous_improvement/clause-links/', data);
+      const response = await apiClient.post('/continuous_improvement/clause-links/', data);
       return response.data;
     },
     onSuccess: () => {
@@ -334,7 +334,7 @@ export function useDashboardStats() {
   return useQuery({
     queryKey: cirKeys.dashboardStats(),
     queryFn: async () => {
-      const response = await api.get<DashboardStats>(
+      const response = await apiClient.get<DashboardStats>(
         '/continuous_improvement/actions/dashboard_stats/'
       );
       return response.data;
@@ -350,7 +350,7 @@ export function useComplianceDashboard() {
   return useQuery({
     queryKey: cirKeys.complianceDashboard(),
     queryFn: async () => {
-      const response = await api.get(
+      const response = await apiClient.get(
         '/continuous_improvement/actions-cir/compliance_dashboard/'
       );
       return response.data;

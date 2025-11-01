@@ -195,12 +195,13 @@ export const eligibilityKeys = {
 // Jurisdictions
 // ============================================================================
 
-export function useJurisdictions(options?: UseQueryOptions<Jurisdiction[]>) {
+export function useJurisdictions(tenantSlug: string, options?: UseQueryOptions<Jurisdiction[]>) {
   return useQuery({
-    queryKey: eligibilityKeys.jurisdictions(),
+    queryKey: [...eligibilityKeys.jurisdictions(), tenantSlug],
     queryFn: async () => {
-      const response = await apiClient.get('/funding-eligibility/jurisdictions/');
-      return response.data;
+      const response = await apiClient.get(`/tenants/${tenantSlug}/funding-eligibility/jurisdictions/`);
+      // Extract results array from paginated response
+      return response.data.results || response.data;
     },
     staleTime: 1000 * 60 * 60, // 1 hour
     ...options,
@@ -302,8 +303,9 @@ export function useEligibilityRequest(id: number, options?: UseQueryOptions<Elig
     },
     enabled: !!id,
     staleTime: 1000 * 30, // 30 seconds
-    refetchInterval: (data) => {
+    refetchInterval: (query) => {
       // Auto-refresh if pending/evaluating
+      const data = query.state.data;
       if (data && ['pending', 'evaluating'].includes(data.status)) {
         return 3000; // 3 seconds
       }

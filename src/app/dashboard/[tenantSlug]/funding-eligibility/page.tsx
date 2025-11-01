@@ -2,17 +2,21 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useJurisdictions } from '@/lib/hooks/useEligibility';
 
 // Types
 interface JurisdictionRequirement {
-  id: number;
-  jurisdiction: string;
-  jurisdiction_display: string;
-  name: string;
   code: string;
-  funding_percentage: number;
-  student_contribution: number;
-  is_currently_effective: boolean;
+  name: string;
+  active: boolean;
+  config: {
+    funding_percentage?: number;
+    student_contribution?: number;
+    age_min?: number;
+    age_max?: number;
+    residency_months?: number;
+    requirements?: string[];
+  };
 }
 
 interface EligibilityResult {
@@ -38,6 +42,14 @@ export default function FundingEligibilityPage() {
   const [activeTab, setActiveTab] = useState<'check' | 'history' | 'requirements'>('check');
   const [checkResult, setCheckResult] = useState<EligibilityResult | null>(null);
   const [checking, setChecking] = useState(false);
+  
+  // Modal state for editing jurisdiction requirements
+  const [editingJurisdiction, setEditingJurisdiction] = useState<JurisdictionRequirement | null>(null);
+  const [editedConfig, setEditedConfig] = useState<JurisdictionRequirement['config']>({});
+  
+  // Fetch jurisdictions from API
+  const { data: jurisdictionsData, isLoading: jurisdictionsLoading, refetch: refetchJurisdictions } = useJurisdictions(tenantSlug);
+  const jurisdictions = jurisdictionsData || [];
   
   // Form state
   const [formData, setFormData] = useState({
@@ -70,11 +82,16 @@ export default function FundingEligibilityPage() {
     is_indigenous: false,
   });
 
-  // Mock jurisdictions
-  const jurisdictions = [
-    { id: 1, jurisdiction: 'nsw', jurisdiction_display: 'New South Wales', name: 'Smart and Skilled NSW', code: 'SS-NSW', funding_percentage: 90, student_contribution: 500, is_currently_effective: true },
-    { id: 2, jurisdiction: 'vic', jurisdiction_display: 'Victoria', name: 'Skills First Victoria', code: 'SFV', funding_percentage: 85, student_contribution: 600, is_currently_effective: true },
-    { id: 3, jurisdiction: 'qld', jurisdiction_display: 'Queensland', name: 'Certificate 3 Guarantee', code: 'C3G-QLD', funding_percentage: 100, student_contribution: 0, is_currently_effective: true },
+  // Mock jurisdictions for jurisdiction selector (will be replaced with API data)
+  const jurisdictionOptions = [
+    { code: 'NSW', name: 'New South Wales' },
+    { code: 'VIC', name: 'Victoria' },
+    { code: 'QLD', name: 'Queensland' },
+    { code: 'WA', name: 'Western Australia' },
+    { code: 'SA', name: 'South Australia' },
+    { code: 'TAS', name: 'Tasmania' },
+    { code: 'ACT', name: 'ACT' },
+    { code: 'NT', name: 'Northern Territory' },
   ];
 
   const handleCheckEligibility = () => {
@@ -100,13 +117,57 @@ export default function FundingEligibilityPage() {
         override_required: !formData.is_jurisdiction_resident && formData.citizenship_status === 'citizen',
         prevents_enrollment: !(formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident),
         eligibility_summary: formData.citizenship_status === 'citizen' && formData.is_jurisdiction_resident 
-          ? `Eligible for ${jurisdictions.find(j => j.jurisdiction === formData.jurisdiction)?.name} funding`
+          ? `Eligible for ${formData.jurisdiction.toUpperCase()} funding`
           : 'Not eligible - citizenship or residency requirements not met'
       };
       
       setCheckResult(mockResult);
       setChecking(false);
     }, 2000);
+  };
+
+  // Handle opening edit modal
+  const handleEditJurisdiction = (jurisdiction: JurisdictionRequirement) => {
+    setEditingJurisdiction(jurisdiction);
+    setEditedConfig({ ...jurisdiction.config });
+  };
+
+  // Handle closing edit modal
+  const handleCloseModal = () => {
+    setEditingJurisdiction(null);
+    setEditedConfig({});
+  };
+
+  // Handle saving edited requirements
+  const handleSaveRequirements = () => {
+    if (!editingJurisdiction) return;
+    
+    // TODO: Call API to save the updated requirements
+    console.log('Saving requirements for', editingJurisdiction.code, editedConfig);
+    
+    // For now, just close the modal
+    // In production, this would make an API call to update the jurisdiction
+    alert(`Requirements confirmed for ${editingJurisdiction.name}\n\nThis would save to the backend in production.`);
+    handleCloseModal();
+  };
+
+  // Handle updating individual requirement text
+  const handleUpdateRequirement = (index: number, value: string) => {
+    const updatedRequirements = [...(editedConfig.requirements || [])];
+    updatedRequirements[index] = value;
+    setEditedConfig({ ...editedConfig, requirements: updatedRequirements });
+  };
+
+  // Handle adding new requirement
+  const handleAddRequirement = () => {
+    const updatedRequirements = [...(editedConfig.requirements || []), 'New requirement'];
+    setEditedConfig({ ...editedConfig, requirements: updatedRequirements });
+  };
+
+  // Handle removing requirement
+  const handleRemoveRequirement = (index: number) => {
+    const updatedRequirements = (editedConfig.requirements || []).filter((_, i) => i !== index);
+    setEditedConfig({ ...editedConfig, requirements: updatedRequirements });
   };
 
   const getStatusColor = (status: string) => {
@@ -484,44 +545,122 @@ export default function FundingEligibilityPage() {
 
         {/* Requirements Tab */}
         {activeTab === 'requirements' && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {jurisdictions.map(req => (
-              <div key={req.id} className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{req.jurisdiction_display}</h3>
-                    <p className="text-sm text-gray-600">{req.name}</p>
-                  </div>
-                  {req.is_currently_effective && (
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Active
-                    </span>
-                  )}
-                </div>
-                
-                <div className="space-y-3">
-                  <div>
-                    <div className="text-sm text-gray-600">Funding Coverage</div>
-                    <div className="text-2xl font-bold text-indigo-600">{req.funding_percentage}%</div>
-                  </div>
-                  
-                  <div>
-                    <div className="text-sm text-gray-600">Student Contribution</div>
-                    <div className="text-lg font-semibold text-gray-900">${req.student_contribution}</div>
-                  </div>
-                  
-                  <div className="pt-3 border-t border-gray-200">
-                    <div className="text-xs text-gray-500 uppercase font-medium mb-2">Requirements</div>
-                    <ul className="space-y-1 text-sm text-gray-700">
-                      <li>✓ Australian citizen or PR</li>
-                      <li>✓ Jurisdiction resident (6+ months)</li>
-                      <li>✓ Age 15-64</li>
-                      <li>✓ No higher qualifications</li>
-                    </ul>
-                  </div>
-                </div>
+          <div>
+            {/* Header with Refresh Button */}
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Australian VET Funding Requirements</h2>
+                <p className="text-gray-600 mt-1">Active jurisdiction requirements for vocational education and training funding</p>
               </div>
-            ))}
+              <button
+                onClick={() => refetchJurisdictions()}
+                disabled={jurisdictionsLoading}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+              >
+                <svg className={`w-5 h-5 ${jurisdictionsLoading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                {jurisdictionsLoading ? 'Refreshing...' : 'Refresh Requirements'}
+              </button>
+            </div>
+
+            {/* Loading State */}
+            {jurisdictionsLoading && jurisdictions.length === 0 && (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+                <p className="text-gray-600">Loading jurisdiction requirements...</p>
+              </div>
+            )}
+
+            {/* Requirements Grid */}
+            {!jurisdictionsLoading || jurisdictions.length > 0 ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {jurisdictions.map((req: JurisdictionRequirement) => {
+                  const config = req.config || {};
+                  const fundingPercentage = config.funding_percentage || 0;
+                  const studentContribution = config.student_contribution || 0;
+                  const ageMin = config.age_min || 15;
+                  const ageMax = config.age_max || 64;
+                  const residencyMonths = config.residency_months || 6;
+                  const requirements = config.requirements || [
+                    'Australian citizen or PR',
+                    `Jurisdiction resident (${residencyMonths}+ months)`,
+                    `Age ${ageMin}-${ageMax}`,
+                    'No higher qualifications'
+                  ];
+
+                  return (
+                    <div 
+                      key={req.code} 
+                      className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500 hover:shadow-lg transition-all cursor-pointer hover:scale-[1.02]"
+                      onClick={() => handleEditJurisdiction(req)}
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">{req.code.toUpperCase()}</h3>
+                          <p className="text-sm text-gray-600">{req.name}</p>
+                        </div>
+                        <div className="flex flex-col items-end gap-2">
+                          {req.active && (
+                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              Active
+                            </span>
+                          )}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditJurisdiction(req);
+                            }}
+                            className="text-indigo-600 hover:text-indigo-800 text-sm font-medium"
+                          >
+                            Edit →
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div>
+                          <div className="text-sm text-gray-600">Funding Coverage</div>
+                          <div className="text-2xl font-bold text-indigo-600">{fundingPercentage}%</div>
+                        </div>
+                        
+                        <div>
+                          <div className="text-sm text-gray-600">Student Contribution</div>
+                          <div className="text-lg font-semibold text-gray-900">${studentContribution}</div>
+                        </div>
+                        
+                        <div className="pt-3 border-t border-gray-200">
+                          <div className="text-xs text-gray-500 uppercase font-medium mb-2">Requirements</div>
+                          <ul className="space-y-1 text-sm text-gray-700">
+                            {requirements.map((req, idx) => (
+                              <li key={idx}>✓ {req}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
+
+            {/* Empty State */}
+            {!jurisdictionsLoading && jurisdictions.length === 0 && (
+              <div className="bg-white rounded-lg shadow-md p-12 text-center">
+                <div className="text-6xl mb-4">📋</div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No Requirements Available</h3>
+                <p className="text-gray-600 mb-6">Click the refresh button to load VET funding requirements from all Australian jurisdictions.</p>
+                <button
+                  onClick={() => refetchJurisdictions()}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Load Requirements
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -536,6 +675,177 @@ export default function FundingEligibilityPage() {
           </div>
         )}
       </div>
+
+      {/* Edit Requirements Modal */}
+      {editingJurisdiction && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={handleCloseModal}>
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">{editingJurisdiction.name}</h2>
+                <p className="text-sm text-gray-600 mt-1">Review and confirm VET funding requirements</p>
+              </div>
+              <button
+                onClick={handleCloseModal}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-6">
+              {/* Funding Information */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Funding Percentage
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={editedConfig.funding_percentage || 0}
+                      onChange={(e) => setEditedConfig({ ...editedConfig, funding_percentage: parseInt(e.target.value) || 0 })}
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <span className="text-gray-600">%</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Student Contribution
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      value={editedConfig.student_contribution || 0}
+                      onChange={(e) => setEditedConfig({ ...editedConfig, student_contribution: parseInt(e.target.value) || 0 })}
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <span className="text-gray-600">%</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Minimum Age
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editedConfig.age_min || 15}
+                    onChange={(e) => setEditedConfig({ ...editedConfig, age_min: parseInt(e.target.value) || 15 })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Maximum Age (optional)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editedConfig.age_max || ''}
+                    onChange={(e) => setEditedConfig({ ...editedConfig, age_max: e.target.value ? parseInt(e.target.value) : undefined })}
+                    placeholder="No limit"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Residency Period (months)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editedConfig.residency_months || 6}
+                    onChange={(e) => setEditedConfig({ ...editedConfig, residency_months: parseInt(e.target.value) || 6 })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              {/* Requirements List */}
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Eligibility Requirements
+                  </label>
+                  <button
+                    onClick={handleAddRequirement}
+                    className="text-sm text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Requirement
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {(editedConfig.requirements || []).map((req, index) => (
+                    <div key={index} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={req}
+                        onChange={(e) => handleUpdateRequirement(index, e.target.value)}
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="Enter requirement"
+                      />
+                      <button
+                        onClick={() => handleRemoveRequirement(index)}
+                        className="px-3 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Remove requirement"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {(editedConfig.requirements || []).length === 0 && (
+                  <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
+                    <p className="mb-2">No requirements added yet</p>
+                    <button
+                      onClick={handleAddRequirement}
+                      className="text-indigo-600 hover:text-indigo-800 font-medium"
+                    >
+                      Add your first requirement
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
+              <button
+                onClick={handleCloseModal}
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveRequirements}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-md"
+              >
+                Confirm & Save Requirements
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
